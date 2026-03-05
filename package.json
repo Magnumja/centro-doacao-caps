@@ -1,0 +1,27 @@
+{
+  "name": "centrodoacao",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@react-icons/all-files": "^4.1.0",
+    "icons": "^1.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.6.0",
+    "react-router-dom": "^7.13.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@types/react-router-dom": "^5.3.3",
+    "@vitejs/plugin-react": "^5.0.0",
+    "typescript": "^5.9.3",
+    "vite": "^5.1.0"
+  }
+}
