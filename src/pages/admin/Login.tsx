@@ -18,7 +18,7 @@ export default function Login(): React.ReactElement {
             <div className="login-container">
                 <form className="login-form" onSubmit={handleSubmit}>
                     <div className='login-titulo'>
-                        <h1>Sistema de Doação do CAPS</h1>
+                        <h1>Sistema de Doação CAPS</h1>
                     </div>
                     <div className="field">
                         <input type="email" placeholder="E-mail"
@@ -40,8 +40,10 @@ export default function Login(): React.ReactElement {
                         <a href="#"> Esqueci minha senha</a>
 
                     </div>
-                    <div className='login-button'>
-                        <button type="submit">Entrar</button>
+                    <div className="login-button-container">
+                        <div className="login-button">
+                            <button type="submit">Entrar</button>
+                        </div>
                     </div>
                     <div className="signup-link">
                         <p>
