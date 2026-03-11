@@ -1,13 +1,15 @@
-import React from 'react'
+import { FaUser, FaLock } from 'react-icons/fa'
+import { useState } from 'react'
 import Layout from '../components/Layout'
 
-export default function Home(): JSX.Element {
+export default function Home(): React.ReactElement  {
   return (
-    <Layout>
-      <div style={{ padding: 24 }}>
-        <h1>Home</h1>
-        <p>Bem-vindo ao Centro Doação — página inicial.</p>
-      </div>
-    </Layout>
+    <div className="Menu-geral" style={{ padding: 24 }}>
+
+        <Layout />
+
+    
+
+    </div>
   )
 }

@@ -127,3 +127,21 @@
     transform: translateY(-1px);
     background: linear-gradient(135deg, #3b8cff, #1b4fa8);
 }
+
+
+.signup-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+
+.signup-link a{
+    text-decoration: none;
+}
+
+
+.signup-link a:hover{
+    text-decoration: underline;
+}
