@@ -9,6 +9,7 @@ export type Cap = {
   privacyNote?: string
   lat?: number
   lng?: number
+  photo?: string
 }
 
 export type Need = {

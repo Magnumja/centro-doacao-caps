@@ -23,6 +23,13 @@ export default function CapsCard({ cap, isSelected, onSelectDonation }: Props): 
       onClick={() => onSelectDonation(cap)}
       onKeyDown={handleKeyDown}
     >
+      {cap.photo ? (
+        <img
+          className="caps-card__photo"
+          src={cap.photo}
+          alt={`Foto da unidade ${cap.title}`}
+        />
+      ) : null}
       <span className="unit-type-badge">{cap.unitType}</span>
       <h3>{cap.title}</h3>
       <p><strong>Endereco:</strong> {cap.address}</p>

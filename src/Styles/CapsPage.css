@@ -3,6 +3,32 @@
   gap: 0.45rem;
   cursor: pointer;
   transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+  overflow: hidden;
+  padding: 0 !important;
+}
+
+.caps-card__photo {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  display: block;
+  border-radius: 16px 16px 0 0;
+}
+
+.donation-unit-card .unit-type-badge,
+.donation-unit-card h3,
+.donation-unit-card p,
+.donation-unit-card .unit-donate-button {
+  margin-left: 0.95rem;
+  margin-right: 0.95rem;
+}
+
+.donation-unit-card .unit-type-badge {
+  margin-top: 0.75rem;
+}
+
+.donation-unit-card .unit-donate-button {
+  margin-bottom: 0.85rem;
 }
 
 .donation-unit-card:hover {

@@ -8,7 +8,8 @@ export const caps: Cap[] = [
     address: 'Rua Itambe, 2939 - Vila Rica / Jardim Vitrine',
     contact: '(67) 3314-3144',
     lat: -20.4810,
-    lng: -54.6660
+    lng: -54.6660,
+    photo: '/capsmargarida.jpg'
   },
   {
     id: 'c2',
@@ -17,7 +18,8 @@ export const caps: Cap[] = [
     address: 'Rua Marechal Hermes, 854 - Vila Almeida',
     contact: 'Contato nao informado',
     lat: -20.4560,
-    lng: -54.6200
+    lng: -54.6200,
+    photo: '/capsvilaalmeida.jpeg'
   },
   {
     id: 'c3',
@@ -26,7 +28,8 @@ export const caps: Cap[] = [
     address: 'Rua Sao Paulo, 70 - Bairro Sao Francisco',
     contact: '(67) 3314-3185 / 3314-3188',
     lat: -20.4660,
-    lng: -54.6135
+    lng: -54.6135,
+    photo: '/capsafrodite.jpeg'
   },
   {
     id: 'c4',
@@ -35,7 +38,8 @@ export const caps: Cap[] = [
     address: 'Av. Manoel da Costa Lima, 3272 - Guanandi',
     contact: 'Contato nao informado',
     lat: -20.5020,
-    lng: -54.6350
+    lng: -54.6350,
+    photo: '/capsaerorancho.jpeg'
   },
   {
     id: 'c5',
@@ -44,7 +48,8 @@ export const caps: Cap[] = [
     address: 'Rua Theotonio Rosa Pires, 19 - Jardim Sao Bento',
     contact: 'Contato nao informado',
     lat: -20.4500,
-    lng: -54.6380
+    lng: -54.6380,
+    photo: '/capsdrafatima.jpg'
   },
   {
     id: 'c6',
@@ -53,7 +58,8 @@ export const caps: Cap[] = [
     address: 'Av. Manoel da Costa Lima, 3272 - Guanandi',
     contact: 'Contato nao informado',
     lat: -20.5025,
-    lng: -54.6355
+    lng: -54.6355,
+    photo: '/capsmarciazen.jpg'
   },
   {
     id: 'r1',
