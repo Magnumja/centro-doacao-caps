@@ -1,10 +1,11 @@
 import React from 'react'
 
-export default function Dashboard(): JSX.Element {
+export default function Dashboard(): React.ReactElement {
   return (
-    <div style={{ padding: 24 }}>
-      <h1>Admin — Dashboard</h1>
-      <p>Painel administrativo (esqueleto).</p>
-    </div>
+    <section className="page-block">
+      <span className="page-kicker">Gestao interna</span>
+      <h2>Painel administrativo</h2>
+      <p>Area de acompanhamento operacional e organizacao das doacoes.</p>
+    </section>
   )
 }

@@ -1,15 +1,31 @@
-import { FaUser, FaLock } from 'react-icons/fa'
-import { useState } from 'react'
-import Layout from '../components/Layout'
+import React from 'react'
 
-export default function Home(): React.ReactElement  {
+import '../Styles/Home.css'
+
+export default function Home(): React.ReactElement {
   return (
-    <div className="Menu-geral" style={{ padding: 24 }}>
+    <section className="page-block home-instructions">
+      <span className="page-kicker">Saude mental em rede</span>
+      <h2>Um unico menu para acompanhar cuidado, doacoes e impacto social.</h2>
+      <p>
+        Este espaco organiza a jornada da equipe e da comunidade com acesso rapido a
+        unidades CAPS, necessidades de doacao e painel administrativo.
+      </p>
 
-        <Layout />
-
-    
-
-    </div>
+      <div className="home-cards">
+        <article className="home-card">
+          <h3>Necessidades priorizadas</h3>
+          <p>Visualize os itens urgentes para manter atendimentos e oficinas ativas.</p>
+        </article>
+        <article className="home-card">
+          <h3>Rede CAPS integrada</h3>
+          <p>Centralize informacoes de unidades e facilite o encaminhamento solidario.</p>
+        </article>
+        <article className="home-card">
+          <h3>Transparencia de apoio</h3>
+          <p>Registre cada contribuicao e mantenha o acompanhamento acessivel.</p>
+        </article>
+      </div>
+    </section>
   )
 }

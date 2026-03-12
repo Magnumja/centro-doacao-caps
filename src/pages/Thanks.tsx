@@ -1,13 +1,17 @@
 import React from 'react'
-import Layout from '../components/Layout'
+import { Link } from 'react-router-dom'
 
-export default function Thanks(): JSX.Element {
+export default function Thanks(): React.ReactElement {
   return (
-    <Layout>
-      <div style={{ padding: 24 }}>
-        <h1>Obrigado</h1>
-        <p>Sua doação foi registrada. Obrigado!</p>
-      </div>
-    </Layout>
+    <section className="page-block">
+      <span className="page-kicker">Contribuicao registrada</span>
+      <h2>Obrigado por apoiar o cuidado em saude mental.</h2>
+      <p>
+        Sua doacao foi registrada e ajudara na continuidade das atividades dos CAPS.
+      </p>
+      <Link className="inline-link" to="/donate">
+        Fazer nova doacao
+      </Link>
+    </section>
   )
 }

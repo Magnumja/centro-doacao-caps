@@ -1,7 +1,12 @@
 export type Cap = {
   id: string
   title: string
+  unitType: 'CAPS' | 'Residência Terapêutica'
+  address: string
+  contact?: string
   description?: string
+  capacity?: string
+  privacyNote?: string
 }
 
 export type Need = {

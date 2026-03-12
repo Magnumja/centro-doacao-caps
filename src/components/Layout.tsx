@@ -1,57 +1,51 @@
 import React from 'react'
+import { NavLink, Outlet } from 'react-router-dom'
 
-type Props = {
-  children?: React.ReactNode
-}
+import '../Styles/Layout.css'
 
-export default function Layout(): React.ReactElement  {
+const navigationItems = [
+  { to: '/', label: 'Início' },
+  { to: '/caps', label: 'Unidades CAPS' },
+  { to: '/donate', label: 'Doações' },
+  { to: '/thanks', label: 'Agradecimentos' },
+  { to: '/admin/login', label: 'Área Admin' }
+]
+
+export default function Layout(): React.ReactElement {
   return (
+    <>
+      <header className="health-header">
+        <div className="health-header__inner">
+          <div className="health-brand">
+            <img
+              className="health-brand__logo"
+              src="/SESAU.png"
+              alt="Logo da rede CAPS"
+            />
+            <div className="health-brand__text">
+              <span className="health-brand__kicker">Rede de Atenção Psicossocial</span>
+              <h1>Centro de Doação CAPS</h1>
+            </div>
+          </div>
 
-
-    <div className="Menu-geral" style={{ padding: 24 }}>
-      <div className='titulo'>
-        <h1>Bem-vindo ao Sistema de Doação CAPS</h1>
-      </div>
-       <p>Este é o sistema de doação para o Centro de Atenção Psicossocial (CAPS). Aqui você pode fazer doações, acompanhar suas doações e muito mais.</p>
-
-    </div>
-  )
-}
-
-export function Navbar(): React.ReactElement {
-  return (
-
-
-
-
-
-
-
-    <div className="navbar" style={{ padding: 24 }}>
-      <nav>
-          <li><a href="/">Home</a></li>
-          <li><a href="/doacoes">Doações</a></li>
-          <li><a href="/sobre">Sobre</a></li>
-          <li><a href="/contato">Contato</a></li>
-      </nav>
-    </div>
-  )
-}
-
-
-
-/*
-
-
-<div className = 'Menu-geral' style={{ fontFamily: 'Arial, sans-serif', minHeight: '100vh' }}>
-      <header style={{ padding: 16, background: '#f5f5f5' }}>
-        <strong>Centro Doação</strong>
+          <nav className="health-nav" aria-label="Menu principal">
+            {navigationItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.to === '/'}
+                className={({ isActive }) =>
+                  `health-nav__link${isActive ? ' health-nav__link--active' : ''}`
+                }
+              >
+                {item.label}
+              </NavLink>
+            ))}
+          </nav>
+        </div>
       </header>
-      <main>{children}</main>
-      <footer style={{ padding: 12, textAlign: 'center', fontSize: 12, color: '#666' }}>
-        © Centro Doação
-      </footer>
-    </div>
-    
-    
-    */
+
+      <Outlet />
+    </>
+  )
+}
