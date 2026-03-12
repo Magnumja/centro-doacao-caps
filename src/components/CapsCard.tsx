@@ -4,10 +4,16 @@ import { Cap } from '../types'
 type Props = {
   cap: Cap
   isSelected: boolean
+  isAnimatingSelection?: boolean
   onSelectDonation: (cap: Cap) => void
 }
 
-export default function CapsCard({ cap, isSelected, onSelectDonation }: Props): React.ReactElement {
+export default function CapsCard({
+  cap,
+  isSelected,
+  isAnimatingSelection = false,
+  onSelectDonation,
+}: Props): React.ReactElement {
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>): void => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault()
@@ -17,7 +23,7 @@ export default function CapsCard({ cap, isSelected, onSelectDonation }: Props): 
 
   return (
     <div
-      className={`page-card donation-unit-card${isSelected ? ' donation-unit-card--selected' : ''}`}
+      className={`page-card donation-unit-card${isSelected || isAnimatingSelection ? ' donation-unit-card--selected' : ''}${isAnimatingSelection ? ' donation-unit-card--selecting' : ''}`}
       role="button"
       tabIndex={0}
       onClick={() => onSelectDonation(cap)}

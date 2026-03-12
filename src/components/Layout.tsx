@@ -7,7 +7,6 @@ const navigationItems = [
   { to: '/', label: 'Início' },
   { to: '/caps', label: 'Unidades CAPS' },
   { to: '/donate', label: 'Doações' },
-  { to: '/thanks', label: 'Agradecimentos' },
   { to: '/admin/login', label: 'Área Admin' }
 ]
 

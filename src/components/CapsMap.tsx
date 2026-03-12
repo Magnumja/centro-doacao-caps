@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import L from 'leaflet'
 
@@ -41,9 +41,9 @@ export default function CapsMap(): React.ReactElement {
 
   return (
     <div className="caps-map-wrapper">
-      <h3 className="caps-map-title">Mapa da Rede de Saude Mental — Campo Grande (MS)</h3>
+      <h3 className="caps-map-title">Mapa interativo da Rede de Saude Mental em Campo Grande (MS)</h3>
       <p className="caps-map-subtitle">
-        Clique em um marcador para ver o nome, endereco e contato da unidade.
+        Use os marcadores para localizar unidades, comparar enderecos e consultar contatos da rede.
       </p>
       <MapContainer
         center={CAMPO_GRANDE_CENTER}

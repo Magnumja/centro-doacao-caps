@@ -1,54 +1,106 @@
-import { FaUser, FaLock } from 'react-icons/fa'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { hosts } from '../../data/mock'
 
 import '../../Styles/Login.css'
 
 export default function Login(): React.ReactElement {
-    const [username, setUsername] = useState('')
+    const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [errorMessage, setErrorMessage] = useState('')
+    const [isLoading, setIsLoading] = useState(false)
+    const navigate = useNavigate()
 
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault()
+        setErrorMessage('')
+        setIsLoading(true)
 
-        alert("Envando os dados: " + username + " - " + password)
+        // Simular delay de autenticação
+        setTimeout(() => {
+            const host = hosts.find(h => h.email === email && h.password === password)
+
+            if (host) {
+                localStorage.setItem('loggedHost', JSON.stringify(host))
+                navigate('/admin/dashboard')
+            } else {
+                setErrorMessage('E-mail ou senha inválido.')
+            }
+            setIsLoading(false)
+        }, 600)
     }
 
     return (
-        <div className="Login" style={{ padding: 24 }}>
-            <div className="login-container">
+        <div className="login-page">
+            <div className="login-hero">
+                <div className="login-hero__content">
+                    <span className="page-kicker">Acesso restrito</span>
+                    <h1>Painel de Gestores</h1>
+                    <p>
+                        Acesso exclusivo para gestores de CAPS. Informe suas credenciais para
+                        continuar.
+                    </p>
+                </div>
+            </div>
+
+            <div className="login-form-wrapper">
                 <form className="login-form" onSubmit={handleSubmit}>
-                    <div className='login-titulo'>
-                        <h1>Sistema de Doação CAPS</h1>
-                    </div>
-                    <div className="field">
-                        <input type="email" placeholder="E-mail"
+                    <h2>Entrar no Sistema</h2>
 
-                            onChange={(e) => setUsername(e.target.value)} />
-                        <FaUser className="icon" aria-hidden />
-                    </div>
-                    <div className="field">
-                        <input type="password" placeholder="Senha"
-                            onChange={(e) => setPassword(e.target.value)} />
-                        <FaLock className="icon" aria-hidden />
-                    </div>
+                    <fieldset className="form-group">
+                        <label htmlFor="email">E-mail</label>
+                        <input
+                            id="email"
+                            type="email"
+                            placeholder="seu@email.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            disabled={isLoading}
+                        />
+                    </fieldset>
 
-                    <div className="recall-forget">
-                        <label>
-                            <input type="checkbox" />
-                            Lembre de mim
-                        </label>
-                        <a href="#"> Esqueci minha senha</a>
+                    <fieldset className="form-group">
+                        <label htmlFor="password">Senha</label>
+                        <input
+                            id="password"
+                            type="password"
+                            placeholder="••••••••"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            disabled={isLoading}
+                        />
+                    </fieldset>
 
-                    </div>
-                    <div className="login-button-container">
-                        <div className="login-button">
-                            <button type="submit">Entrar</button>
+                    {errorMessage && (
+                        <div className="login-error">
+                            <p>{errorMessage}</p>
                         </div>
+                    )}
+
+                    <div className="login-remember">
+                        <label>
+                            <input type="checkbox" disabled={isLoading} />
+                            Manter-me conectado
+                        </label>
                     </div>
-                    <div className="signup-link">
-                        <p>
-                            Não tem uma conta? <a href="#">Cadastre-se</a>
+
+                    <button
+                        type="submit"
+                        className="login-submit"
+                        disabled={isLoading}
+                    >
+                        {isLoading ? 'Autenticando...' : 'Entrar'}
+                    </button>
+
+                    <div className="login-help">
+                        <p className="login-help__text">
+                            Teste com: <strong>teste@caps.br</strong> / <strong>senha123</strong>
                         </p>
+                        <a href="#" className="login-help__link">
+                            Esqueceu a senha?
+                        </a>
                     </div>
                 </form>
             </div>

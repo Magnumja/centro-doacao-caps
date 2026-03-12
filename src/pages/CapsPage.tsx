@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 
 import CapsCard from '../components/CapsCard'
 import { caps } from '../data/mock'
@@ -7,9 +8,13 @@ import { Cap } from '../types'
 import '../Styles/CapsPage.css'
 
 const donationOptions = ['Roupas', 'Comida', 'Utensilios']
+const selectionAnimationDurationMs = 260
 
 export default function CapsPage(): React.ReactElement {
+  const [searchParams, setSearchParams] = useSearchParams()
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null)
+  const [selectionPreviewId, setSelectionPreviewId] = useState<string | null>(null)
+  const [showUnitChooser, setShowUnitChooser] = useState(true)
   const [selectedItems, setSelectedItems] = useState<string[]>([])
   const [itemQuantities, setItemQuantities] = useState<Record<string, string>>({})
   const [donationDate, setDonationDate] = useState('')
@@ -18,14 +23,61 @@ export default function CapsPage(): React.ReactElement {
   const [donorName, setDonorName] = useState('')
   const [donorEmail, setDonorEmail] = useState('')
   const [formMessage, setFormMessage] = useState<string>('')
+  const [showSuccessOverlay, setShowSuccessOverlay] = useState(false)
+  const [successMessage, setSuccessMessage] = useState<string>('')
+  const selectionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const donationFlowRef = useRef<HTMLDivElement | null>(null)
+  const shouldScrollToDonationRef = useRef(false)
+
+  const selectedUnitParam = searchParams.get('unit')
 
   const selectedUnit = useMemo(
     () => caps.find((unit) => unit.id === selectedUnitId) ?? null,
     [selectedUnitId]
   )
 
-  const handleSelectDonation = (unit: Cap): void => {
-    setSelectedUnitId(unit.id)
+  useEffect(() => {
+    return () => {
+      if (selectionTimeoutRef.current) {
+        clearTimeout(selectionTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!selectedUnitParam) {
+      return
+    }
+
+    const matchedUnit = caps.find((unit) => unit.id === selectedUnitParam)
+
+    if (!matchedUnit) {
+      return
+    }
+
+    setSelectedUnitId(matchedUnit.id)
+    setSelectionPreviewId(null)
+    resetDonationForm()
+    setShowUnitChooser(false)
+    shouldScrollToDonationRef.current = true
+  }, [selectedUnitParam])
+
+  useEffect(() => {
+    if (!shouldScrollToDonationRef.current || !selectedUnit || showUnitChooser) {
+      return
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      donationFlowRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      shouldScrollToDonationRef.current = false
+    }, 120)
+
+    return () => {
+      window.clearTimeout(timeoutId)
+    }
+  }, [selectedUnit, showUnitChooser])
+
+  const resetDonationForm = (): void => {
     setSelectedItems([])
     setItemQuantities({})
     setDonationDate('')
@@ -34,6 +86,48 @@ export default function CapsPage(): React.ReactElement {
     setDonorName('')
     setDonorEmail('')
     setFormMessage('')
+  }
+
+  const handleSelectDonation = (unit: Cap): void => {
+    if (selectionTimeoutRef.current) {
+      clearTimeout(selectionTimeoutRef.current)
+    }
+
+    if (selectedUnitId === unit.id && showUnitChooser) {
+      setSelectionPreviewId(null)
+      setShowUnitChooser(false)
+      return
+    }
+
+    setSelectionPreviewId(unit.id)
+
+    selectionTimeoutRef.current = setTimeout(() => {
+      setSelectedUnitId(unit.id)
+      resetDonationForm()
+      setSelectionPreviewId(null)
+      setShowUnitChooser(false)
+      selectionTimeoutRef.current = null
+    }, selectionAnimationDurationMs)
+  }
+
+  const handleShowUnitChooser = (): void => {
+    if (selectionTimeoutRef.current) {
+      clearTimeout(selectionTimeoutRef.current)
+      selectionTimeoutRef.current = null
+    }
+
+    setSelectionPreviewId(null)
+    resetDonationForm()
+    setShowUnitChooser(true)
+    setShowSuccessOverlay(false)
+    setSearchParams({})
+  }
+
+  const handleCloseDonationSuccess = (): void => {
+    setShowSuccessOverlay(false)
+    setSelectedUnitId(null)
+    setShowUnitChooser(true)
+    resetDonationForm()
   }
 
   const toggleItem = (item: string): void => {
@@ -75,22 +169,50 @@ export default function CapsPage(): React.ReactElement {
       return
     }
 
-    const identidade =
-      anonymousDonation === 'sim'
-        ? 'Doador anonimo: Sim'
-        : `Doador: ${donorName} (${donorEmail})`
-
     const itensList = selectedItems
       .map((item) => `${item}: ${itemQuantities[item]}`)
       .join(', ')
 
-    setFormMessage(
-      `Registro salvo para ${selectedUnit.title}. Dia: ${donationDate}, Horario: ${donationTime}. Itens: ${itensList}. ${identidade}.`
-    )
+    const identidade = anonymousDonation === 'sim' ? 'Doador anonimo' : `Doador: ${donorName} (${donorEmail})`
+
+    const successMsg = `Registro salvo para ${selectedUnit.title}. Dia: ${donationDate}, Horario: ${donationTime}. Itens: ${itensList}. ${identidade}.`
+    setSuccessMessage(successMsg)
+    setShowSuccessOverlay(true)
   }
 
   return (
-    <section className="page-block">
+    <section className="page-block caps-page">
+      {showSuccessOverlay ? (
+        <div className="donation-success-overlay">
+          <article className="donation-success-card">
+            <span className="page-kicker">Contribuicao registrada</span>
+            <h2>Obrigado por apoiar o cuidado em saude mental.</h2>
+            <p>
+              Sua doacao foi registrada e ajudara na continuidade das atividades
+              dos CAPS.
+            </p>
+            <p className="donation-success-details">{successMessage}</p>
+
+            <div className="donation-success-actions">
+              <button
+                type="button"
+                className="unit-donate-button"
+                onClick={() => setShowSuccessOverlay(false)}
+              >
+                Fazer nova doacao
+              </button>
+              <button
+                type="button"
+                className="donation-success-close"
+                onClick={handleCloseDonationSuccess}
+              >
+                Voltar a selecao de unidades
+              </button>
+            </div>
+          </article>
+        </div>
+      ) : null}
+
       <span className="page-kicker">Rede de saude mental</span>
       <h2>Rede de Saude Mental - Campo Grande (MS)</h2>
       <p>
@@ -98,24 +220,60 @@ export default function CapsPage(): React.ReactElement {
         registrar dia, horario e preferencia de doador anonimo.
       </p>
 
-      <div className="card-grid">
-        {caps.map((c) => (
-          <CapsCard
-            key={c.id}
-            cap={c}
-            isSelected={selectedUnitId === c.id}
-            onSelectDonation={handleSelectDonation}
-          />
-        ))}
-      </div>
+      {selectedUnit && !showUnitChooser ? (
+        <article className={`page-card selected-unit-spotlight selected-unit-spotlight--enter${selectedUnit.photo ? '' : ' selected-unit-spotlight--no-photo'}`}>
+          {selectedUnit.photo ? (
+            <div className="selected-unit-spotlight__media">
+              <img
+                className="selected-unit-spotlight__photo"
+                src={selectedUnit.photo}
+                alt={`Foto da unidade ${selectedUnit.title}`}
+              />
+            </div>
+          ) : null}
 
-      {selectedUnit ? (
-        <div className="donation-flow-grid">
-          <article className="page-card donation-panel">
-            <span className="unit-type-badge">Doacao para unidade selecionada</span>
+          <div className="selected-unit-spotlight__content">
+            <span className="unit-type-badge">Unidade selecionada</span>
             <h3>{selectedUnit.title}</h3>
+            <p><strong>Tipo:</strong> {selectedUnit.unitType}</p>
             <p><strong>Endereco:</strong> {selectedUnit.address}</p>
             <p><strong>Contato:</strong> {selectedUnit.contact ?? 'Contato nao informado'}</p>
+            {selectedUnit.capacity ? <p>{selectedUnit.capacity}</p> : null}
+            {selectedUnit.description ? <p>{selectedUnit.description}</p> : null}
+            {selectedUnit.privacyNote ? <p>{selectedUnit.privacyNote}</p> : null}
+
+            <button
+              type="button"
+              className="unit-donate-button"
+              onClick={handleShowUnitChooser}
+            >
+              Alterar doacao desta unidade
+            </button>
+          </div>
+        </article>
+      ) : (
+        <div className="card-grid caps-card-grid">
+          {caps.map((c) => (
+            <CapsCard
+              key={c.id}
+              cap={c}
+              isSelected={selectedUnitId === c.id}
+              isAnimatingSelection={selectionPreviewId === c.id}
+              onSelectDonation={handleSelectDonation}
+            />
+          ))}
+        </div>
+      )}
+
+      {selectedUnit && !showUnitChooser ? (
+        <div ref={donationFlowRef} className="donation-flow-grid">
+          <article className="page-card donation-panel donation-guidelines">
+            <h3>Instrucoes de doacao</h3>
+            <p className="donation-guidelines__unit">
+              <strong>Unidade:</strong> {selectedUnit.title}
+            </p>
+            <p>Itens aceitos: roupas, comida e utensilios.</p>
+            <p className="guideline-warning">Nao aceitamos dinheiro.</p>
 
             <div className="donation-actions" role="group" aria-label="Botoes de doacao">
               {donationOptions.map((item) => {
@@ -132,12 +290,6 @@ export default function CapsPage(): React.ReactElement {
                 )
               })}
             </div>
-          </article>
-
-          <article className="page-card donation-panel donation-guidelines">
-            <h3>Instrucoes de doacao</h3>
-            <p>Itens aceitos: roupas, comida e utensilios.</p>
-            <p className="guideline-warning">Nao aceitamos dinheiro.</p>
 
             <form className="donation-form" onSubmit={handleRegisterDonation}>
               {selectedItems.length > 0 ? (
