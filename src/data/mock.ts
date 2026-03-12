@@ -6,79 +6,64 @@ export const caps: Cap[] = [
     title: 'CAPS III Margarida',
     unitType: 'CAPS',
     address: 'Rua Itambe, 2939 - Vila Rica / Jardim Vitrine',
-    contact: '(67) 3314-3144'
+    contact: '(67) 3314-3144',
+    lat: -20.4810,
+    lng: -54.6660
   },
   {
     id: 'c2',
     title: 'CAPS III Vila Almeida',
     unitType: 'CAPS',
     address: 'Rua Marechal Hermes, 854 - Vila Almeida',
-    contact: 'Contato nao informado'
+    contact: 'Contato nao informado',
+    lat: -20.4560,
+    lng: -54.6200
   },
   {
     id: 'c3',
     title: 'CAPS III Afrodite Doris Contis',
     unitType: 'CAPS',
     address: 'Rua Sao Paulo, 70 - Bairro Sao Francisco',
-    contact: '(67) 3314-3185 / 3314-3188'
+    contact: '(67) 3314-3185 / 3314-3188',
+    lat: -20.4660,
+    lng: -54.6135
   },
   {
     id: 'c4',
     title: 'CAPS III Aero Rancho',
     unitType: 'CAPS',
     address: 'Av. Manoel da Costa Lima, 3272 - Guanandi',
-    contact: 'Contato nao informado'
+    contact: 'Contato nao informado',
+    lat: -20.5020,
+    lng: -54.6350
   },
   {
     id: 'c5',
     title: 'CAPS AD IV - Alcool e Drogas',
     unitType: 'CAPS',
     address: 'Rua Theotonio Rosa Pires, 19 - Jardim Sao Bento',
-    contact: 'Contato nao informado'
+    contact: 'Contato nao informado',
+    lat: -20.4500,
+    lng: -54.6380
   },
   {
     id: 'c6',
     title: 'CAPS AD III - Marcia Zen',
     unitType: 'CAPS',
     address: 'Av. Manoel da Costa Lima, 3272 - Guanandi',
-    contact: 'Contato nao informado'
-  },
-  {
-    id: 'c7',
-    title: 'CAPSi (Infanto-Juvenil)',
-    unitType: 'CAPS',
-    address: 'Rua Sao Paulo, 70 - Bairro Sao Francisco',
-    contact: '(67) 3314-3874 / 3314-3952'
+    contact: 'Contato nao informado',
+    lat: -20.5025,
+    lng: -54.6355
   },
   {
     id: 'r1',
     title: 'Residencia Terapeutica Moinho dos Ventos (Tipo II)',
     unitType: 'Residência Terapêutica',
     address: 'Bairro Sao Francisco - Rua Sao Paulo',
-    capacity: 'Capacidade aproximada: ate 10 moradores'
+    capacity: 'Capacidade aproximada: ate 10 moradores',
+    lat: -20.4650,
+    lng: -54.6130
   },
-  {
-    id: 'r2',
-    title: 'Residencia Terapeutica I - Campo Grande',
-    unitType: 'Residência Terapêutica',
-    address: 'Endereco publico nao divulgado oficialmente',
-    description: 'Moradia assistida para usuarios da rede de saude mental',
-    privacyNote: 'Endereco completo preservado por protecao e privacidade dos moradores.'
-  },
-  {
-    id: 'r3',
-    title: 'Residencia Terapeutica II - Campo Grande',
-    unitType: 'Residência Terapêutica',
-    address: 'Endereco publico nao divulgado oficialmente',
-    privacyNote: 'Endereco completo preservado por protecao e privacidade dos moradores.'
-  },
-  {
-    id: 'r4',
-    title: 'Residencia Terapeutica III - Campo Grande',
-    unitType: 'Residência Terapêutica',
-    address: 'Endereco publico nao divulgado oficialmente',
-    privacyNote: 'Endereco completo preservado por protecao e privacidade dos moradores.'
-  }
 ]
 
 export const needs: Need[] = [

@@ -7,6 +7,8 @@ export type Cap = {
   description?: string
   capacity?: string
   privacyNote?: string
+  lat?: number
+  lng?: number
 }
 
 export type Need = {

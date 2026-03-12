@@ -1,4 +1,4 @@
-.home-instructions {
+/* ---- Page section ---- */\n.home-instructions {
   position: relative;
   overflow: hidden;
 }
@@ -44,5 +44,61 @@
     inset: -35% auto auto 55%;
     width: 220px;
     height: 220px;
+  }
+}
+
+/* ---- Mapa interativo ---- */
+.caps-map-wrapper {
+  margin-top: 2rem;
+}
+
+.caps-map-title {
+  font-family: 'Lexend', sans-serif;
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+}
+
+.caps-map-subtitle {
+  font-size: 0.92rem;
+  color: #555;
+  margin-bottom: 0.75rem;
+}
+
+.caps-map {
+  width: 100%;
+  height: 420px;
+  border-radius: 16px;
+  border: 1px solid rgba(15, 143, 121, 0.28);
+  z-index: 0;
+}
+
+.caps-map-legend {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 0.6rem;
+  font-size: 0.9rem;
+}
+
+.legend-caps {
+  color: #2a81cb;
+  font-weight: 600;
+}
+
+.legend-rt {
+  color: #c85a20;
+  font-weight: 600;
+}
+
+.caps-marker {
+  filter: hue-rotate(0deg);
+}
+
+.rt-marker {
+  filter: hue-rotate(180deg);
+}
+
+@media (max-width: 740px) {
+  .caps-map {
+    height: 300px;
   }
 }

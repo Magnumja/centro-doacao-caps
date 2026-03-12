@@ -11,9 +11,12 @@ const donationOptions = ['Roupas', 'Comida', 'Utensilios']
 export default function CapsPage(): React.ReactElement {
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null)
   const [selectedItems, setSelectedItems] = useState<string[]>([])
+  const [itemQuantities, setItemQuantities] = useState<Record<string, string>>({})
   const [donationDate, setDonationDate] = useState('')
   const [donationTime, setDonationTime] = useState('')
   const [anonymousDonation, setAnonymousDonation] = useState<'sim' | 'nao'>('nao')
+  const [donorName, setDonorName] = useState('')
+  const [donorEmail, setDonorEmail] = useState('')
   const [formMessage, setFormMessage] = useState<string>('')
 
   const selectedUnit = useMemo(
@@ -24,9 +27,12 @@ export default function CapsPage(): React.ReactElement {
   const handleSelectDonation = (unit: Cap): void => {
     setSelectedUnitId(unit.id)
     setSelectedItems([])
+    setItemQuantities({})
     setDonationDate('')
     setDonationTime('')
     setAnonymousDonation('nao')
+    setDonorName('')
+    setDonorEmail('')
     setFormMessage('')
   }
 
@@ -34,11 +40,20 @@ export default function CapsPage(): React.ReactElement {
     setFormMessage('')
     setSelectedItems((prevItems) => {
       if (prevItems.includes(item)) {
+        setItemQuantities((prev) => {
+          const next = { ...prev }
+          delete next[item]
+          return next
+        })
         return prevItems.filter((existingItem) => existingItem !== item)
       }
 
       return [...prevItems, item]
     })
+  }
+
+  const handleQuantityChange = (item: string, value: string): void => {
+    setItemQuantities((prev) => ({ ...prev, [item]: value }))
   }
 
   const handleRegisterDonation = (event: React.FormEvent<HTMLFormElement>): void => {
@@ -49,8 +64,28 @@ export default function CapsPage(): React.ReactElement {
       return
     }
 
+    const missingQty = selectedItems.some((item) => !itemQuantities[item]?.trim())
+    if (missingQty) {
+      setFormMessage('Informe a quantidade para cada item selecionado.')
+      return
+    }
+
+    if (anonymousDonation === 'nao' && (!donorName.trim() || !donorEmail.trim())) {
+      setFormMessage('Preencha seu nome e e-mail para continuar.')
+      return
+    }
+
+    const identidade =
+      anonymousDonation === 'sim'
+        ? 'Doador anonimo: Sim'
+        : `Doador: ${donorName} (${donorEmail})`
+
+    const itensList = selectedItems
+      .map((item) => `${item}: ${itemQuantities[item]}`)
+      .join(', ')
+
     setFormMessage(
-      `Registro salvo para ${selectedUnit.title}. Dia: ${donationDate}, Horario: ${donationTime}, Doador anonimo: ${anonymousDonation === 'sim' ? 'Sim' : 'Nao'}.`
+      `Registro salvo para ${selectedUnit.title}. Dia: ${donationDate}, Horario: ${donationTime}. Itens: ${itensList}. ${identidade}.`
     )
   }
 
@@ -105,6 +140,23 @@ export default function CapsPage(): React.ReactElement {
             <p className="guideline-warning">Nao aceitamos dinheiro.</p>
 
             <form className="donation-form" onSubmit={handleRegisterDonation}>
+              {selectedItems.length > 0 ? (
+                <fieldset>
+                  <legend>Quantidade por item</legend>
+                  {selectedItems.map((item) => (
+                    <label key={item}>
+                      {item}
+                      <input
+                        type="text"
+                        placeholder={`Quantidade de ${item.toLowerCase()}`}
+                        value={itemQuantities[item] ?? ''}
+                        onChange={(event) => handleQuantityChange(item, event.target.value)}
+                      />
+                    </label>
+                  ))}
+                </fieldset>
+              ) : null}
+
               <label>
                 Dia da entrega
                 <input
@@ -146,6 +198,29 @@ export default function CapsPage(): React.ReactElement {
                   Nao
                 </label>
               </fieldset>
+
+              {anonymousDonation === 'nao' ? (
+                <>
+                  <label>
+                    Seu nome
+                    <input
+                      type="text"
+                      placeholder="Nome completo"
+                      value={donorName}
+                      onChange={(event) => setDonorName(event.target.value)}
+                    />
+                  </label>
+                  <label>
+                    Seu e-mail
+                    <input
+                      type="email"
+                      placeholder="email@exemplo.com"
+                      value={donorEmail}
+                      onChange={(event) => setDonorEmail(event.target.value)}
+                    />
+                  </label>
+                </>
+              ) : null}
 
               <button type="submit" className="unit-donate-button">
                 Registrar intencao de doacao

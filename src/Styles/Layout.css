@@ -28,6 +28,83 @@ body {
 		linear-gradient(145deg, var(--health-bg-top), var(--health-bg-mid) 50%, var(--health-bg-bottom));
 }
 
+/* ---- Site banner (topo, acima do nav) ---- */
+.site-banner {
+	width: 100%;
+	background: linear-gradient(
+		to bottom,
+		#ffffff 0%,
+		#ffffff 55%,
+		rgba(244, 253, 250, 0.95) 80%,
+		rgba(244, 253, 250, 0.9) 100%
+	);
+	border-bottom: 1px solid rgba(15, 143, 121, 0.15);
+	box-shadow: 0 4px 18px rgba(14, 66, 57, 0.07);
+}
+
+.site-banner__content {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	gap: 2.5rem;
+	padding: 1.4rem 3rem;
+}
+
+.site-banner__logo {
+	width: 380px;
+	height: 220px;
+	object-fit: contain;
+	border-radius: 22px;
+	background: #ffffff;
+	padding: 0.65rem;
+	border: 1.5px solid rgba(15, 143, 121, 0.22);
+	box-shadow: 0 8px 32px rgba(14, 66, 57, 0.12);
+	flex-shrink: 0;
+}
+
+.site-banner__text {
+	display: grid;
+	gap: 0.4rem;
+	flex: 1;
+}
+
+.site-banner__title {
+	margin: 0;
+	font-family: 'Lexend', sans-serif;
+	font-size: clamp(1.8rem, 3.5vw, 3rem);
+	font-weight: 700;
+	color: var(--health-accent-strong);
+	line-height: 1.1;
+}
+
+.site-banner__kicker {
+	font-family: 'Lexend', sans-serif;
+	font-size: clamp(0.75rem, 1.2vw, 0.95rem);
+	font-weight: 600;
+	letter-spacing: 0.07em;
+	text-transform: uppercase;
+	color: var(--health-secondary);
+}
+
+.site-banner__desc {
+	margin: 0;
+	font-family: 'Source Sans 3', sans-serif;
+	font-size: clamp(1rem, 1.6vw, 1.3rem);
+	font-weight: 500;
+	color: var(--health-soft-text);
+}
+
+@media (max-width: 700px) {
+	.site-banner__logo {
+		width: 120px;
+		height: 100px;
+	}
+	.site-banner__content {
+		gap: 1rem;
+		padding: 1rem 1.2rem;
+	}
+}
+
 .health-header {
 	position: sticky;
 	top: 0;
@@ -43,10 +120,10 @@ body {
 	margin: 0 auto;
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
+	justify-content: center;
 	gap: 1.1rem;
 	flex-wrap: wrap;
-	padding: 0.8rem 0;
+	padding: 0.7rem 0;
 }
 
 .health-brand {

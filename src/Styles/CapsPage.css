@@ -32,19 +32,22 @@
 .unit-donate-button {
   margin-top: 0.35rem;
   width: fit-content;
-  border: 1px solid transparent;
+  border: none;
   border-radius: 10px;
   padding: 0.48rem 0.82rem;
-  background: linear-gradient(125deg, #0f8f79, #2f7c9d);
+  background: linear-gradient(125deg, #0f8f79 0%, #1a9e8a 40%, #2f7c9d 100%);
   color: #ffffff;
   font-family: 'Lexend', sans-serif;
   font-size: 0.86rem;
   font-weight: 600;
   cursor: pointer;
+  box-shadow: 0 4px 14px rgba(15, 143, 121, 0.3);
+  transition: filter 160ms ease, box-shadow 160ms ease;
 }
 
 .unit-donate-button:hover {
-  filter: brightness(1.04);
+  filter: brightness(1.06);
+  box-shadow: 0 6px 20px rgba(15, 143, 121, 0.42);
 }
 
 .donation-flow-grid {
@@ -86,7 +89,8 @@
 .donation-action-button--active {
   border-color: transparent;
   color: #ffffff;
-  background: linear-gradient(125deg, #0f8f79, #2f7c9d);
+  background: linear-gradient(125deg, #0f8f79 0%, #1a9e8a 40%, #2f7c9d 100%);
+  box-shadow: 0 3px 10px rgba(15, 143, 121, 0.28);
 }
 
 .donation-guidelines {
