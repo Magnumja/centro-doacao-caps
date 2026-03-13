@@ -214,8 +214,8 @@ export default function Dashboard(): React.ReactElement {
               <div className="form-group">
                 <label>Prioridade</label>
                 <select>
-                  <option value="media">Média</option>
-                  <option value="alta">Alta (Urgente)</option>
+                  <option value="media">Não urgente</option>
+                  <option value="alta">Urgente</option>
                 </select>
               </div>
 

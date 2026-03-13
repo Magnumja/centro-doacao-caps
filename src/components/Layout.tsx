@@ -21,9 +21,9 @@ export default function Layout(): React.ReactElement {
             alt="Logo SESAU"
           />
           <div className="site-banner__text">
-            <h1 className="site-banner__title">Centro de Doacao CAPS</h1>
-            <p className="site-banner__desc">Rede de Atencao Psicossocial — Campo Grande (MS)</p>
-            <span className="site-banner__kicker">Secretaria Municipal de Saude</span>
+            <h1 className="site-banner__title">Centro de Doação CAPS</h1>
+            <p className="site-banner__desc">Rede de Atenção Psicossocial — Campo Grande (MS)</p>
+            <span className="site-banner__kicker">Secretaria Municipal de Saúde</span>
           </div>
         </div>
       </div>

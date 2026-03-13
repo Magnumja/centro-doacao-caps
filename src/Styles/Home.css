@@ -300,6 +300,74 @@
   box-shadow: 0 12px 20px rgba(15, 143, 121, 0.24);
 }
 
+/* ---- Donate carousels ---- */
+.donate-page {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.donate-page > div h2 {
+  margin-top: 0.35rem;
+}
+
+.donate-carousel-group {
+  display: grid;
+  gap: 0.95rem;
+  padding: 1rem;
+  border-radius: 18px;
+  border: 1px solid rgba(15, 143, 121, 0.14);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.96), rgba(239, 248, 245, 0.96));
+}
+
+.donate-carousel-controls {
+  justify-self: end;
+}
+
+.donate-carousel-group h3 {
+  margin: 0.35rem 0 0;
+  font-family: 'Lexend', sans-serif;
+  font-size: clamp(1.05rem, 2vw, 1.28rem);
+  line-height: 1.35;
+  color: #17343b;
+}
+
+.donate-carousel-group p {
+  margin: 0.35rem 0 0;
+}
+
+.donate-need-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.donate-need-card .home-urgent-card__top {
+  padding-right: 2.45rem;
+}
+
+.donate-need-icon {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(15, 143, 121, 0.14);
+  color: #0b6d5d;
+  box-shadow: 0 8px 16px rgba(15, 143, 121, 0.13);
+}
+
+.donate-need-icon svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.home-urgent-badge.is-normal {
+  background: rgba(47, 124, 157, 0.14);
+  color: #1f536a;
+}
+
 /* ---- Mapa interativo ---- */
 .caps-map-wrapper {
   margin-top: 2rem;

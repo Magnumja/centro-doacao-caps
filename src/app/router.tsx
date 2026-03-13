@@ -19,7 +19,7 @@ export default function Router(): JSX.Element {
           <Route path="/donate" element={<Donate />} />
           <Route path="/admin/login" element={<Login />} />
           <Route path="/admin/*" element={<Dashboard />} />
-          <Route path="*" element={<div className="page-block"><h2>Rota nao encontrada</h2></div>} />
+          <Route path="*" element={<div className="page-block"><h2>Rota não encontrada</h2></div>} />
         </Route>
       </Routes>
     </BrowserRouter>

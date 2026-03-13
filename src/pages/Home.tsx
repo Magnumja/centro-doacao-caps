@@ -58,12 +58,12 @@ export default function Home(): React.ReactElement {
             <span className="page-kicker">Jornada de cuidado</span>
             <h2>Um roteiro inicial para ler prioridades, localizar a rede CAPS e acompanhar cada apoio.</h2>
             <p>
-              A pagina inicial organiza a leitura da rede e orienta o proximo passo de quem acolhe,
-              doa ou acompanha a gestao, com foco no que precisa de resposta agora.
+              A página inicial organiza a leitura da rede e orienta o próximo passo de quem acolhe,
+              doa ou acompanha a gestão, com foco no que precisa de resposta agora.
             </p>
 
             <span className="home-card-tag">Fluxo recomendado</span>
-            <h3>Comece pelas prioridades e avance ate o registro do apoio em tres movimentos.</h3>
+            <h3>Comece pelas prioridades e avance até o registro do apoio em três movimentos.</h3>
 
             <ol className="home-step-list">
               <li>
@@ -79,20 +79,20 @@ export default function Home(): React.ReactElement {
               <li>
                 <span className="home-step-number">2</span>
                 <div>
-                  <strong>Encontre a unidade ou o territorio certo</strong>
+                  <strong>Encontre a unidade ou o território certo</strong>
                   <p>
                     Use a rede CAPS para localizar contatos, comparar pontos de apoio e facilitar
-                    encaminhamentos solidarios.
+                    encaminhamentos solidários.
                   </p>
                 </div>
               </li>
               <li>
                 <span className="home-step-number">3</span>
                 <div>
-                  <strong>Registre a contribuicao com clareza</strong>
+                  <strong>Registre a contribuição com clareza</strong>
                   <p>
                     Formalize o apoio para que a equipe acompanhe entradas, prioridades atendidas
-                    e visibilidade para a gestao.
+                    e visibilidade para a gestão.
                   </p>
                 </div>
               </li>
@@ -105,11 +105,11 @@ export default function Home(): React.ReactElement {
               </article>
               <article className="home-guidance-note">
                 <strong>Rede CAPS integrada</strong>
-                <p>Consulte contatos e territorio para direcionar melhor o apoio da comunidade.</p>
+                <p>Consulte contatos e território para direcionar melhor o apoio da comunidade.</p>
               </article>
               <article className="home-guidance-note">
-                <strong>Transparencia de apoio</strong>
-                <p>O registro de cada contribuicao fortalece acompanhamento e visibilidade da gestao.</p>
+                <strong>Transparência de apoio</strong>
+                <p>O registro de cada contribuição fortalece acompanhamento e visibilidade da gestão.</p>
               </article>
             </div>
           </article>
@@ -118,7 +118,7 @@ export default function Home(): React.ReactElement {
             <span className="home-card-tag">Rede territorial</span>
             <p className="home-map-card__intro">
               O mapa fica ao lado do roteiro principal para facilitar a consulta da unidade certa
-              antes do encaminhamento ou da doacao.
+              antes do encaminhamento ou da doação.
             </p>
             <CapsMap />
           </article>
@@ -129,15 +129,15 @@ export default function Home(): React.ReactElement {
         <div className="home-urgent-header">
           <div>
             <span className="page-kicker">Prioridades imediatas</span>
-            <h2>Doacoes pedidas com urgencia</h2>
+            <h2>Doações pedidas com urgência</h2>
             <p>
-              Acompanhe os pedidos mais sensiveis da rede e avance pelo carrossel para ver onde o
+              Acompanhe os pedidos mais sensíveis da rede e avance pelo carrossel para ver onde o
               apoio precisa chegar primeiro.
             </p>
           </div>
 
           {urgentNeeds.length > cardsPerView ? (
-            <div className="home-carousel-controls" aria-label="Navegacao do carrossel de urgencias">
+            <div className="home-carousel-controls" aria-label="Navegação do carrossel de urgências">
               <button
                 type="button"
                 onClick={() => setActiveIndex((currentIndex) => Math.max(0, currentIndex - 1))}
@@ -150,7 +150,7 @@ export default function Home(): React.ReactElement {
                 onClick={() => setActiveIndex((currentIndex) => Math.min(maxIndex, currentIndex + 1))}
                 disabled={activeIndex >= maxIndex}
               >
-                Proximo
+                Próximo
               </button>
             </div>
           ) : null}
@@ -178,7 +178,7 @@ export default function Home(): React.ReactElement {
                         </div>
 
                         <Link className="home-urgent-link" to={`/caps?unit=${need.unitId}`}>
-                          Ir para doacao desta unidade
+                          DOAR AGORA
                         </Link>
                       </div>
                     </div>
@@ -188,7 +188,7 @@ export default function Home(): React.ReactElement {
             </div>
           </div>
         ) : (
-          <p className="home-urgent-empty">Nao ha pedidos urgentes registrados no momento.</p>
+          <p className="home-urgent-empty">Não há pedidos urgentes registrados no momento.</p>
         )}
       </section>
     </>

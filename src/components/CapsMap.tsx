@@ -41,9 +41,9 @@ export default function CapsMap(): React.ReactElement {
 
   return (
     <div className="caps-map-wrapper">
-      <h3 className="caps-map-title">Mapa interativo da Rede de Saude Mental em Campo Grande (MS)</h3>
+      <h3 className="caps-map-title">Mapa interativo da Rede de Saúde Mental em Campo Grande (MS)</h3>
       <p className="caps-map-subtitle">
-        Use os marcadores para localizar unidades, comparar enderecos e consultar contatos da rede.
+        Use os marcadores para localizar unidades, comparar endereços e consultar contatos da rede.
       </p>
       <MapContainer
         center={CAMPO_GRANDE_CENTER}
@@ -85,7 +85,7 @@ export default function CapsMap(): React.ReactElement {
       </MapContainer>
       <p className="caps-map-legend">
         <span className="legend-caps">● CAPS</span>
-        <span className="legend-rt">● Residencia Terapeutica</span>
+        <span className="legend-rt">● Residência Terapêutica</span>
       </p>
     </div>
   )

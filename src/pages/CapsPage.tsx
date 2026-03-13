@@ -7,7 +7,7 @@ import { Cap } from '../types'
 
 import '../Styles/CapsPage.css'
 
-const donationOptions = ['Roupas', 'Comida', 'Utensilios']
+const donationOptions = ['Roupas', 'Comida', 'Utensílios']
 const selectionAnimationDurationMs = 260
 
 export default function CapsPage(): React.ReactElement {
@@ -19,7 +19,7 @@ export default function CapsPage(): React.ReactElement {
   const [itemQuantities, setItemQuantities] = useState<Record<string, string>>({})
   const [donationDate, setDonationDate] = useState('')
   const [donationTime, setDonationTime] = useState('')
-  const [anonymousDonation, setAnonymousDonation] = useState<'sim' | 'nao'>('nao')
+  const [anonymousDonation, setAnonymousDonation] = useState<'sim' | 'não'>('não')
   const [donorName, setDonorName] = useState('')
   const [donorEmail, setDonorEmail] = useState('')
   const [formMessage, setFormMessage] = useState<string>('')
@@ -82,7 +82,7 @@ export default function CapsPage(): React.ReactElement {
     setItemQuantities({})
     setDonationDate('')
     setDonationTime('')
-    setAnonymousDonation('nao')
+    setAnonymousDonation('não')
     setDonorName('')
     setDonorEmail('')
     setFormMessage('')
@@ -154,7 +154,7 @@ export default function CapsPage(): React.ReactElement {
     event.preventDefault()
 
     if (!selectedUnit || selectedItems.length === 0 || !donationDate || !donationTime) {
-      setFormMessage('Preencha dia, horario e selecione ao menos um tipo de doacao.')
+      setFormMessage('Preencha dia, horário e selecione ao menos um tipo de doação.')
       return
     }
 
@@ -164,7 +164,7 @@ export default function CapsPage(): React.ReactElement {
       return
     }
 
-    if (anonymousDonation === 'nao' && (!donorName.trim() || !donorEmail.trim())) {
+    if (anonymousDonation === 'não' && (!donorName.trim() || !donorEmail.trim())) {
       setFormMessage('Preencha seu nome e e-mail para continuar.')
       return
     }
@@ -173,9 +173,9 @@ export default function CapsPage(): React.ReactElement {
       .map((item) => `${item}: ${itemQuantities[item]}`)
       .join(', ')
 
-    const identidade = anonymousDonation === 'sim' ? 'Doador anonimo' : `Doador: ${donorName} (${donorEmail})`
+    const identidade = anonymousDonation === 'sim' ? 'Doador anônimo' : `Doador: ${donorName} (${donorEmail})`
 
-    const successMsg = `Registro salvo para ${selectedUnit.title}. Dia: ${donationDate}, Horario: ${donationTime}. Itens: ${itensList}. ${identidade}.`
+    const successMsg = `Registro salvo para ${selectedUnit.title}. Dia: ${donationDate}, Horário: ${donationTime}. Itens: ${itensList}. ${identidade}.`
     setSuccessMessage(successMsg)
     setShowSuccessOverlay(true)
   }
@@ -185,10 +185,10 @@ export default function CapsPage(): React.ReactElement {
       {showSuccessOverlay ? (
         <div className="donation-success-overlay">
           <article className="donation-success-card">
-            <span className="page-kicker">Contribuicao registrada</span>
-            <h2>Obrigado por apoiar o cuidado em saude mental.</h2>
+            <span className="page-kicker">Contribuição registrada</span>
+            <h2>Obrigado por apoiar o cuidado em saúde mental.</h2>
             <p>
-              Sua doacao foi registrada e ajudara na continuidade das atividades
+              Sua doação foi registrada e ajudará na continuidade das atividades
               dos CAPS.
             </p>
             <p className="donation-success-details">{successMessage}</p>
@@ -199,25 +199,25 @@ export default function CapsPage(): React.ReactElement {
                 className="unit-donate-button"
                 onClick={() => setShowSuccessOverlay(false)}
               >
-                Fazer nova doacao
+                Fazer nova doação
               </button>
               <button
                 type="button"
                 className="donation-success-close"
                 onClick={handleCloseDonationSuccess}
               >
-                Voltar a selecao de unidades
+                Voltar à seleção de unidades
               </button>
             </div>
           </article>
         </div>
       ) : null}
 
-      <span className="page-kicker">Rede de saude mental</span>
-      <h2>Rede de Saude Mental - Campo Grande (MS)</h2>
+      <span className="page-kicker">Rede de saúde mental</span>
+      <h2>Rede de Saúde Mental - Campo Grande (MS)</h2>
       <p>
-        Clique em uma unidade para abrir os botoes de doacao, ver instrucoes e
-        registrar dia, horario e preferencia de doador anonimo.
+        Clique em uma unidade para abrir os botões de doação, ver instruções e
+        registrar dia, horário e preferência de doador anônimo.
       </p>
 
       {selectedUnit && !showUnitChooser ? (
@@ -236,8 +236,8 @@ export default function CapsPage(): React.ReactElement {
             <span className="unit-type-badge">Unidade selecionada</span>
             <h3>{selectedUnit.title}</h3>
             <p><strong>Tipo:</strong> {selectedUnit.unitType}</p>
-            <p><strong>Endereco:</strong> {selectedUnit.address}</p>
-            <p><strong>Contato:</strong> {selectedUnit.contact ?? 'Contato nao informado'}</p>
+            <p><strong>Endereço:</strong> {selectedUnit.address}</p>
+            <p><strong>Contato:</strong> {selectedUnit.contact ?? 'Contato não informado'}</p>
             {selectedUnit.capacity ? <p>{selectedUnit.capacity}</p> : null}
             {selectedUnit.description ? <p>{selectedUnit.description}</p> : null}
             {selectedUnit.privacyNote ? <p>{selectedUnit.privacyNote}</p> : null}
@@ -247,7 +247,7 @@ export default function CapsPage(): React.ReactElement {
               className="unit-donate-button"
               onClick={handleShowUnitChooser}
             >
-              Alterar doacao desta unidade
+              Alterar doação desta unidade
             </button>
           </div>
         </article>
@@ -268,14 +268,14 @@ export default function CapsPage(): React.ReactElement {
       {selectedUnit && !showUnitChooser ? (
         <div ref={donationFlowRef} className="donation-flow-grid">
           <article className="page-card donation-panel donation-guidelines">
-            <h3>Instrucoes de doacao</h3>
+            <h3>Instruções de doação</h3>
             <p className="donation-guidelines__unit">
               <strong>Unidade:</strong> {selectedUnit.title}
             </p>
-            <p>Itens aceitos: roupas, comida e utensilios.</p>
-            <p className="guideline-warning">Nao aceitamos dinheiro.</p>
+            <p>Itens aceitos: roupas, comida e utensílios.</p>
+            <p className="guideline-warning">Não aceitamos dinheiro.</p>
 
-            <div className="donation-actions" role="group" aria-label="Botoes de doacao">
+            <div className="donation-actions" role="group" aria-label="Botões de doação">
               {donationOptions.map((item) => {
                 const active = selectedItems.includes(item)
                 return (
@@ -319,7 +319,7 @@ export default function CapsPage(): React.ReactElement {
               </label>
 
               <label>
-                Horario da entrega
+                Horário da entrega
                 <input
                   type="time"
                   value={donationTime}
@@ -328,7 +328,7 @@ export default function CapsPage(): React.ReactElement {
               </label>
 
               <fieldset>
-                <legend>Doador anonimo?</legend>
+                <legend>Doador anônimo?</legend>
                 <label>
                   <input
                     type="radio"
@@ -343,15 +343,15 @@ export default function CapsPage(): React.ReactElement {
                   <input
                     type="radio"
                     name="anonymousDonation"
-                    value="nao"
-                    checked={anonymousDonation === 'nao'}
-                    onChange={() => setAnonymousDonation('nao')}
+                    value="não"
+                    checked={anonymousDonation === 'não'}
+                    onChange={() => setAnonymousDonation('não')}
                   />
-                  Nao
+                  Não
                 </label>
               </fieldset>
 
-              {anonymousDonation === 'nao' ? (
+              {anonymousDonation === 'não' ? (
                 <>
                   <label>
                     Seu nome
@@ -375,7 +375,7 @@ export default function CapsPage(): React.ReactElement {
               ) : null}
 
               <button type="submit" className="unit-donate-button">
-                Registrar intencao de doacao
+                Registrar intenção de doação
               </button>
 
               {formMessage ? <p className="form-feedback">{formMessage}</p> : null}
