@@ -1,0 +1,133 @@
+// Prisma schema — Centro de Doação CAPS
+// Banco: PostgreSQL (troque para mysql se preferir)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Unidade (CAPS ou Residência Terapêutica) ───────────────────────────────
+
+model Unit {
+  id          String   @id @default(cuid())
+  slug        String   @unique // ex.: c1, r1 (mantém compat. com front)
+  title       String
+  unitType    UnitType
+  address     String
+  contact     String?
+  description String?
+  capacity    String?
+  privacyNote String?
+  lat         Float?
+  lng         Float?
+  photo       String?
+
+  needs       Need[]
+  donations   Donation[]
+  residents   Resident[]
+  hosts       Host[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum UnitType {
+  CAPS
+  RESIDENCIA_TERAPEUTICA
+}
+
+// ─── Necessidade pública ─────────────────────────────────────────────────────
+
+model Need {
+  id          String       @id @default(cuid())
+  title       String
+  amount      Int
+  description String
+  category    String
+  priority    NeedPriority
+
+  unit        Unit         @relation(fields: [unitId], references: [id])
+  unitId      String
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+enum NeedPriority {
+  alta
+  media
+}
+
+// ─── Gestor / Host ───────────────────────────────────────────────────────────
+
+model Host {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String   // bcrypt hash — NUNCA armazenar texto puro
+  contact   String?
+  role      HostRole @default(host)
+
+  unit      Unit     @relation(fields: [unitId], references: [id])
+  unitId    String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum HostRole {
+  host
+  admin
+}
+
+// ─── Doação ──────────────────────────────────────────────────────────────────
+
+model Donation {
+  id          String           @id @default(cuid())
+  category    DonationCategory
+  quantity    String
+  donorName   String?
+  donorEmail  String?
+  isAnonymous Boolean          @default(false)
+  date        String           // ex.: 2026-03-10 (data informada pelo doador)
+  time        String           // ex.: 14:30
+  registeredAt DateTime        @default(now())
+
+  unit        Unit             @relation(fields: [unitId], references: [id])
+  unitId      String
+
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+enum DonationCategory {
+  roupa
+  comida
+  utensilios
+}
+
+// ─── Residente ───────────────────────────────────────────────────────────────
+
+model Resident {
+  id               String         @id @default(cuid())
+  name             String
+  emergencyContact String?
+  entryDate        String         // ex.: 2025-06-15
+  status           ResidentStatus @default(ativo)
+
+  unit             Unit           @relation(fields: [unitId], references: [id])
+  unitId           String
+
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+}
+
+enum ResidentStatus {
+  ativo
+  inativo
+  transferido
+}

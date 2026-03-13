@@ -5,8 +5,10 @@ import { caps, donations, residents } from '../../data/mock'
 
 import '../../Styles/Dashboard.css'
 
+// Abas disponíveis na área administrativa.
 type TabType = 'overview' | 'donations' | 'analytics' | 'profile' | 'residents'
 
+// Configuração de categorias usada no resumo e gráfico de analytics.
 const analyticsCategories: Array<{
   key: Donation['category']
   label: string
@@ -18,12 +20,15 @@ const analyticsCategories: Array<{
 ]
 
 export default function Dashboard(): React.ReactElement {
+  // activeTab controla qual seção da interface será exibida.
   const [activeTab, setActiveTab] = useState<TabType>('overview')
+
+  // loggedHost guarda o gestor autenticado para personalizar dados do painel.
   const [loggedHost, setLoggedHost] = useState<Host | null>(null)
   const navigate = useNavigate()
 
   useEffect(() => {
-    // Recuperar host logado do localStorage
+    // Recupera sessão local (mock) e protege acesso ao dashboard.
     const storedHost = localStorage.getItem('loggedHost')
     if (!storedHost) {
       navigate('/admin/login')
@@ -33,17 +38,22 @@ export default function Dashboard(): React.ReactElement {
     setLoggedHost(host)
   }, [navigate])
 
+  // Encerra sessão local e redireciona para o login.
   const handleLogout = () => {
     localStorage.removeItem('loggedHost')
     navigate('/admin/login')
   }
 
+  // Enquanto o host não foi carregado do storage, mantém estado de espera.
   if (!loggedHost) {
     return <div>Carregando...</div>
   }
 
+  // Dados derivados para o host logado (unidade, doações e agregações).
   const hostCaps = caps.find(c => c.id === loggedHost.capId)
   const hostDonations = donations.filter(d => d.capId === loggedHost.capId)
+
+  // Conta quantas doações existem em cada categoria.
   const donationCategoryCounts = hostDonations.reduce<Record<Donation['category'], number>>(
     (accumulator, donation) => {
       accumulator[donation.category] += 1
@@ -51,7 +61,10 @@ export default function Dashboard(): React.ReactElement {
     },
     { roupa: 0, comida: 0, utensilios: 0 }
   )
+
   const totalDonations = hostDonations.length
+
+  // Estrutura pronta para cards e legenda do gráfico.
   const chartData = analyticsCategories.map(category => {
     const value = donationCategoryCounts[category.key]
     const percentage = totalDonations === 0 ? 0 : Math.round((value / totalDonations) * 100)
@@ -63,6 +76,7 @@ export default function Dashboard(): React.ReactElement {
     }
   })
 
+  // Acumulador usado para montar segmentos do conic-gradient (pizza).
   let accumulatedValue = 0
   const pieChartSegments = chartData
     .filter(category => category.value > 0)
@@ -74,11 +88,13 @@ export default function Dashboard(): React.ReactElement {
       return `${category.color} ${start}% ${end}%`
     })
 
+  // Fundo dinâmico do gráfico de pizza (ou estado vazio sem dados).
   const pieChartBackground =
     totalDonations > 0
       ? `conic-gradient(${pieChartSegments.join(', ')})`
       : 'conic-gradient(#dce8e5 0% 100%)'
 
+  // Texto de acessibilidade para leitores de tela.
   const pieChartAriaLabel =
     totalDonations > 0
       ? `Distribuição de doações por categoria: ${chartData
@@ -101,6 +117,7 @@ export default function Dashboard(): React.ReactElement {
         </div>
       </header>
 
+      {/* Navegação por abas (sem trocar rota, apenas estado interno). */}
       <nav className="dashboard-nav">
         <button
           className={`dashboard-nav__item ${activeTab === 'overview' ? 'active' : ''}`}
@@ -135,7 +152,7 @@ export default function Dashboard(): React.ReactElement {
       </nav>
 
       <main className="dashboard-main">
-        {/* TAB: OVERVIEW */}
+        {/* TAB: OVERVIEW - visão rápida de indicadores e atalhos */}
         {activeTab === 'overview' && (
           <section className="dashboard-tab">
             <h2>Visão Geral</h2>
@@ -181,7 +198,7 @@ export default function Dashboard(): React.ReactElement {
           </section>
         )}
 
-        {/* TAB: DONATIONS */}
+        {/* TAB: DONATIONS - formulário de solicitação de necessidades */}
         {activeTab === 'donations' && (
           <section className="dashboard-tab">
             <h2>Solicitar Doações</h2>
@@ -233,7 +250,7 @@ export default function Dashboard(): React.ReactElement {
           </section>
         )}
 
-        {/* TAB: ANALYTICS */}
+        {/* TAB: ANALYTICS - distribuição e histórico das doações */}
         {activeTab === 'analytics' && (
           <section className="dashboard-tab">
             <h2>Analytics - Histórico de Doações</h2>
@@ -294,41 +311,43 @@ export default function Dashboard(): React.ReactElement {
 
             <div className="analytics-section">
               <h3>Timeline de Doações (Últimas 10)</h3>
-              <table className="donations-table">
-                <thead>
-                  <tr>
-                    <th>Data</th>
-                    <th>Hora</th>
-                    <th>Categoria</th>
-                    <th>Quantidade</th>
-                    <th>Doador</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {hostDonations.slice(0, 10).map(donation => (
-                    <tr key={donation.id}>
-                      <td>{new Date(donation.date).toLocaleDateString('pt-BR')}</td>
-                      <td>{donation.time}</td>
-                      <td className={`category-badge category-${donation.category}`}>
-                        {donation.category}
-                      </td>
-                      <td>{donation.quantity}</td>
-                      <td>
-                        {donation.isAnonymous ? (
-                          <em>Anônimo</em>
-                        ) : (
-                          donation.donorName || 'N/A'
-                        )}
-                      </td>
+              <div className="table-scroll" aria-label="Tabela de doações com rolagem horizontal">
+                <table className="donations-table">
+                  <thead>
+                    <tr>
+                      <th>Data</th>
+                      <th>Hora</th>
+                      <th>Categoria</th>
+                      <th>Quantidade</th>
+                      <th>Doador</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {hostDonations.slice(0, 10).map(donation => (
+                      <tr key={donation.id}>
+                        <td>{new Date(donation.date).toLocaleDateString('pt-BR')}</td>
+                        <td>{donation.time}</td>
+                        <td className={`category-badge category-${donation.category}`}>
+                          {donation.category}
+                        </td>
+                        <td>{donation.quantity}</td>
+                        <td>
+                          {donation.isAnonymous ? (
+                            <em>Anônimo</em>
+                          ) : (
+                            donation.donorName || 'N/A'
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </section>
         )}
 
-        {/* TAB: PROFILE */}
+        {/* TAB: PROFILE - dados cadastrais do gestor e da unidade */}
         {activeTab === 'profile' && (
           <section className="dashboard-tab">
             <h2>Perfil do Gestor</h2>
@@ -376,7 +395,7 @@ export default function Dashboard(): React.ReactElement {
           </section>
         )}
 
-        {/* TAB: RESIDENTS */}
+        {/* TAB: RESIDENTS - lista de residentes de outras unidades */}
         {activeTab === 'residents' && (
           <section className="dashboard-tab">
             <h2>Controle Social - Residentes em Outros CAPS</h2>
@@ -390,34 +409,36 @@ export default function Dashboard(): React.ReactElement {
               />
             </div>
 
-            <table className="residents-table">
-              <thead>
-                <tr>
-                  <th>Nome</th>
-                  <th>CAPS</th>
-                  <th>Contato de Emergência</th>
-                  <th>Data de Entrada</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {residents
-                  .filter(r => r.capId !== loggedHost.capId)
-                  .map(resident => (
-                    <tr key={resident.id}>
-                      <td>{resident.name}</td>
-                      <td>{resident.capName}</td>
-                      <td>{resident.emergencyContact}</td>
-                      <td>{new Date(resident.entryDate).toLocaleDateString('pt-BR')}</td>
-                      <td>
-                        <span className={`status-badge status-${resident.status}`}>
-                          {resident.status === 'ativo' ? '🟢 Ativo' : '⚪ Egresso'}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
+            <div className="table-scroll" aria-label="Tabela de residentes com rolagem horizontal">
+              <table className="residents-table">
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>CAPS</th>
+                    <th>Contato de Emergência</th>
+                    <th>Data de Entrada</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {residents
+                    .filter(r => r.capId !== loggedHost.capId)
+                    .map(resident => (
+                      <tr key={resident.id}>
+                        <td>{resident.name}</td>
+                        <td>{resident.capName}</td>
+                        <td>{resident.emergencyContact}</td>
+                        <td>{new Date(resident.entryDate).toLocaleDateString('pt-BR')}</td>
+                        <td>
+                          <span className={`status-badge status-${resident.status}`}>
+                            {resident.status === 'ativo' ? '🟢 Ativo' : '⚪ Egresso'}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
           </section>
         )}
       </main>

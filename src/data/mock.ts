@@ -1,5 +1,6 @@
 import { Cap, Need, Host, Donation, Resident } from '../types'
 
+// Unidades da rede de saúde mental exibidas em mapa, cards e fluxo de doação.
 export const caps: Cap[] = [
   {
     id: 'c1',
@@ -72,6 +73,7 @@ export const caps: Cap[] = [
   },
 ]
 
+// Necessidades públicas que aparecem na Home e em Doações.
 export const needs: Need[] = [
   {
     id: 'n1',
@@ -135,6 +137,7 @@ export const needs: Need[] = [
   }
 ]
 
+// Usuários gestores válidos para o login administrativo (mock local).
 export const hosts: Host[] = [
   {
     id: 'host1',
@@ -147,6 +150,7 @@ export const hosts: Host[] = [
   }
 ]
 
+// Histórico de doações usado no dashboard para tabela e analytics.
 export const donations: Donation[] = [
   {
     id: 'd1',
@@ -246,6 +250,7 @@ export const donations: Donation[] = [
   }
 ]
 
+// Lista de residentes usada na aba de controle social do dashboard.
 export const residents: Resident[] = [
   {
     id: 'res1',

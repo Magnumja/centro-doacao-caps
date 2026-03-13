@@ -5,10 +5,15 @@ import { hosts } from '../../data/mock'
 import '../../Styles/Login.css'
 
 export default function Login(): React.ReactElement {
+    // Campos controlados do formulário.
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+
+    // Feedback visual de erro e de carregamento.
     const [errorMessage, setErrorMessage] = useState('')
     const [isLoading, setIsLoading] = useState(false)
+
+    // Hook para redirecionar usuário entre rotas.
     const navigate = useNavigate()
 
     const handleSubmit = (event: React.FormEvent) => {
@@ -16,22 +21,29 @@ export default function Login(): React.ReactElement {
         setErrorMessage('')
         setIsLoading(true)
 
-        // Simular delay de autenticação
+        // Simula tempo de autenticação para representar chamada de API.
         setTimeout(() => {
+            // Procura no mock um host com as credenciais informadas.
             const host = hosts.find(h => h.email === email && h.password === password)
 
             if (host) {
+                // Persistência simples no navegador para manter sessão local.
                 localStorage.setItem('loggedHost', JSON.stringify(host))
+
+                // Dashboard é tratado pela rota /admin/* no router.
                 navigate('/admin/dashboard')
             } else {
                 setErrorMessage('E-mail ou senha inválido.')
             }
+
+            // Finaliza estado de carregamento em qualquer resultado.
             setIsLoading(false)
         }, 600)
     }
 
     return (
         <div className="login-page">
+            {/* Bloco institucional/lateral da tela de login */}
             <div className="login-hero">
                 <div className="login-hero__content">
                     <span className="page-kicker">Acesso restrito</span>
@@ -43,6 +55,7 @@ export default function Login(): React.ReactElement {
                 </div>
             </div>
 
+            {/* Formulário de autenticação */}
             <div className="login-form-wrapper">
                 <form className="login-form" onSubmit={handleSubmit}>
                     <h2>Entrar no Sistema</h2>
@@ -73,6 +86,7 @@ export default function Login(): React.ReactElement {
                         />
                     </fieldset>
 
+                    {/* Mensagem exibida quando credenciais não conferem */}
                     {errorMessage && (
                         <div className="login-error">
                             <p>{errorMessage}</p>
@@ -91,6 +105,7 @@ export default function Login(): React.ReactElement {
                         className="login-submit"
                         disabled={isLoading}
                     >
+                        {/* O texto do botão muda enquanto o "login" está em andamento */}
                         {isLoading ? 'Autenticando...' : 'Entrar'}
                     </button>
 

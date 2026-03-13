@@ -7,36 +7,65 @@ import { Cap } from '../types'
 
 import '../Styles/CapsPage.css'
 
+// Tipos de itens aceitos no formulário de intenção de doação.
 const donationOptions = ['Roupas', 'Comida', 'Utensílios']
+
+// Duração da animação de seleção para sincronizar estado e UI.
 const selectionAnimationDurationMs = 260
 
 export default function CapsPage(): React.ReactElement {
+  // searchParams lê/escreve parâmetros de URL (ex: /caps?unit=c1).
   const [searchParams, setSearchParams] = useSearchParams()
+
+  // selectedUnitId: unidade escolhida para doação.
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null)
+
+  // selectionPreviewId: unidade em animação de seleção antes de confirmar.
   const [selectionPreviewId, setSelectionPreviewId] = useState<string | null>(null)
+
+  // showUnitChooser: alterna entre lista de unidades e painel detalhado da escolhida.
   const [showUnitChooser, setShowUnitChooser] = useState(true)
+
+  // selectedItems: categorias de itens marcadas no formulário.
   const [selectedItems, setSelectedItems] = useState<string[]>([])
+
+  // itemQuantities: quantidade digitada para cada item selecionado.
   const [itemQuantities, setItemQuantities] = useState<Record<string, string>>({})
+
+  // Data e horário de entrega informados pelo doador.
   const [donationDate, setDonationDate] = useState('')
   const [donationTime, setDonationTime] = useState('')
+
+  // Controle de identificação do doador.
   const [anonymousDonation, setAnonymousDonation] = useState<'sim' | 'não'>('não')
   const [donorName, setDonorName] = useState('')
   const [donorEmail, setDonorEmail] = useState('')
+
+  // Mensagens de validação e feedback visual do envio.
   const [formMessage, setFormMessage] = useState<string>('')
   const [showSuccessOverlay, setShowSuccessOverlay] = useState(false)
   const [successMessage, setSuccessMessage] = useState<string>('')
+
+  // Referência para limpar timer de animação quando necessário.
   const selectionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Referência da seção de formulário para rolagem automática.
   const donationFlowRef = useRef<HTMLDivElement | null>(null)
+
+  // Flag para rolar apenas quando a seleção veio por query string.
   const shouldScrollToDonationRef = useRef(false)
 
+  // Parâmetro unit recebido da URL para seleção direta de unidade.
   const selectedUnitParam = searchParams.get('unit')
 
+  // Resolve os dados completos da unidade a partir do ID selecionado.
   const selectedUnit = useMemo(
     () => caps.find((unit) => unit.id === selectedUnitId) ?? null,
     [selectedUnitId]
   )
 
   useEffect(() => {
+    // Cleanup para evitar timer pendente ao desmontar o componente.
     return () => {
       if (selectionTimeoutRef.current) {
         clearTimeout(selectionTimeoutRef.current)
@@ -45,16 +74,19 @@ export default function CapsPage(): React.ReactElement {
   }, [])
 
   useEffect(() => {
+    // Se não veio unidade pela URL, não altera o estado atual.
     if (!selectedUnitParam) {
       return
     }
 
+    // Valida se o ID da URL corresponde a alguma unidade conhecida.
     const matchedUnit = caps.find((unit) => unit.id === selectedUnitParam)
 
     if (!matchedUnit) {
       return
     }
 
+    // Abre direto o fluxo da unidade selecionada via query string.
     setSelectedUnitId(matchedUnit.id)
     setSelectionPreviewId(null)
     resetDonationForm()
@@ -63,10 +95,12 @@ export default function CapsPage(): React.ReactElement {
   }, [selectedUnitParam])
 
   useEffect(() => {
+    // Só executa rolagem quando explicitamente sinalizado.
     if (!shouldScrollToDonationRef.current || !selectedUnit || showUnitChooser) {
       return
     }
 
+    // Pequeno delay para garantir que o painel já foi renderizado no DOM.
     const timeoutId = window.setTimeout(() => {
       donationFlowRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       shouldScrollToDonationRef.current = false
@@ -77,6 +111,7 @@ export default function CapsPage(): React.ReactElement {
     }
   }, [selectedUnit, showUnitChooser])
 
+  // Reinicia todo o formulário quando troca de unidade ou volta para seleção.
   const resetDonationForm = (): void => {
     setSelectedItems([])
     setItemQuantities({})
@@ -88,11 +123,13 @@ export default function CapsPage(): React.ReactElement {
     setFormMessage('')
   }
 
+  // Seleciona a unidade para doação, com animação visual antes da confirmação.
   const handleSelectDonation = (unit: Cap): void => {
     if (selectionTimeoutRef.current) {
       clearTimeout(selectionTimeoutRef.current)
     }
 
+    // Clique repetido na mesma unidade já selecionada fecha a lista e abre o detalhe.
     if (selectedUnitId === unit.id && showUnitChooser) {
       setSelectionPreviewId(null)
       setShowUnitChooser(false)
@@ -102,6 +139,7 @@ export default function CapsPage(): React.ReactElement {
     setSelectionPreviewId(unit.id)
 
     selectionTimeoutRef.current = setTimeout(() => {
+      // Confirma seleção após animação.
       setSelectedUnitId(unit.id)
       resetDonationForm()
       setSelectionPreviewId(null)
@@ -110,6 +148,7 @@ export default function CapsPage(): React.ReactElement {
     }, selectionAnimationDurationMs)
   }
 
+  // Retorna para a grade de unidades e limpa contexto anterior.
   const handleShowUnitChooser = (): void => {
     if (selectionTimeoutRef.current) {
       clearTimeout(selectionTimeoutRef.current)
@@ -123,6 +162,7 @@ export default function CapsPage(): React.ReactElement {
     setSearchParams({})
   }
 
+  // Fecha o overlay de sucesso e reinicia o fluxo para nova escolha de unidade.
   const handleCloseDonationSuccess = (): void => {
     setShowSuccessOverlay(false)
     setSelectedUnitId(null)
@@ -130,6 +170,7 @@ export default function CapsPage(): React.ReactElement {
     resetDonationForm()
   }
 
+  // Marca/desmarca um item de doação e mantém quantities sincronizadas.
   const toggleItem = (item: string): void => {
     setFormMessage('')
     setSelectedItems((prevItems) => {
@@ -146,24 +187,29 @@ export default function CapsPage(): React.ReactElement {
     })
   }
 
+  // Atualiza o valor digitado para um item específico.
   const handleQuantityChange = (item: string, value: string): void => {
     setItemQuantities((prev) => ({ ...prev, [item]: value }))
   }
 
+  // Valida e registra a intenção de doação (atualmente só no estado local).
   const handleRegisterDonation = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault()
 
+    // Campos mínimos obrigatórios do formulário.
     if (!selectedUnit || selectedItems.length === 0 || !donationDate || !donationTime) {
       setFormMessage('Preencha dia, horário e selecione ao menos um tipo de doação.')
       return
     }
 
+    // Exige quantidade para todos os itens selecionados.
     const missingQty = selectedItems.some((item) => !itemQuantities[item]?.trim())
     if (missingQty) {
       setFormMessage('Informe a quantidade para cada item selecionado.')
       return
     }
 
+    // Se não for anônimo, nome e e-mail são obrigatórios.
     if (anonymousDonation === 'não' && (!donorName.trim() || !donorEmail.trim())) {
       setFormMessage('Preencha seu nome e e-mail para continuar.')
       return
@@ -175,6 +221,7 @@ export default function CapsPage(): React.ReactElement {
 
     const identidade = anonymousDonation === 'sim' ? 'Doador anônimo' : `Doador: ${donorName} (${donorEmail})`
 
+    // Mensagem final exibida no overlay de confirmação.
     const successMsg = `Registro salvo para ${selectedUnit.title}. Dia: ${donationDate}, Horário: ${donationTime}. Itens: ${itensList}. ${identidade}.`
     setSuccessMessage(successMsg)
     setShowSuccessOverlay(true)
@@ -182,6 +229,7 @@ export default function CapsPage(): React.ReactElement {
 
   return (
     <section className="page-block caps-page">
+      {/* Overlay exibido após o usuário concluir o formulário com sucesso. */}
       {showSuccessOverlay ? (
         <div className="donation-success-overlay">
           <article className="donation-success-card">
@@ -276,6 +324,7 @@ export default function CapsPage(): React.ReactElement {
             <p className="guideline-warning">Não aceitamos dinheiro.</p>
 
             <div className="donation-actions" role="group" aria-label="Botões de doação">
+              {/* Botões tipo toggle para escolher os itens a doar. */}
               {donationOptions.map((item) => {
                 const active = selectedItems.includes(item)
                 return (
@@ -293,7 +342,7 @@ export default function CapsPage(): React.ReactElement {
 
             <form className="donation-form" onSubmit={handleRegisterDonation}>
               {selectedItems.length > 0 ? (
-                <fieldset>
+                <fieldset className="donation-form__quantities">
                   <legend>Quantidade por item</legend>
                   {selectedItems.map((item) => (
                     <label key={item}>
@@ -327,7 +376,7 @@ export default function CapsPage(): React.ReactElement {
                 />
               </label>
 
-              <fieldset>
+              <fieldset className="donation-form__anonymity">
                 <legend>Doador anônimo?</legend>
                 <label>
                   <input

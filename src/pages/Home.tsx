@@ -5,6 +5,7 @@ import CapsMap from '../components/CapsMap'
 import { needs } from '../data/mock'
 import '../Styles/Home.css'
 
+// Define quantos cards o carrossel mostra, conforme largura de tela.
 function getCardsPerView(): number {
   if (typeof window === 'undefined') {
     return 1
@@ -22,11 +23,17 @@ function getCardsPerView(): number {
 }
 
 export default function Home(): React.ReactElement {
+  // Lista apenas necessidades marcadas como urgentes.
   const urgentNeeds = needs.filter((need) => need.priority === 'alta')
+
+  // cardsPerView: quantidade de cards visíveis por "página" no carrossel.
   const [cardsPerView, setCardsPerView] = useState<number>(getCardsPerView)
+
+  // activeIndex: posição atual do carrossel (deslocamento horizontal).
   const [activeIndex, setActiveIndex] = useState(0)
 
   useEffect(() => {
+    // Recalcula o layout do carrossel quando a janela muda de tamanho.
     const handleResize = (): void => {
       setCardsPerView(getCardsPerView())
     }
@@ -40,11 +47,15 @@ export default function Home(): React.ReactElement {
   }, [])
 
   useEffect(() => {
+    // Garante que o índice ativo nunca ultrapasse o último índice válido.
     const nextMaxIndex = Math.max(0, urgentNeeds.length - cardsPerView)
     setActiveIndex((currentIndex) => Math.min(currentIndex, nextMaxIndex))
   }, [cardsPerView, urgentNeeds.length])
 
+  // Limite máximo de navegação do carrossel para o estado atual.
   const maxIndex = Math.max(0, urgentNeeds.length - cardsPerView)
+
+  // Variáveis CSS usadas no track para controlar largura e deslocamento.
   const carouselStyle = {
     ['--cards-per-view' as string]: cardsPerView,
     ['--active-index' as string]: activeIndex,
@@ -136,6 +147,7 @@ export default function Home(): React.ReactElement {
             </p>
           </div>
 
+          {/* Só mostra controles quando há mais cards do que o espaço visível. */}
           {urgentNeeds.length > cardsPerView ? (
             <div className="home-carousel-controls" aria-label="Navegação do carrossel de urgências">
               <button
@@ -156,6 +168,7 @@ export default function Home(): React.ReactElement {
           ) : null}
         </div>
 
+        {/* Renderiza carrossel quando existem necessidades urgentes. */}
         {urgentNeeds.length > 0 ? (
           <div className="home-carousel" style={carouselStyle}>
             <div className="home-carousel-viewport">
@@ -177,6 +190,7 @@ export default function Home(): React.ReactElement {
                           <span>{need.category}</span>
                         </div>
 
+                        {/* Leva para a página de unidades já com a unidade pré-selecionada. */}
                         <Link className="home-urgent-link" to={`/caps?unit=${need.unitId}`}>
                           DOAR AGORA
                         </Link>

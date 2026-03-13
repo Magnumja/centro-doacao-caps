@@ -6,7 +6,7 @@ import { caps } from '../data/mock'
 
 import 'leaflet/dist/leaflet.css'
 
-// Fix leaflet default icon with Vite
+// Ajuste necessário para o Leaflet encontrar os ícones quando rodando com Vite.
 delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -14,6 +14,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 })
 
+// Ícone para unidades do tipo CAPS.
 const capsIcon = new L.Icon({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -24,6 +25,7 @@ const capsIcon = new L.Icon({
   className: 'caps-marker',
 })
 
+// Ícone para unidades do tipo Residência Terapêutica.
 const rtIcon = new L.Icon({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -34,9 +36,11 @@ const rtIcon = new L.Icon({
   className: 'rt-marker',
 })
 
+// Centro inicial do mapa (Campo Grande/MS).
 const CAMPO_GRANDE_CENTER: [number, number] = [-20.4697, -54.6201]
 
 export default function CapsMap(): React.ReactElement {
+  // Filtra apenas unidades que possuem latitude e longitude válidas.
   const unitsWithCoords = caps.filter((c) => c.lat !== undefined && c.lng !== undefined)
 
   return (
@@ -55,12 +59,16 @@ export default function CapsMap(): React.ReactElement {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+
+        {/* Um marcador para cada unidade georreferenciada */}
         {unitsWithCoords.map((unit) => (
           <Marker
             key={unit.id}
             position={[unit.lat as number, unit.lng as number]}
+            // Escolhe o ícone de acordo com o tipo da unidade.
             icon={unit.unitType === 'CAPS' ? capsIcon : rtIcon}
           >
+            {/* Popup com resumo da unidade ao clicar no marcador */}
             <Popup>
               <strong>{unit.title}</strong>
               <br />

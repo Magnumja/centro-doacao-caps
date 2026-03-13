@@ -66,6 +66,7 @@ body {
 	display: grid;
 	gap: 0.4rem;
 	flex: 1;
+	min-width: 0;
 }
 
 .site-banner__title {
@@ -92,6 +93,18 @@ body {
 	font-size: clamp(1rem, 1.6vw, 1.3rem);
 	font-weight: 500;
 	color: var(--health-soft-text);
+}
+
+@media (max-width: 980px) {
+	.site-banner__logo {
+		width: 240px;
+		height: 150px;
+	}
+
+	.site-banner__content {
+		gap: 1.3rem;
+		padding: 1.1rem 1.5rem;
+	}
 }
 
 @media (max-width: 700px) {

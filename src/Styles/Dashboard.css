@@ -1,5 +1,6 @@
 .dashboard-container {
   min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   grid-template-rows: auto auto 1fr;
   grid-template-columns: 1fr;
@@ -215,21 +216,21 @@
   margin: 2rem 0;
 }
 
-.form-group {
+.donation-request-form .form-group {
   margin-bottom: 1.5rem;
   display: flex;
   flex-direction: column;
 }
 
-.form-group label {
+.donation-request-form .form-group label {
   color: #0b3d34;
   font-weight: 600;
   margin-bottom: 0.5rem;
 }
 
-.form-group input,
-.form-group select,
-.form-group textarea {
+.donation-request-form .form-group input,
+.donation-request-form .form-group select,
+.donation-request-form .form-group textarea {
   padding: 0.8rem;
   border: 1px solid #ddd;
   border-radius: 6px;
@@ -238,9 +239,9 @@
   transition: border-color 160ms ease;
 }
 
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
+.donation-request-form .form-group input:focus,
+.donation-request-form .form-group select:focus,
+.donation-request-form .form-group textarea:focus {
   outline: none;
   border-color: #0f8f79;
   box-shadow: 0 0 0 3px rgba(15, 143, 121, 0.1);
@@ -433,6 +434,20 @@
 }
 
 /* Tables */
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-scroll .donations-table {
+  min-width: 620px;
+}
+
+.table-scroll .residents-table {
+  min-width: 760px;
+}
+
 .donations-table,
 .residents-table {
   width: 100%;

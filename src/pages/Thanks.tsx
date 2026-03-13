@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 
 export default function Thanks(): React.ReactElement {
   return (
+    // Tela de confirmação de doação com atalho para novo ciclo.
     <section className="page-block">
       <span className="page-kicker">Contribuição registrada</span>
       <h2>Obrigado por apoiar o cuidado em saúde mental.</h2>

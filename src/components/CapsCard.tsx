@@ -1,10 +1,15 @@
 import React from 'react'
 import { Cap } from '../types'
 
+// Propriedades esperadas para renderizar e controlar o card da unidade.
 type Props = {
+  // Dados completos da unidade (nome, endereço, foto, etc.).
   cap: Cap
+  // Indica se esta unidade está selecionada no fluxo de doação.
   isSelected: boolean
+  // Indica se o card está no estado visual de animação de seleção.
   isAnimatingSelection?: boolean
+  // Callback para notificar a página pai que a unidade foi escolhida.
   onSelectDonation: (cap: Cap) => void
 }
 
@@ -14,6 +19,7 @@ export default function CapsCard({
   isAnimatingSelection = false,
   onSelectDonation,
 }: Props): React.ReactElement {
+  // Suporte a teclado (Enter/Espaço) para manter acessibilidade.
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>): void => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault()
@@ -29,6 +35,7 @@ export default function CapsCard({
       onClick={() => onSelectDonation(cap)}
       onKeyDown={handleKeyDown}
     >
+      {/* Foto opcional da unidade */}
       {cap.photo ? (
         <img
           className="caps-card__photo"
@@ -48,6 +55,7 @@ export default function CapsCard({
         type="button"
         className="unit-donate-button"
         onClick={(event) => {
+          // Evita disparar também o onClick do card pai.
           event.stopPropagation()
           onSelectDonation(cap)
         }}

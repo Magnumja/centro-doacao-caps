@@ -215,8 +215,15 @@
   color: #17333a;
 }
 
+.donation-form label {
+  display: grid;
+  gap: 0.3rem;
+}
+
 .donation-form input[type='date'],
-.donation-form input[type='time'] {
+.donation-form input[type='time'],
+.donation-form input[type='text'],
+.donation-form input[type='email'] {
   margin-top: 0.2rem;
   width: 100%;
   border: 1px solid rgba(15, 143, 121, 0.26);
@@ -236,13 +243,22 @@
   flex-wrap: wrap;
 }
 
-.donation-form fieldset label {
+.donation-form__quantities {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.donation-form__anonymity label {
   display: inline-flex;
   align-items: center;
   gap: 0.32rem;
   font-family: 'Source Sans 3', sans-serif;
   font-size: 0.93rem;
   font-weight: 600;
+}
+
+.donation-form__anonymity input[type='radio'] {
+  margin: 0;
 }
 
 .form-feedback {

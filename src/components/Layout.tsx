@@ -3,6 +3,7 @@ import { NavLink, Outlet } from 'react-router-dom'
 
 import '../Styles/Layout.css'
 
+// Itens exibidos no menu principal da aplicação.
 const navigationItems = [
   { to: '/', label: 'Início' },
   { to: '/caps', label: 'Unidades CAPS' },
@@ -13,6 +14,7 @@ const navigationItems = [
 export default function Layout(): React.ReactElement {
   return (
     <>
+      {/* Banner institucional fixo no topo do site */}
       <div className="site-banner">
         <div className="site-banner__content">
           <img
@@ -28,6 +30,7 @@ export default function Layout(): React.ReactElement {
         </div>
       </div>
 
+      {/* Cabeçalho com links de navegação */}
       <header className="health-header">
         <div className="health-header__inner">
           <nav className="health-nav" aria-label="Menu principal">
@@ -35,6 +38,7 @@ export default function Layout(): React.ReactElement {
               <NavLink
                 key={item.to}
                 to={item.to}
+                // Só marca "Início" como ativo quando caminho é exatamente '/'.
                 end={item.to === '/'}
                 className={({ isActive }) =>
                   `health-nav__link${isActive ? ' health-nav__link--active' : ''}`
@@ -47,6 +51,7 @@ export default function Layout(): React.ReactElement {
         </div>
       </header>
 
+      {/* Área onde a rota filha é renderizada */}
       <Outlet />
     </>
   )

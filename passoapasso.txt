@@ -1,0 +1,484 @@
+============================================================
+  CENTRO DE DOAÇÃO CAPS — GUIA COMPLETO DO PROJETO
+============================================================
+Criado em: 13/03/2026
+Tecnologias: React + TypeScript + Vite (front) | Node + Express + Prisma + PostgreSQL (back)
+
+------------------------------------------------------------
+ÍNDICE
+------------------------------------------------------------
+  1. O que é este projeto
+  2. Estrutura de pastas
+  3. O que foi feito no front-end
+  4. O que foi feito no back-end
+  5. Como rodar o projeto do zero
+  6. Como rodar somente o front-end
+  7. Como rodar o back-end
+  8. Rotas da API
+  9. Usuário de teste
+ 10. Segurança implementada
+ 11. O que falta para ir para produção
+ 12. Dicionário rápido de tecnologias
+
+============================================================
+1. O QUE É ESTE PROJETO
+============================================================
+
+Sistema web para a rede de CAPS (Centro de Atenção Psicossocial) de Campo Grande - MS.
+Permite que a população veja quais itens cada unidade precisa e registre uma doação.
+Gestores de cada unidade têm um painel administrativo para acompanhar doações recebidas
+e gerenciar dados de residentes.
+
+Páginas públicas (qualquer pessoa acessa):
+  - Home         → mapa interativo das unidades, itens urgentes
+  - Doações      → catálogo completo de necessidades por prioridade
+  - Unidades     → grade de unidades com fluxo de doação
+  - Agradecimento → confirmação após registrar uma doação
+
+Painel administrativo (somente gestores):
+  - Login  → autenticação com e-mail e senha
+  - Dashboard → abas com resumo, doações, gráficos, residentes, perfil
+
+============================================================
+2. ESTRUTURA DE PASTAS
+============================================================
+
+centro-doacao-caps/
+│
+├── index.html              ← ponto de entrada HTML do front
+├── package.json            ← dependências do front
+├── tsconfig.json           ← configurações TypeScript do front
+├── vite.config.js          ← configurações do Vite (bundler)
+│
+├── public/                 ← imagens estáticas (logos, fotos das unidades)
+│
+├── src/                    ← todo o código do front-end
+│   ├── main.tsx            ← inicia o React, envolve com BrowserRouter
+│   ├── styles.css          ← reset de CSS global
+│   │
+│   ├── app/
+│   │   └── router.tsx      ← define todas as rotas de navegação
+│   │
+│   ├── components/         ← peças reutilizáveis de interface
+│   │   ├── Layout.tsx      ← cabeçalho + nav que envolvem todas as páginas
+│   │   ├── CapsMap.tsx     ← mapa interativo com Leaflet
+│   │   ├── CapsCard.tsx    ← card de uma unidade
+│   │   └── NeedCard.tsx    ← card de uma necessidade
+│   │
+│   ├── pages/              ← cada arquivo = uma página do site
+│   │   ├── Home.tsx
+│   │   ├── Donate.tsx
+│   │   ├── CapsPage.tsx    ← fluxo de seleção de unidade + formulário de doação
+│   │   ├── Thanks.tsx
+│   │   └── admin/
+│   │       ├── Login.tsx
+│   │       └── Dashboard.tsx
+│   │
+│   ├── Styles/             ← um arquivo CSS por página/componente
+│   │   ├── Layout.css
+│   │   ├── Home.css
+│   │   ├── CapsPage.css
+│   │   ├── Login.css
+│   │   └── Dashboard.css
+│   │
+│   ├── data/
+│   │   └── mock.ts         ← dados simulados (unidades, doações, residentes, etc.)
+│   │
+│   └── types/
+│       └── index.ts        ← definição dos tipos TypeScript usados no projeto
+│
+├── dist/                   ← gerado pelo "npm run build" (não editar)
+│
+└── server/                 ← todo o código do back-end (API REST)
+    ├── package.json
+    ├── tsconfig.json
+    ├── .env.example        ← modelo do arquivo .env (copiar e preencher)
+    ├── .gitignore
+    ├── README.md
+    │
+    ├── prisma/
+    │   └── schema.prisma   ← define as tabelas do banco de dados
+    │
+    └── src/
+        ├── index.ts        ← inicia o servidor Express
+        ├── app.ts          ← monta o Express com segurança e rotas
+        │
+        ├── lib/
+        │   ├── prisma.ts   ← conexão singleton com o banco
+        │   └── jwt.ts      ← gera e valida tokens de autenticação
+        │
+        ├── middleware/
+        │   └── auth.ts     ← protege rotas que exigem login
+        │
+        ├── routes/
+        │   ├── auth.ts        ← login / logout / dados do gestor
+        │   ├── units.ts       ← listagem das unidades
+        │   ├── needs.ts       ← necessidades públicas
+        │   ├── donations.ts   ← registrar e listar doações
+        │   └── residents.ts   ← gerenciar residentes
+        │
+        └── prisma/
+            └── seed.ts     ← popula o banco com dados iniciais
+
+============================================================
+3. O QUE FOI FEITO NO FRONT-END
+============================================================
+
+a) COMENTÁRIOS EM PORTUGUÊS
+   Todos os arquivos .tsx e .ts receberam comentários explicativos linha a linha
+   para facilitar o entendimento de quem for dar manutenção.
+
+b) RESPONSIVIDADE MOBILE (CSS)
+   Foram corrigidos os seguintes problemas para celular:
+
+   - Login.css: o seletor "*{}" vazava estilos para o app inteiro → corrigido para
+     escopo ".login-page *{}" para não afetar outras páginas.
+
+   - Dashboard.css + Dashboard.tsx: as tabelas de doações e residentes não tinham
+     scroll horizontal → adicionada classe ".table-scroll" com overflow-x:auto
+     para que o usuário possa deslizar a tabela no celular.
+
+   - Login.css + Dashboard.css: "100vh" corta conteúdo quando a barra do navegador
+     do celular está visível → adicionado "min-height: 100dvh" como complemento moderno.
+
+   - Layout.css: adicionado breakpoint em 980px para que o logo do cabeçalho não
+     fique grande demais em telas intermediárias (tablets).
+
+   - Home.css: a legenda do mapa transbordava em telas estreitas →
+     adicionado "flex-wrap: wrap" para que os itens quebrem linha.
+
+   - CapsPage.css + CapsPage.tsx: campos do formulário de doação receberam
+     melhorias de layout (label em grid, inputs de largura total, radio alinhado).
+
+c) CARROSSEL COM SWIPE MOBILE (Donate.tsx)
+   Os carrosséis de "Necessidades urgentes" e "Não urgentes" passaram a aceitar
+   gesto de deslize com o dedo (swipe) além dos botões Anterior/Próximo.
+   Deslize ≥ 40px muda o slide; gestos menores (tap) são ignorados.
+   "touch-action: pan-y" no CSS garante que o scroll vertical da página não
+   conflite com o swipe horizontal do carrossel.
+
+d) ACESSIBILIDADE (Donate.tsx)
+   - Títulos "Necessidades urgentes" e "Necessidades não urgentes" adicionados
+     acima de cada grupo de carrossel para melhor navegação.
+   - Os botões Anterior/Próximo de cada carrossel receberam "aria-label" distintos
+     ("Anterior — urgentes", "Próximo — urgentes", etc.) para funcionar corretamente
+     com leitores de tela (acessibilidade para deficientes visuais).
+
+============================================================
+4. O QUE FOI FEITO NO BACK-END
+============================================================
+
+O back-end foi criado do zero dentro da pasta "server/" com a seguinte stack:
+
+  Express    → servidor HTTP
+  TypeScript → tipagem estática (mesma linguagem do front)
+  Prisma     → ORM que conecta ao banco; evita SQL manual e SQL Injection
+  PostgreSQL → banco de dados relacional
+  bcryptjs   → hash de senhas (nunca guardar senha em texto puro)
+  jsonwebtoken → autenticação via token JWT gravado em cookie httpOnly
+  zod        → validação dos dados enviados pelo usuário
+  helmet     → configura headers HTTP de segurança automaticamente
+  cors       → controla quais origens podem acessar a API
+  express-rate-limit → limita número de tentativas de login (anti força-bruta)
+
+TABELAS CRIADAS NO BANCO (via schema.prisma):
+
+  Unit       → unidades CAPS e Residências Terapêuticas
+  Need       → necessidades públicas de cada unidade
+  Host       → gestores com acesso ao painel admin
+  Donation   → registros de doação recebidos pelo formulário público
+  Resident   → residentes das unidades (dados sigilosos, só o gestor acessa)
+
+AUTENTICAÇÃO:
+  O login grava um cookie "httpOnly" no navegador do gestor.
+  "httpOnly" significa que o JavaScript da página NÃO consegue ler esse cookie,
+  o que protege contra ataques XSS (roubo de sessão por script malicioso).
+  O token expira em 8 horas.
+
+ESCOPO POR UNIDADE:
+  Cada gestor só consegue ver e editar dados da sua própria unidade.
+  O sistema verifica isso em toda rota protegida antes de retornar qualquer dado.
+
+============================================================
+5. COMO RODAR O PROJETO DO ZERO
+============================================================
+
+Pré-requisitos a instalar na sua máquina:
+  - Node.js versão 20 ou superior: https://nodejs.org
+  - PostgreSQL versão 14 ou superior: https://www.postgresql.org/download
+    (ou Docker: https://www.docker.com)
+
+PASSO 1 — Clonar/abrir o projeto
+  Abra a pasta "centro-doacao-caps" no VS Code.
+
+PASSO 2 — Subir o banco de dados (escolha uma opção):
+
+  Opção A — Docker (mais rápido, sem instalar PostgreSQL):
+    Execute no terminal:
+      docker run --name caps-db \
+        -e POSTGRES_USER=postgres \
+        -e POSTGRES_PASSWORD=senha123 \
+        -e POSTGRES_DB=centro_doacao \
+        -p 5432:5432 \
+        -d postgres:16
+
+  Opção B — PostgreSQL já instalado:
+    Abra o pgAdmin ou psql e rode:
+      CREATE DATABASE centro_doacao;
+
+PASSO 3 — Configurar o .env do back-end
+  No terminal, dentro da pasta do projeto:
+    cd server
+    cp .env.example .env
+  Abra o arquivo .env e preencha:
+    DATABASE_URL="postgresql://postgres:senha123@localhost:5432/centro_doacao"
+    JWT_SECRET="cole uma string longa e aleatória aqui"
+  Para gerar o JWT_SECRET rode:
+    node -e "console.log(require('crypto').randomBytes(48).toString('base64'))"
+
+PASSO 4 — Instalar dependências do back-end
+  (ainda dentro da pasta server/)
+    npm install
+
+PASSO 5 — Criar tabelas no banco
+    npm run db:migrate
+
+PASSO 6 — Popular o banco com dados iniciais
+    npm run db:seed
+  Isso insere as 7 unidades, 6 necessidades e o usuário de teste.
+
+PASSO 7 — Instalar dependências do front-end
+  Volte para a raiz do projeto:
+    cd ..
+    npm install
+
+PASSO 8 — Rodar tudo
+
+  Terminal 1 (back-end):
+    cd server
+    npm run dev
+  → Servidor em http://localhost:3333
+
+  Terminal 2 (front-end):
+    npm run dev
+  → Site em http://localhost:5173
+
+============================================================
+6. COMO RODAR SOMENTE O FRONT-END
+============================================================
+
+O front-end funciona de forma independente usando dados simulados (mock.ts).
+É útil quando você ainda não configurou o banco de dados.
+
+  Na raiz do projeto:
+    npm install    (só na primeira vez)
+    npm run dev
+
+  Acesse: http://localhost:5173
+
+  Credenciais do painel admin (simulado):
+    E-mail: teste@caps.br
+    Senha:  senha123
+
+============================================================
+7. COMO RODAR O BACK-END
+============================================================
+
+  cd server
+  npm install       (só na primeira vez)
+  npm run db:migrate   (só na primeira vez ou após alterar o schema.prisma)
+  npm run db:seed      (só na primeira vez, para ter dados iniciais)
+  npm run dev
+
+  Verificar se está funcionando:
+    Abra no navegador: http://localhost:3333/api/health
+    Deve aparecer: {"status":"ok","timestamp":"..."}
+
+  Outros comandos úteis:
+    npm run build   → compila TypeScript para JavaScript (pasta dist/)
+    npm run start   → roda a versão compilada (usar em produção)
+
+============================================================
+8. ROTAS DA API
+============================================================
+
+BASE URL em desenvolvimento: http://localhost:3333
+
+PÚBLICAS (não precisam de login):
+  GET    /api/health              → verifica se o servidor está de pé
+  POST   /api/auth/login          → faz login; corpo: { email, password }
+  POST   /api/auth/logout         → encerra a sessão
+  GET    /api/units               → lista todas as unidades
+  GET    /api/units/:slug         → detalhe de uma unidade (ex: /api/units/c1)
+  GET    /api/needs               → lista necessidades
+                                    filtros opcionais: ?priority=alta
+                                                       ?unitId=<id-da-unidade>
+  POST   /api/donations           → registra nova doação
+    corpo esperado:
+      {
+        "unitSlug": "c1",
+        "category": "roupa",        (roupa | comida | utensilios)
+        "quantity": "20 peças",
+        "isAnonymous": false,
+        "donorName": "João Silva",
+        "donorEmail": "joao@email.com",
+        "date": "2026-03-13",
+        "time": "14:30"
+      }
+
+PROTEGIDAS (precisam de login / cookie de sessão):
+  GET    /api/auth/me             → dados do gestor logado
+  GET    /api/donations           → doações da unidade do gestor
+                                    paginação: ?page=1&limit=20
+  DELETE /api/donations/:id       → remove uma doação
+  GET    /api/residents           → residentes da unidade do gestor
+  POST   /api/residents           → cadastra residente
+    corpo esperado:
+      {
+        "name": "Nome do Residente",
+        "emergencyContact": "(67) 99999-0000",
+        "entryDate": "2026-01-15",
+        "status": "ativo"           (ativo | inativo | transferido)
+      }
+  PUT    /api/residents/:id       → atualiza residente (mesmo corpo do POST)
+  DELETE /api/residents/:id       → remove residente
+
+============================================================
+9. USUÁRIO DE TESTE
+============================================================
+
+O seed cria automaticamente um gestor de teste vinculado ao CAPS III Margarida (c1):
+
+  E-mail:  teste@caps.br
+  Senha:   senha123
+  Unidade: CAPS III Margarida
+  Perfil:  host (gestor de unidade)
+
+Para criar mais gestores no banco, insira via seed.ts ou diretamente com SQL:
+  (lembre-se de sempre usar bcrypt para hashear a senha antes de salvar)
+
+============================================================
+10. SEGURANÇA IMPLEMENTADA
+============================================================
+
+  bcrypt (rounds=12)
+    As senhas nunca são salvas em texto puro no banco.
+    Mesmo quem tiver acesso direto ao banco não consegue ler as senhas reais.
+
+  JWT em cookie httpOnly
+    O token de autenticação fica num cookie que o JavaScript da página não
+    consegue ler. Isso protege contra ataques XSS.
+    O token expira em 8 horas.
+
+  cookie sameSite: 'strict'
+    O cookie não é enviado em requisições originadas de outros sites.
+    Isso protege contra ataques CSRF.
+
+  Helmet
+    Configura automaticamente headers HTTP de segurança:
+    Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, etc.
+
+  CORS restrito
+    A API só aceita requisições vindas do domínio configurado em FRONTEND_URL.
+    Outros sites não conseguem fazer chamadas para a API.
+
+  Rate limiting
+    Login: máximo 10 tentativas por IP a cada 15 minutos.
+    Geral: máximo 200 requisições por IP a cada 15 minutos.
+    Isso bloqueia ataques de força-bruta (testar senhas em sequência).
+
+  Zod (validação de entrada)
+    Todos os dados enviados pelo usuário (formulários, API) são validados
+    antes de chegar ao banco. Campos com formato inválido são rejeitados.
+
+  Prisma (prepared statements)
+    O Prisma nunca concatena valores diretamente no SQL.
+    Isso protege completamente contra SQL Injection.
+
+  Escopo por unitId
+    Cada gestor só vê os dados da sua própria unidade, mesmo que tente
+    acessar manualmente outra URL. O servidor verifica isso em toda rota.
+
+  Limite de tamanho de body
+    O servidor rejeita requisições com corpo maior que 64KB.
+    Isso evita ataques de negação de serviço (DoS) por payload grande.
+
+============================================================
+11. O QUE FALTA PARA IR PARA PRODUÇÃO
+============================================================
+
+  □ Trocar JWT_SECRET por uma chave forte gerada aleatoriamente
+  □ Trocar a senha do usuário teste@caps.br por uma senha real
+  □ Configurar HTTPS no servidor (obrigatório para cookie secure)
+  □ Definir NODE_ENV=production e FRONTEND_URL com o domínio real
+  □ Nunca commitar o arquivo .env no Git (já está no .gitignore)
+  □ Conectar o front-end à API real (substituir chamadas ao mock.ts)
+  □ Configurar backups automáticos do PostgreSQL
+  □ Considerar um serviço de hospedagem:
+      Front: Vercel, Netlify ou GitHub Pages
+      Back:  Railway, Render, Fly.io ou VPS própria
+
+============================================================
+12. DICIONÁRIO RÁPIDO DE TECNOLOGIAS
+============================================================
+
+React
+  Biblioteca JavaScript para construir interfaces.
+  O HTML da página é gerado por funções chamadas "componentes".
+
+TypeScript
+  JavaScript com tipagem. Você declara o tipo de cada variável
+  e o editor avisa quando algo está errado antes de rodar o código.
+
+Vite
+  Ferramenta que empacota o projeto React para o navegador.
+  "npm run dev" = modo desenvolvimento com hot-reload
+  "npm run build" = gera os arquivos finais para publicar
+
+React Router
+  Biblioteca que controla a navegação entre páginas sem recarregar
+  o navegador (SPA — Single Page Application).
+
+Leaflet / react-leaflet
+  Biblioteca de mapas interativos. Usada no componente CapsMap.tsx
+  para mostrar a localização das unidades.
+
+Express
+  Framework Node.js para criar servidores HTTP e APIs REST.
+
+Prisma
+  ORM (Object-Relational Mapping): você escreve código TypeScript
+  para fazer consultas no banco, sem escrever SQL manualmente.
+  Schema em: server/prisma/schema.prisma
+
+PostgreSQL
+  Banco de dados relacional (tabelas com linhas e colunas).
+  É onde ficam armazenados unidades, doações, residentes, etc.
+
+bcrypt
+  Algoritmo para transformar senhas em hashes irreversíveis.
+  "irreversível" = não dá para recuperar a senha original a partir do hash.
+
+JWT (JSON Web Token)
+  Token assinado digitalmente que prova que o usuário está autenticado.
+  Aqui é salvo em cookie httpOnly e expira em 8 horas.
+
+Zod
+  Biblioteca de validação: define a "forma" esperada dos dados
+  e rejeita automaticamente o que não se encaixar.
+
+CORS
+  Mecanismo do navegador que controla quais sites podem chamar uma API.
+  Configurado para aceitar somente o domínio do front-end.
+
+ORM
+  Camada que traduz código TypeScript em comandos SQL no banco.
+  Evita SQL Injection porque nunca concatena strings diretamente.
+
+httpOnly cookie
+  Cookie que só o servidor consegue ler e escrever.
+  O JavaScript rodando no navegador não tem acesso a ele.
+
+============================================================
+FIM DO DOCUMENTO
+============================================================
