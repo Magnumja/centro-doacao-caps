@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
 import CapsCard from '../components/CapsCard'
-import { caps } from '../data/mock'
+import * as api from '../lib/api'
 import { Cap } from '../types'
 
 import '../Styles/CapsPage.css'
@@ -19,6 +19,10 @@ export default function CapsPage(): React.ReactElement {
 
   // selectedUnitId: unidade escolhida para doação.
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null)
+
+  // Lista de unidades carregadas do backend. Mantemos a forma localmente
+  // compatível com o restante da UI (id = slug) para evitar grandes mudanças.
+  const [caps, setCaps] = useState<Cap[]>([])
 
   // selectionPreviewId: unidade em animação de seleção antes de confirmar.
   const [selectionPreviewId, setSelectionPreviewId] = useState<string | null>(null)
@@ -58,10 +62,48 @@ export default function CapsPage(): React.ReactElement {
   // Parâmetro unit recebido da URL para seleção direta de unidade.
   const selectedUnitParam = searchParams.get('unit')
 
+  // Carrega unidades do backend ao montar a página.
+  useEffect(() => {
+    let mounted = true
+
+    async function loadUnits() {
+      try {
+        const units = await api.get('/api/units')
+        // O backend retorna { id, slug, title, ... } — aqui mapeamos para a
+        // forma que a UI espera: usamos `slug` como `id` para manter compat.
+        const mapped: Cap[] = (units || []).map((u: any) => ({
+          id: u.slug ?? u.id,
+          title: u.title,
+          unitType: u.unitType === 'RESIDENCIA_TERAPEUTICA' ? 'Residência Terapêutica' : u.unitType,
+          address: u.address,
+          contact: u.contact,
+          description: u.description,
+          capacity: u.capacity,
+          privacyNote: u.privacyNote,
+          lat: u.lat,
+          lng: u.lng,
+          photo: u.photo,
+        }))
+
+        if (mounted) setCaps(mapped)
+      } catch (err: any) {
+        // Silencioso — a UI continuará funcionando com lista vazia.
+        // Poderíamos exibir uma mensagem de erro se preferir.
+        // console.error('Erro ao carregar unidades:', err)
+      }
+    }
+
+    loadUnits()
+
+    return () => {
+      mounted = false
+    }
+  }, [])
+
   // Resolve os dados completos da unidade a partir do ID selecionado.
   const selectedUnit = useMemo(
     () => caps.find((unit) => unit.id === selectedUnitId) ?? null,
-    [selectedUnitId]
+    [selectedUnitId, caps]
   )
 
   useEffect(() => {
@@ -92,7 +134,7 @@ export default function CapsPage(): React.ReactElement {
     resetDonationForm()
     setShowUnitChooser(false)
     shouldScrollToDonationRef.current = true
-  }, [selectedUnitParam])
+  }, [selectedUnitParam, caps])
 
   useEffect(() => {
     // Só executa rolagem quando explicitamente sinalizado.
@@ -195,7 +237,6 @@ export default function CapsPage(): React.ReactElement {
   // Valida e registra a intenção de doação (atualmente só no estado local).
   const handleRegisterDonation = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault()
-
     // Campos mínimos obrigatórios do formulário.
     if (!selectedUnit || selectedItems.length === 0 || !donationDate || !donationTime) {
       setFormMessage('Preencha dia, horário e selecione ao menos um tipo de doação.')
@@ -215,16 +256,46 @@ export default function CapsPage(): React.ReactElement {
       return
     }
 
-    const itensList = selectedItems
-      .map((item) => `${item}: ${itemQuantities[item]}`)
-      .join(', ')
+    // Mapeia rótulos da UI para os valores esperados pela API.
+    const categoryMap: Record<string, 'roupa' | 'comida' | 'utensilios'> = {
+      Roupas: 'roupa',
+      Comida: 'comida',
+      Utensílios: 'utensilios',
+    }
 
-    const identidade = anonymousDonation === 'sim' ? 'Doador anônimo' : `Doador: ${donorName} (${donorEmail})`
+    // Faz uma requisição por item selecionado (cada categoria vira um registro).
+    ;(async () => {
+      try {
+        const payloads = selectedItems.map((item) => ({
+          unitSlug: selectedUnit.id,
+          category: categoryMap[item],
+          quantity: itemQuantities[item],
+          isAnonymous: anonymousDonation === 'sim',
+          donorName: anonymousDonation === 'sim' ? undefined : donorName,
+          donorEmail: anonymousDonation === 'sim' ? undefined : donorEmail,
+          date: donationDate,
+          time: donationTime,
+        }))
 
-    // Mensagem final exibida no overlay de confirmação.
-    const successMsg = `Registro salvo para ${selectedUnit.title}. Dia: ${donationDate}, Horário: ${donationTime}. Itens: ${itensList}. ${identidade}.`
-    setSuccessMessage(successMsg)
-    setShowSuccessOverlay(true)
+        await Promise.all(payloads.map((p) => api.post('/api/donations', p)))
+
+        const itensList = selectedItems
+          .map((it) => `${it}: ${itemQuantities[it]}`)
+          .join(', ')
+
+        const identidade = anonymousDonation === 'sim' ? 'Doador anônimo' : `Doador: ${donorName} (${donorEmail})`
+
+        const successMsg = `Registro salvo para ${selectedUnit.title}. Dia: ${donationDate}, Horário: ${donationTime}. Itens: ${itensList}. ${identidade}.`
+
+        setSuccessMessage(successMsg)
+        setShowSuccessOverlay(true)
+        setFormMessage('')
+      } catch (err: any) {
+        // Exibe mensagem genérica ou específica vinda da API.
+        const msg = err?.message ? String(err.message) : 'Erro ao registrar doação.'
+        setFormMessage(msg)
+      }
+    })()
   }
 
   return (

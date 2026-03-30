@@ -1,49 +1,40 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { hosts } from '../../data/mock'
+import api from '../../lib/api'
 
 import '../../Styles/Login.css'
 
 export default function Login(): React.ReactElement {
-    // Campos controlados do formulário.
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-
-    // Feedback visual de erro e de carregamento.
     const [errorMessage, setErrorMessage] = useState('')
     const [isLoading, setIsLoading] = useState(false)
-
-    // Hook para redirecionar usuário entre rotas.
     const navigate = useNavigate()
 
-    const handleSubmit = (event: React.FormEvent) => {
+    const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault()
         setErrorMessage('')
         setIsLoading(true)
 
-        // Simula tempo de autenticação para representar chamada de API.
-        setTimeout(() => {
-            // Procura no mock um host com as credenciais informadas.
-            const host = hosts.find(h => h.email === email && h.password === password)
+        try {
+            // envia credenciais ao backend; backend devolve cookie httpOnly
+            await api.post('/api/auth/login', { email, password })
 
-            if (host) {
-                // Persistência simples no navegador para manter sessão local.
-                localStorage.setItem('loggedHost', JSON.stringify(host))
+            // busca dados do host autenticado
+            const host = await api.get('/api/auth/me')
 
-                // Dashboard é tratado pela rota /admin/* no router.
-                navigate('/admin/dashboard')
-            } else {
-                setErrorMessage('E-mail ou senha inválido.')
-            }
-
-            // Finaliza estado de carregamento em qualquer resultado.
+            // salva e redireciona
+            localStorage.setItem('loggedHost', JSON.stringify(host))
+            navigate('/admin/dashboard')
+        } catch (err: any) {
+            setErrorMessage(err?.message || 'Erro ao autenticar.')
+        } finally {
             setIsLoading(false)
-        }, 600)
+        }
     }
 
     return (
         <div className="login-page">
-            {/* Bloco institucional/lateral da tela de login */}
             <div className="login-hero">
                 <div className="login-hero__content">
                     <span className="page-kicker">Acesso restrito</span>
@@ -55,7 +46,6 @@ export default function Login(): React.ReactElement {
                 </div>
             </div>
 
-            {/* Formulário de autenticação */}
             <div className="login-form-wrapper">
                 <form className="login-form" onSubmit={handleSubmit}>
                     <h2>Entrar no Sistema</h2>
@@ -86,7 +76,6 @@ export default function Login(): React.ReactElement {
                         />
                     </fieldset>
 
-                    {/* Mensagem exibida quando credenciais não conferem */}
                     {errorMessage && (
                         <div className="login-error">
                             <p>{errorMessage}</p>
@@ -100,12 +89,7 @@ export default function Login(): React.ReactElement {
                         </label>
                     </div>
 
-                    <button
-                        type="submit"
-                        className="login-submit"
-                        disabled={isLoading}
-                    >
-                        {/* O texto do botão muda enquanto o "login" está em andamento */}
+                    <button type="submit" className="login-submit" disabled={isLoading}>
                         {isLoading ? 'Autenticando...' : 'Entrar'}
                     </button>
 

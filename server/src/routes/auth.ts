@@ -43,7 +43,8 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
     .cookie('token', token, {
       httpOnly: true,       // inAccessível via JS do navegador
       secure: process.env.NODE_ENV === 'production', // HTTPS somente em prod
-      sameSite: 'strict',   // proteção anti-CSRF
+      // Em produção (frontend possivelmente em domínio diferente) usamos 'none' + secure
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
       maxAge: 8 * 60 * 60 * 1000, // 8 horas em ms
     })
     .json({ message: 'Login realizado com sucesso.', role: host.role, unitId: host.unitId })
