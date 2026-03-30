@@ -66,5 +66,5 @@ async function main(): Promise<void> {
 
 main().catch((err) => {
   console.error('Erro no teste de API:', err)
-  process.exit(1)
+  ;(globalThis as any).process?.exit?.(1)
 })
