@@ -1,4 +1,5 @@
 import express from 'express'
+import path from 'path'
 import helmet from 'helmet'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
@@ -64,6 +65,17 @@ app.use('/api/residents', residentsRouter)
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
+})
+
+// ─── Serve front build (se existir) ────────────────────────────────────────────
+// Serve arquivos estáticos da pasta /dist (build do frontend na raiz do repo).
+const distPath = path.join(__dirname, '../../dist')
+app.use(express.static(distPath))
+
+// Fallback para SPA: devolve index.html para rotas que não comecem com /api
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api')) return next()
+  res.sendFile(path.join(distPath, 'index.html'))
 })
 
 // ─── 404 handler ─────────────────────────────────────────────────────────────
