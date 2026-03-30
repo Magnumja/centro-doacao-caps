@@ -1,6 +1,10 @@
 import React from 'react'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import L from 'leaflet'
+// Importa os assets do leaflet para que o bundler (Vite) resolva os caminhos corretamente
+const markerIcon2xUrl = new URL('leaflet/dist/images/marker-icon-2x.png', import.meta.url).href
+const markerIconUrl = new URL('leaflet/dist/images/marker-icon.png', import.meta.url).href
+const markerShadowUrl = new URL('leaflet/dist/images/marker-shadow.png', import.meta.url).href
 
 import { caps } from '../data/mock'
 
@@ -9,16 +13,17 @@ import 'leaflet/dist/leaflet.css'
 // Ajuste necessário para o Leaflet encontrar os ícones quando rodando com Vite.
 delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  // Usa os arquivos importados para garantir caminhos corretos com Vite
+  iconRetinaUrl: markerIcon2xUrl,
+  iconUrl: markerIconUrl,
+  shadowUrl: markerShadowUrl,
 })
 
 // Ícone para unidades do tipo CAPS.
 const capsIcon = new L.Icon({
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  iconUrl: markerIconUrl,
+  iconRetinaUrl: markerIcon2xUrl,
+  shadowUrl: markerShadowUrl,
   iconSize: [22, 34],
   iconAnchor: [11, 34],
   popupAnchor: [0, -34],
@@ -27,9 +32,9 @@ const capsIcon = new L.Icon({
 
 // Ícone para unidades do tipo Residência Terapêutica.
 const rtIcon = new L.Icon({
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  iconUrl: markerIconUrl,
+  iconRetinaUrl: markerIcon2xUrl,
+  shadowUrl: markerShadowUrl,
   iconSize: [22, 34],
   iconAnchor: [11, 34],
   popupAnchor: [0, -34],
