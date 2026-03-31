@@ -3,14 +3,23 @@ const BASE = (import.meta as any).env?.VITE_API_URL ?? ''
 
 async function handleRes(res: Response) {
   const text = await res.text()
+
+  let parsed: any = null
   try {
-    const json = JSON.parse(text || '{}')
-    if (!res.ok) throw new Error(json.error || text || res.statusText)
-    return json
+    parsed = JSON.parse(text || '{}')
   } catch {
-    if (!res.ok) throw new Error(text || res.statusText)
-    return text
+    parsed = null
   }
+
+  if (!res.ok) {
+    const message =
+      (parsed && typeof parsed.error === 'string' && parsed.error) ||
+      text ||
+      res.statusText
+    throw new Error(message)
+  }
+
+  return parsed ?? text
 }
 
 export async function get(path: string) {
