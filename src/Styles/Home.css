@@ -458,4 +458,55 @@
   .caps-map {
     height: 300px;
   }
+
+  .home-guidance-card,
+  .home-map-card,
+  .donate-carousel-group {
+    padding: 0.9rem;
+  }
+
+  .home-urgent-card {
+    padding: 0.85rem;
+  }
+
+  .home-urgent-link {
+    width: 100%;
+    text-align: center;
+  }
+
+  .donate-carousel-controls {
+    justify-self: stretch;
+  }
+}
+
+@media (max-width: 560px) {
+  .page-block.home-hero,
+  .page-block.home-urgent-section {
+    width: min(1360px, 95vw);
+    padding-inline: 0.75rem;
+  }
+
+  .home-step-number {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 0.84rem;
+  }
+
+  .home-map-card .caps-map {
+    height: 240px;
+  }
+
+  .home-carousel {
+    --carousel-gap: 0.75rem;
+  }
+
+  .donate-need-icon {
+    width: 1.8rem;
+    height: 1.8rem;
+  }
+
+  .donate-need-icon svg {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
 }

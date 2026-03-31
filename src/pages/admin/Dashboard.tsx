@@ -9,6 +9,16 @@ import '../../Styles/Dashboard.css'
 // Abas disponíveis na área administrativa.
 type TabType = 'overview' | 'donations' | 'analytics' | 'profile' | 'residents'
 
+type NeedCardItem = {
+  id: string
+  title: string
+  amount: number
+  description: string
+  priority: 'alta' | 'media'
+  category: string
+  unitId: string
+}
+
 // Configuração de categorias usada no resumo e gráfico de analytics.
 const analyticsCategories: Array<{
   key: Donation['category']
@@ -32,6 +42,7 @@ export default function Dashboard(): React.ReactElement {
   const [requestPriority, setRequestPriority] = useState<'media' | 'alta'>('media')
   const [requestFeedback, setRequestFeedback] = useState('')
   const [isPublishingRequest, setIsPublishingRequest] = useState(false)
+  const [publishedNeeds, setPublishedNeeds] = useState<NeedCardItem[]>([])
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -43,6 +54,27 @@ export default function Dashboard(): React.ReactElement {
     }
     const host: Host = JSON.parse(storedHost)
     setLoggedHost(host)
+
+    ;(async () => {
+      try {
+        const allNeeds = await api.get('/api/needs')
+        const normalized: NeedCardItem[] = (allNeeds || [])
+          .filter((need: any) => need.unitId === host.unitId)
+          .map((need: any) => ({
+            id: need.id,
+            title: need.title,
+            amount: need.amount,
+            description: need.description,
+            priority: need.priority,
+            category: need.category,
+            unitId: need.unitId,
+          }))
+
+        setPublishedNeeds(normalized)
+      } catch {
+        setPublishedNeeds([])
+      }
+    })()
   }, [navigate])
 
   // Encerra sessão local e redireciona para o login.
@@ -63,13 +95,26 @@ export default function Dashboard(): React.ReactElement {
 
     setIsPublishingRequest(true)
     try {
-      await api.post('/api/needs', {
+      const createdNeed = await api.post('/api/needs', {
         title: requestCategory,
         amount,
         description: requestDescription,
         category: requestCategory,
         priority: requestPriority,
       })
+
+      setPublishedNeeds((current) => [
+        {
+          id: createdNeed.id,
+          title: createdNeed.title,
+          amount: createdNeed.amount,
+          description: createdNeed.description,
+          priority: createdNeed.priority,
+          category: createdNeed.category,
+          unitId: createdNeed.unitId,
+        },
+        ...current,
+      ])
 
       setRequestDescription('')
       setRequestAmount('')
@@ -306,9 +351,22 @@ export default function Dashboard(): React.ReactElement {
 
             <div className="dashboard-section">
               <h3>Solicitações Ativas para {hostCaps?.title}</h3>
-              <p style={{ color: '#666', fontSize: '0.9rem' }}>
-                Neste momento, não há solicitações de doação. Crie uma acima!
-              </p>
+              {publishedNeeds.length === 0 ? (
+                <p style={{ color: '#666', fontSize: '0.9rem' }}>
+                  Neste momento, não há solicitações de doação. Crie uma acima!
+                </p>
+              ) : (
+                <div className="dashboard-cards">
+                  {publishedNeeds.map((need) => (
+                    <article className="dashboard-card" key={need.id}>
+                      <h3>{need.title}</h3>
+                      <p className="dashboard-card__value">{need.amount}</p>
+                      <p className="dashboard-card__label">{need.priority === 'alta' ? 'Urgente' : 'Não urgente'}</p>
+                      <p style={{ marginTop: '0.6rem', color: '#666' }}>{need.description}</p>
+                    </article>
+                  ))}
+                </div>
+              )}
             </div>
           </section>
         )}
@@ -488,7 +546,7 @@ export default function Dashboard(): React.ReactElement {
                     .filter(r => r.capId !== loggedHost.capId)
                     .map(resident => (
                       <tr key={resident.id}>
-                        <td>{resident.name}</td>
+                        <td>Em sigilo</td>
                         <td>{resident.capName}</td>
                         <td>{resident.emergencyContact}</td>
                         <td>{new Date(resident.entryDate).toLocaleDateString('pt-BR')}</td>

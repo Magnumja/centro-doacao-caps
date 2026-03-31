@@ -315,6 +315,20 @@
   .donation-flow-grid {
     grid-template-columns: 1fr;
   }
+
+  .unit-donate-button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .donation-actions {
+    gap: 0.5rem;
+  }
+
+  .donation-action-button {
+    flex: 1 1 calc(50% - 0.5rem);
+    text-align: center;
+  }
 }
 
 .donation-success-overlay {
@@ -428,5 +442,33 @@
 
   .donation-success-actions {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 560px) {
+  .page-block.caps-page {
+    width: min(1360px, 95vw);
+    padding-inline: 0.75rem;
+  }
+
+  .caps-card__photo {
+    height: 135px;
+  }
+
+  .selected-unit-spotlight__content {
+    padding: 0 0.8rem 0.9rem;
+  }
+
+  .donation-form fieldset {
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .donation-action-button {
+    flex-basis: 100%;
+  }
+
+  .donation-success-card {
+    padding: 1.35rem 1rem;
   }
 }

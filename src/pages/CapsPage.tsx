@@ -14,6 +14,18 @@ const donationOptions = ['Roupas', 'Comida', 'Utensílios']
 // Duração da animação de seleção para sincronizar estado e UI.
 const selectionAnimationDurationMs = 260
 
+function resolveUnitPhotoPath(photo?: string): string | undefined {
+  if (!photo) return undefined
+  if (photo.startsWith('/')) {
+    try {
+      return new URL(`../public${photo}`, import.meta.url).href
+    } catch {
+      return photo
+    }
+  }
+  return photo
+}
+
 export default function CapsPage(): React.ReactElement {
   // searchParams lê/escreve parâmetros de URL (ex: /caps?unit=c1).
   const [searchParams, setSearchParams] = useSearchParams()
@@ -83,7 +95,7 @@ export default function CapsPage(): React.ReactElement {
           privacyNote: u.privacyNote,
           lat: u.lat,
           lng: u.lng,
-          photo: u.photo,
+          photo: resolveUnitPhotoPath(u.photo),
         }))
 
         if (mounted) {
@@ -355,6 +367,14 @@ export default function CapsPage(): React.ReactElement {
                 className="selected-unit-spotlight__photo"
                 src={selectedUnit.photo}
                 alt={`Foto da unidade ${selectedUnit.title}`}
+                onError={(event) => {
+                  const fallback = selectedUnit.photo?.startsWith('/')
+                    ? resolveUnitPhotoPath(selectedUnit.photo)
+                    : undefined
+                  if (fallback && event.currentTarget.src !== fallback) {
+                    event.currentTarget.src = fallback
+                  }
+                }}
               />
             </div>
           ) : null}

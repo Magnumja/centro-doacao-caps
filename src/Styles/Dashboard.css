@@ -259,6 +259,10 @@
   transition: all 160ms ease;
 }
 
+.donation-request-form .btn-primary {
+  width: 100%;
+}
+
 .btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 16px rgba(15, 143, 121, 0.24);
@@ -644,7 +648,22 @@
   }
 
   .dashboard-nav {
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.4rem;
+    overflow: visible;
+  }
+
+  .dashboard-nav__item {
+    padding: 0.62rem 0.45rem;
+    font-size: 0.82rem;
+    text-align: center;
+    border-radius: 8px;
+    border: 1px solid rgba(15, 143, 121, 0.12);
+  }
+
+  .dashboard-nav__item.active {
+    border-color: rgba(15, 143, 121, 0.24);
   }
 
   .dashboard-main {
@@ -665,6 +684,11 @@
 
   .donation-request-form {
     padding: 1.5rem;
+  }
+
+  .table-scroll {
+    margin-inline: -0.2rem;
+    padding-bottom: 0.25rem;
   }
 
   .analytics-summary {
@@ -707,5 +731,45 @@
   .residents-table th,
   .residents-table td {
     padding: 0.5rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .dashboard-header {
+    padding: 1.2rem 0.75rem;
+  }
+
+  .dashboard-header__content {
+    gap: 0.8rem;
+  }
+
+  .dashboard-main {
+    padding: 1rem 0.7rem;
+  }
+
+  .dashboard-tab {
+    padding: 1rem 0.8rem;
+  }
+
+  .dashboard-tab h2 {
+    font-size: 1.35rem;
+  }
+
+  .dashboard-nav {
+    grid-template-columns: 1fr;
+    padding: 0.8rem 0.75rem;
+  }
+
+  .dashboard-card {
+    border-radius: 10px;
+  }
+
+  .donation-request-form {
+    padding: 1rem;
+    margin: 1.2rem 0;
+  }
+
+  .profile-card {
+    padding: 1rem;
   }
 }

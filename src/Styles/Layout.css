@@ -289,6 +289,15 @@ body {
 }
 
 @media (max-width: 740px) {
+	.site-banner__logo {
+		width: 96px;
+		height: 80px;
+	}
+
+	.site-banner__desc {
+		font-size: 0.9rem;
+	}
+
 	.health-header__inner {
 		align-items: flex-start;
 		padding: 0.72rem 0;
@@ -296,11 +305,16 @@ body {
 
 	.health-nav {
 		width: 100%;
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 0.45rem;
 	}
 
 	.health-nav__link {
-		flex: 1 1 calc(50% - 0.55rem);
+		flex: unset;
 		text-align: center;
+		padding: 0.54rem 0.62rem;
+		font-size: 0.82rem;
 	}
 
 	.health-brand__logo {
@@ -310,5 +324,51 @@ body {
 
 	.health-brand__kicker {
 		font-size: 0.68rem;
+	}
+
+	.page-block {
+		width: min(1100px, 95vw);
+		padding: clamp(0.85rem, 3vw, 1.2rem);
+		border-radius: 18px;
+	}
+}
+
+@media (max-width: 560px) {
+	.site-banner__content {
+		padding: 0.9rem;
+		gap: 0.7rem;
+	}
+
+	.site-banner__title {
+		font-size: 1.25rem;
+	}
+
+	.site-banner__desc {
+		font-size: 0.84rem;
+	}
+
+	.health-header__inner {
+		width: min(1180px, 96vw);
+	}
+
+	.health-nav__link {
+		font-size: 0.8rem;
+		padding: 0.52rem 0.5rem;
+	}
+}
+
+@media (max-width: 420px) {
+	.site-banner__content {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.site-banner__logo {
+		width: 88px;
+		height: 74px;
+	}
+
+	.health-nav {
+		grid-template-columns: 1fr;
 	}
 }

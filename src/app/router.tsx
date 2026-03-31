@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
 
 import Home from '../pages/Home'
 import CapsPage from '../pages/CapsPage'
@@ -10,8 +10,8 @@ import Layout from '../components/Layout'
 
 export default function Router(): JSX.Element {
   return (
-    // BrowserRouter controla o histórico de navegação no navegador.
-    <BrowserRouter>
+    // HashRouter evita erro de refresh em hospedagens estáticas sem rewrite.
+    <HashRouter>
       <Routes>
         {/*
           Layout é a rota "pai" para compartilhar banner/menu em todas as telas filhas.
@@ -40,6 +40,6 @@ export default function Router(): JSX.Element {
           <Route path="*" element={<div className="page-block"><h2>Rota não encontrada</h2></div>} />
         </Route>
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   )
 }

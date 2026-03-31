@@ -282,8 +282,8 @@
 
 @media (max-width: 740px) {
   .login-hero {
-    min-height: 250px;
-    padding: 2rem 1rem;
+    min-height: 200px;
+    padding: 1.4rem 1rem;
   }
 
   .login-form-wrapper {
@@ -306,6 +306,31 @@
   .login-form .form-group input {
     padding: 0.8rem;
     font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .login-page {
+    min-height: auto;
+  }
+
+  .login-hero {
+    display: none;
+  }
+
+  .login-form-wrapper {
+    padding: 1rem 0.75rem;
+  }
+
+  .login-form {
+    max-width: none;
+    border-radius: 10px;
+    padding: 1.15rem 0.95rem;
+  }
+
+  .login-help {
+    margin-top: 1.1rem;
+    padding-top: 1.1rem;
   }
 }
 
