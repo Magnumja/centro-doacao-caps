@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom'
 import CapsCard from '../components/CapsCard'
 import * as api from '../lib/api'
 import { Cap } from '../types'
+import { caps as mockCaps } from '../data/mock'
 
 import '../Styles/CapsPage.css'
 
@@ -85,11 +86,18 @@ export default function CapsPage(): React.ReactElement {
           photo: u.photo,
         }))
 
-        if (mounted) setCaps(mapped)
+        if (mounted) {
+          // If backend returned an empty list, fall back to local mock data to
+          // keep the UI usable during development when the API is offline.
+          if (!mapped || mapped.length === 0) {
+            setCaps(mockCaps as Cap[])
+          } else {
+            setCaps(mapped)
+          }
+        }
       } catch (err: any) {
-        // Silencioso — a UI continuará funcionando com lista vazia.
-        // Poderíamos exibir uma mensagem de erro se preferir.
-        // console.error('Erro ao carregar unidades:', err)
+        // Se a chamada falhar (backend offline), usa os dados mock locais.
+        if (mounted) setCaps(mockCaps as Cap[])
       }
     }
 

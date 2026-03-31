@@ -1,5 +1,13 @@
 import { Cap, Need, Host, Donation, Resident } from '../types'
 
+// Importa imagens para que o Vite as processe e gere URLs corretos.
+import capMargarida from '../public/capsmargarida.jpg'
+import capVilaAlmeida from '../public/capsvilaalmeida.jpeg'
+import capAfrodite from '../public/capsafrodite.jpeg'
+import capAeroRancho from '../public/capsaerorancho.jpeg'
+import capDraFatima from '../public/capsdrafatima.jpg'
+import capMarciaZen from '../public/capsmarciazen.jpg'
+
 // Unidades da rede de saúde mental exibidas em mapa, cards e fluxo de doação.
 export const caps: Cap[] = [
   {
@@ -10,7 +18,7 @@ export const caps: Cap[] = [
     contact: '(67) 3314-3144',
     lat: -20.4810,
     lng: -54.6660,
-    photo: '/capsmargarida.jpg'
+  photo: capMargarida
   },
   {
     id: 'c2',
@@ -20,7 +28,7 @@ export const caps: Cap[] = [
     contact: 'Contato não informado',
     lat: -20.4560,
     lng: -54.6200,
-    photo: '/capsvilaalmeida.jpeg'
+  photo: capVilaAlmeida
   },
   {
     id: 'c3',
@@ -30,7 +38,7 @@ export const caps: Cap[] = [
     contact: '(67) 3314-3185 / 3314-3188',
     lat: -20.4660,
     lng: -54.6135,
-    photo: '/capsafrodite.jpeg'
+  photo: capAfrodite
   },
   {
     id: 'c4',
@@ -40,7 +48,7 @@ export const caps: Cap[] = [
     contact: 'Contato não informado',
     lat: -20.5020,
     lng: -54.6350,
-    photo: '/capsaerorancho.jpeg'
+  photo: capAeroRancho
   },
   {
     id: 'c5',
@@ -50,7 +58,7 @@ export const caps: Cap[] = [
     contact: 'Contato não informado',
     lat: -20.4500,
     lng: -54.6380,
-    photo: '/capsdrafatima.jpg'
+  photo: capDraFatima
   },
   {
     id: 'c6',
@@ -60,7 +68,7 @@ export const caps: Cap[] = [
     contact: 'Contato não informado',
     lat: -20.5025,
     lng: -54.6355,
-    photo: '/capsmarciazen.jpg'
+  photo: capMarciaZen
   },
   {
     id: 'r1',

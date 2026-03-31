@@ -27,6 +27,39 @@ export default function CapsCard({
     }
   }
 
+  // Resolve photo path when project keeps images under `src/public`.
+  // Vite serves files placed in `public/` at the root path (e.g. `/caps.jpg`).
+  // If `cap.photo` is an absolute path starting with '/', use it directly so
+  // the browser requests `/capsmargarida.jpg`. For other strings (for
+  // example relative imports or module-resolved assets), build a URL using
+  // `import.meta.url` so bundlers can process them.
+  const resolvedPhoto = (() => {
+    if (typeof cap.photo !== 'string' || cap.photo.length === 0) return undefined
+    // For absolute paths (starting with '/'), prefer the root path first.
+    // Many entries use '/capsmargarida.jpg' while the repo currently stores
+    // images under `src/public/`. We'll set the img src to the root path
+    // and use an onError fallback to the bundled file below.
+    if (cap.photo.startsWith('/')) return cap.photo
+    try {
+      return new URL(cap.photo, import.meta.url).href
+    } catch (err) {
+      return cap.photo
+    }
+  })()
+
+  // If `cap.photo` starts with '/', prepare a fallback URL that points to
+  // the asset placed in `src/public` relative to this module. This is used
+  // only as a fallback when the root-path `/...` 404s in the browser.
+  const bundledFallback = (typeof cap.photo === 'string' && cap.photo.startsWith('/'))
+    ? (() => {
+      try {
+        return new URL(`../public${cap.photo}`, import.meta.url).href
+      } catch (err) {
+        return undefined
+      }
+    })()
+    : undefined
+
   return (
     <div
       className={`page-card donation-unit-card${isSelected || isAnimatingSelection ? ' donation-unit-card--selected' : ''}${isAnimatingSelection ? ' donation-unit-card--selecting' : ''}`}
@@ -36,11 +69,16 @@ export default function CapsCard({
       onKeyDown={handleKeyDown}
     >
       {/* Foto opcional da unidade */}
-      {cap.photo ? (
+      {resolvedPhoto ? (
         <img
           className="caps-card__photo"
-          src={cap.photo}
+          src={resolvedPhoto}
           alt={`Foto da unidade ${cap.title}`}
+          onError={(event) => {
+            if (bundledFallback && event.currentTarget.src !== bundledFallback) {
+              event.currentTarget.src = bundledFallback
+            }
+          }}
         />
       ) : null}
       <span className="unit-type-badge">{cap.unitType}</span>
