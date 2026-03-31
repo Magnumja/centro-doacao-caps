@@ -1,5 +1,4 @@
 import express from 'express'
-import path from 'path'
 import helmet from 'helmet'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
@@ -71,21 +70,8 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
 })
 
-// ─── Serve front build (se existir) ────────────────────────────────────────────
-// Serve arquivos estáticos da pasta /dist (build do frontend na raiz do repo).
-const distPath = path.join(__dirname, '../../dist')
-app.use(express.static(distPath))
-// Serve ativos públicos que estejam na pasta /public na raiz do repositório.
-// Isso permite que imagens referenciadas por caminho absoluto (ex: /logosesau.png)
-// continuem funcionando mesmo quando o front é servido pelo backend.
-const publicPath = path.join(__dirname, '../../public')
-app.use(express.static(publicPath))
-
-// Fallback para SPA: devolve index.html para rotas que não comecem com /api
-app.get('*', (req, res, next) => {
-  if (req.path.startsWith('/api')) return next()
-  res.sendFile(path.join(distPath, 'index.html'))
-})
+// Em produção (Render), frontend é servido separadamente como Static Site.
+// Em desenvolvimento local, use `npm run dev` na raiz para ambos (com proxy Vite).
 
 // ─── 404 handler ─────────────────────────────────────────────────────────────
 
