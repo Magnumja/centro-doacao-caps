@@ -4,15 +4,17 @@ import { NavLink, Outlet } from 'react-router-dom'
 import '../Styles/Layout.css'
 import logo from '../public/logosesau.png'
 
-// Itens exibidos no menu principal da aplicação.
-const navigationItems = [
-  { to: '/', label: 'Início' },
-  { to: '/caps', label: 'Unidades CAPS' },
-  { to: '/donate', label: 'Doações' },
-  { to: '/admin/login', label: 'Área Admin' }
-]
-
 export default function Layout(): React.ReactElement {
+  const hasAdminSession = typeof window !== 'undefined' && !!localStorage.getItem('loggedHost')
+
+  // Itens exibidos no menu principal da aplicação.
+  const navigationItems = [
+    { to: '/', label: 'Início' },
+    { to: '/caps', label: 'Unidades CAPS' },
+    { to: '/donate', label: 'Doações' },
+    { to: hasAdminSession ? '/admin/dashboard' : '/admin/login', label: 'Área Admin' },
+  ]
+
   return (
     <>
       {/* Banner institucional fixo no topo do site */}

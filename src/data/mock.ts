@@ -149,7 +149,7 @@ export const needs: Need[] = [
 export const hosts: Host[] = [
   {
     id: 'host1',
-    name: 'Teste',
+    name: '',
     email: 'teste@caps.br',
     password: 'senha123',
     capId: 'c1',

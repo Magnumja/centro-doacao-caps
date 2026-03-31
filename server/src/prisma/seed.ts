@@ -49,7 +49,7 @@ async function main(): Promise<void> {
       where: { email: 'teste@caps.br' },
       update: {},
       create: {
-        name: 'Teste',
+        name: '',
         email: 'teste@caps.br',
         password: demoHash,
         contact: '(67) 99999-0001',
@@ -64,13 +64,13 @@ async function main(): Promise<void> {
   await prisma.host.upsert({
     where: { email: seedAdminEmail },
     update: {
-      name: 'Magnum Abreu',
+      name: '',
       password: requestedHash,
       role: 'admin',
       unitId: c1.id,
     },
     create: {
-      name: 'Magnum Abreu',
+      name: '',
       email: seedAdminEmail,
       password: requestedHash,
       contact: '',

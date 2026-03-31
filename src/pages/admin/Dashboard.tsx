@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Donation, Host } from '../../types'
 import { caps, donations, residents } from '../../data/mock'
+import api from '../../lib/api'
 
 import '../../Styles/Dashboard.css'
 
@@ -25,6 +26,12 @@ export default function Dashboard(): React.ReactElement {
 
   // loggedHost guarda o gestor autenticado para personalizar dados do painel.
   const [loggedHost, setLoggedHost] = useState<Host | null>(null)
+  const [requestCategory, setRequestCategory] = useState('Roupas')
+  const [requestDescription, setRequestDescription] = useState('')
+  const [requestAmount, setRequestAmount] = useState('')
+  const [requestPriority, setRequestPriority] = useState<'media' | 'alta'>('media')
+  const [requestFeedback, setRequestFeedback] = useState('')
+  const [isPublishingRequest, setIsPublishingRequest] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -42,6 +49,37 @@ export default function Dashboard(): React.ReactElement {
   const handleLogout = () => {
     localStorage.removeItem('loggedHost')
     navigate('/admin/login')
+  }
+
+  const handleNeedPublish = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setRequestFeedback('')
+
+    const amount = Number(requestAmount)
+    if (!Number.isInteger(amount) || amount <= 0) {
+      setRequestFeedback('Informe uma quantidade valida para publicar a solicitacao.')
+      return
+    }
+
+    setIsPublishingRequest(true)
+    try {
+      await api.post('/api/needs', {
+        title: requestCategory,
+        amount,
+        description: requestDescription,
+        category: requestCategory,
+        priority: requestPriority,
+      })
+
+      setRequestDescription('')
+      setRequestAmount('')
+      setRequestPriority('media')
+      setRequestFeedback('Solicitacao publicada com sucesso.')
+    } catch (error: any) {
+      setRequestFeedback(error?.message || 'Nao foi possivel publicar a solicitacao.')
+    } finally {
+      setIsPublishingRequest(false)
+    }
   }
 
   // Enquanto o host não foi carregado do storage, mantém estado de espera.
@@ -204,14 +242,17 @@ export default function Dashboard(): React.ReactElement {
             <h2>Solicitar Doações</h2>
             <p>Crie uma solicitação de doação que será exibida para a comunidade.</p>
 
-            <form className="donation-request-form">
+            <form className="donation-request-form" onSubmit={handleNeedPublish}>
               <div className="form-group">
                 <label>Categoria de Doação</label>
-                <select>
-                  <option>Selecione uma categoria...</option>
-                  <option value="roupa">Roupas</option>
-                  <option value="comida">Comida</option>
-                  <option value="utensilios">Utensílios</option>
+                <select
+                  value={requestCategory}
+                  onChange={(e) => setRequestCategory(e.target.value)}
+                  disabled={isPublishingRequest}
+                >
+                  <option value="Roupas">Roupas</option>
+                  <option value="Alimentos">Alimentos</option>
+                  <option value="Utensilios">Utensilios</option>
                 </select>
               </div>
 
@@ -220,24 +261,46 @@ export default function Dashboard(): React.ReactElement {
                 <textarea
                   placeholder="Descreva o que seu CAPS precisa..."
                   rows={4}
+                  value={requestDescription}
+                  onChange={(e) => setRequestDescription(e.target.value)}
+                  required
+                  disabled={isPublishingRequest}
                 ></textarea>
               </div>
 
               <div className="form-group">
                 <label>Quantidade Necessária</label>
-                <input type="text" placeholder="Ex: 50 kg, 20 peças, 100 unidades" />
+                <input
+                  type="number"
+                  min={1}
+                  placeholder="Ex: 50"
+                  value={requestAmount}
+                  onChange={(e) => setRequestAmount(e.target.value)}
+                  required
+                  disabled={isPublishingRequest}
+                />
               </div>
 
               <div className="form-group">
                 <label>Prioridade</label>
-                <select>
+                <select
+                  value={requestPriority}
+                  onChange={(e) => setRequestPriority(e.target.value as 'media' | 'alta')}
+                  disabled={isPublishingRequest}
+                >
                   <option value="media">Não urgente</option>
                   <option value="alta">Urgente</option>
                 </select>
               </div>
 
-              <button type="submit" className="btn-primary">
-                Publicar Solicitação
+              {requestFeedback && (
+                <p style={{ color: requestFeedback.includes('sucesso') ? '#0f7a63' : '#d14343' }}>
+                  {requestFeedback}
+                </p>
+              )}
+
+              <button type="submit" className="btn-primary" disabled={isPublishingRequest}>
+                {isPublishingRequest ? 'Publicando...' : 'Publicar Solicitação'}
               </button>
             </form>
 

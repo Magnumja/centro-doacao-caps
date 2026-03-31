@@ -31,7 +31,7 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
   const envAdminEmail = process.env.SEED_ADMIN_EMAIL
   const envAdminPassword = process.env.SEED_ADMIN_PASSWORD
   const envAdminCapSlug = process.env.SEED_ADMIN_CAP_SLUG ?? 'c1'
-  const envAdminName = process.env.SEED_ADMIN_NAME ?? 'Administrador'
+  const envAdminName = process.env.SEED_ADMIN_NAME ?? ''
 
   if (envAdminEmail && envAdminPassword && email === envAdminEmail && password === envAdminPassword) {
     const envAdminUnit = await prisma.unit.findUnique({ where: { slug: envAdminCapSlug } })
@@ -107,7 +107,7 @@ router.get('/me', requireAuth, async (req: Request, res: Response): Promise<void
   if (req.authHost!.hostId.startsWith(ENV_ADMIN_TOKEN_PREFIX)) {
     const envAdminEmail = process.env.SEED_ADMIN_EMAIL ?? ''
     const envAdminCapSlug = process.env.SEED_ADMIN_CAP_SLUG ?? 'c1'
-    const envAdminName = process.env.SEED_ADMIN_NAME ?? 'Administrador'
+    const envAdminName = process.env.SEED_ADMIN_NAME ?? ''
 
     res.json({
       id: req.authHost!.hostId,
