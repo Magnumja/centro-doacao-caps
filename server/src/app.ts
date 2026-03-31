@@ -71,6 +71,11 @@ app.get('/api/health', (_req, res) => {
 // Serve arquivos estáticos da pasta /dist (build do frontend na raiz do repo).
 const distPath = path.join(__dirname, '../../dist')
 app.use(express.static(distPath))
+// Serve ativos públicos que estejam na pasta /public na raiz do repositório.
+// Isso permite que imagens referenciadas por caminho absoluto (ex: /logosesau.png)
+// continuem funcionando mesmo quando o front é servido pelo backend.
+const publicPath = path.join(__dirname, '../../public')
+app.use(express.static(publicPath))
 
 // Fallback para SPA: devolve index.html para rotas que não comecem com /api
 app.get('*', (req, res, next) => {

@@ -2,6 +2,7 @@ import React from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 
 import '../Styles/Layout.css'
+import logo from '../public/logosesau.png'
 
 // Itens exibidos no menu principal da aplicação.
 const navigationItems = [
@@ -19,7 +20,7 @@ export default function Layout(): React.ReactElement {
         <div className="site-banner__content">
           <img
             className="site-banner__logo"
-            src="/logosesau.png"
+            src={logo}
             alt="Logo SESAU"
           />
           <div className="site-banner__text">
