@@ -33,23 +33,53 @@ async function main(): Promise<void> {
 
   const c1 = await prisma.unit.findUniqueOrThrow({ where: { slug: 'c1' } })
 
-  // Hash da senha de exemplo — em produção trocar por credencial forte.
-  const hash = await bcrypt.hash('senha123', 12)
+  const isProduction = process.env.NODE_ENV === 'production'
+  const seedAdminEmail = process.env.SEED_ADMIN_EMAIL ?? 'admin@local.test'
+  const seedAdminPassword = process.env.SEED_ADMIN_PASSWORD ?? 'dev-only-change-me'
+
+  if (isProduction && (!process.env.SEED_ADMIN_EMAIL || !process.env.SEED_ADMIN_PASSWORD)) {
+    throw new Error('Em produção, defina SEED_ADMIN_EMAIL e SEED_ADMIN_PASSWORD antes do seed.')
+  }
+
+  if (!isProduction) {
+    // Usuário de demonstração só em ambientes locais.
+    const demoHash = await bcrypt.hash('senha123', 12)
+
+    await prisma.host.upsert({
+      where: { email: 'teste@caps.br' },
+      update: {},
+      create: {
+        name: 'Teste',
+        email: 'teste@caps.br',
+        password: demoHash,
+        contact: '(67) 99999-0001',
+        role: 'host',
+        unitId: c1.id,
+      },
+    })
+  }
+
+  const requestedHash = await bcrypt.hash(seedAdminPassword, 12)
 
   await prisma.host.upsert({
-    where: { email: 'teste@caps.br' },
-    update: {},
+    where: { email: seedAdminEmail },
+    update: {
+      name: 'Magnum Abreu',
+      password: requestedHash,
+      role: 'admin',
+      unitId: c1.id,
+    },
     create: {
-      name: 'Teste',
-      email: 'teste@caps.br',
-      password: hash,
-      contact: '(67) 99999-0001',
-      role: 'host',
+      name: 'Magnum Abreu',
+      email: seedAdminEmail,
+      password: requestedHash,
+      contact: '',
+      role: 'admin',
       unitId: c1.id,
     },
   })
 
-  console.log('  ✓ 1 host inserido.')
+  console.log(`  ✓ hosts inseridos/atualizados (${isProduction ? 'producao' : 'desenvolvimento'}).`)
 
   // ─── Necessidades ─────────────────────────────────────────────────────────
 

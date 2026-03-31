@@ -94,9 +94,6 @@ export default function Login(): React.ReactElement {
                     </button>
 
                     <div className="login-help">
-                        <p className="login-help__text">
-                            Teste com: <strong>teste@caps.br</strong> / <strong>senha123</strong>
-                        </p>
                         <a href="#" className="login-help__link">
                             Esqueceu a senha?
                         </a>

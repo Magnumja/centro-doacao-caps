@@ -53,7 +53,13 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
 // POST /auth/logout
 // Invalida o cookie de sessão.
 router.post('/logout', (_req: Request, res: Response): void => {
-  res.clearCookie('token').json({ message: 'Logout realizado.' })
+  res
+    .clearCookie('token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+    })
+    .json({ message: 'Logout realizado.' })
 })
 
 // GET /auth/me
@@ -61,7 +67,7 @@ router.post('/logout', (_req: Request, res: Response): void => {
 router.get('/me', requireAuth, async (req: Request, res: Response): Promise<void> => {
   const found = await prisma.host.findUnique({
     where: { id: req.authHost!.hostId },
-    select: { id: true, name: true, email: true, role: true, unitId: true, contact: true },
+    select: { id: true, name: true, email: true, role: true, unitId: true, contact: true, unit: { select: { slug: true } } },
   })
 
   if (!found) {
@@ -69,7 +75,16 @@ router.get('/me', requireAuth, async (req: Request, res: Response): Promise<void
     return
   }
 
-  res.json(found)
+  res.json({
+    id: found.id,
+    name: found.name,
+    email: found.email,
+    role: found.role,
+    unitId: found.unitId,
+    capId: found.unit.slug,
+    contact: found.contact ?? '',
+    password: '',
+  })
 })
 
 export default router

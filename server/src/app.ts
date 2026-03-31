@@ -13,6 +13,10 @@ import residentsRouter from './routes/residents'
 
 const app = express()
 
+// Em provedores como Render, confia no primeiro proxy para IP real e cookies seguros.
+app.set('trust proxy', 1)
+app.disable('x-powered-by')
+
 // ─── Segurança HTTP ───────────────────────────────────────────────────────────
 
 // Helmet define Content-Security-Policy, X-Frame-Options, etc.

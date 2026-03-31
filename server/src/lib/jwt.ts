@@ -2,6 +2,10 @@ import jwt from 'jsonwebtoken'
 
 const SECRET = process.env.JWT_SECRET as string
 
+if (!SECRET || SECRET.length < 32) {
+  throw new Error('JWT_SECRET ausente ou muito curto. Defina ao menos 32 caracteres no ambiente.')
+}
+
 export type JwtPayload = {
   hostId: string
   unitId: string
