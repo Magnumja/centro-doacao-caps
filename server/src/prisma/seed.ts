@@ -97,7 +97,24 @@ async function main(): Promise<void> {
   ]
 
   for (const { unitSlug, ...need } of needsData) {
-    await prisma.need.create({ data: { ...need, unitId: unitMap[unitSlug] } })
+    const unitId = unitMap[unitSlug]
+    const existingNeed = await prisma.need.findFirst({
+      where: {
+        unitId,
+        title: need.title,
+      },
+      select: { id: true },
+    })
+
+    if (existingNeed) {
+      await prisma.need.update({
+        where: { id: existingNeed.id },
+        data: need,
+      })
+      continue
+    }
+
+    await prisma.need.create({ data: { ...need, unitId } })
   }
 
   console.log(`  ✓ ${needsData.length} necessidades inseridas.`)
