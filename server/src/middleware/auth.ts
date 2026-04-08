@@ -17,8 +17,10 @@ function isLocalHostname(hostname?: string): boolean {
 }
 
 function canBypassLocalAuth(req: Request): boolean {
+  const bypassEnabled = process.env.ENABLE_LOCAL_AUTH_BYPASS !== 'false'
+
   return (
-    process.env.ENABLE_LOCAL_AUTH_BYPASS === 'true'
+    bypassEnabled
     && process.env.NODE_ENV !== 'production'
     && isLocalHostname(req.hostname)
   )

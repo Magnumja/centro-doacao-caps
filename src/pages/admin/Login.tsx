@@ -13,6 +13,17 @@ export default function Login(): React.ReactElement {
     const navigate = useNavigate()
     const localAuthBypassEnabled = isLocalAuthBypassEnabled()
 
+    const createLocalDemoHost = () => ({
+        id: 'local-dev-admin',
+        name: 'Administrador local',
+        email: 'local@localhost',
+        password: '',
+        capId: 'c1',
+        contact: '',
+        role: 'admin' as const,
+        unitId: 'local-unit-c1',
+    })
+
     const handleDirectLocalAccess = async () => {
         setErrorMessage('')
         setIsLoading(true)
@@ -22,6 +33,12 @@ export default function Login(): React.ReactElement {
             localStorage.setItem('loggedHost', JSON.stringify(host))
             navigate('/admin/dashboard')
         } catch (err: any) {
+            if (localAuthBypassEnabled) {
+                localStorage.setItem('loggedHost', JSON.stringify(createLocalDemoHost()))
+                navigate('/admin/dashboard')
+                return
+            }
+
             setErrorMessage(err?.message || 'Nao foi possivel acessar o painel local.')
         } finally {
             setIsLoading(false)
@@ -44,6 +61,12 @@ export default function Login(): React.ReactElement {
             localStorage.setItem('loggedHost', JSON.stringify(host))
             navigate('/admin/dashboard')
         } catch (err: any) {
+            if (localAuthBypassEnabled) {
+                localStorage.setItem('loggedHost', JSON.stringify(createLocalDemoHost()))
+                navigate('/admin/dashboard')
+                return
+            }
+
             setErrorMessage(err?.message || 'Erro ao autenticar.')
         } finally {
             setIsLoading(false)

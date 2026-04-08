@@ -25,7 +25,7 @@
   display: grid;
   gap: 1rem;
   grid-template-columns: minmax(0, 1.18fr) minmax(0, 0.82fr);
-  align-items: start;
+  align-items: stretch;
 }
 
 .home-guidance-card,
@@ -35,14 +35,37 @@
   padding: 1.15rem;
   display: grid;
   gap: 0.95rem;
+  min-width: 0;
+  height: 100%;
 }
 
 .home-guidance-card {
   background: linear-gradient(145deg, rgba(15, 143, 121, 0.14), rgba(255, 255, 255, 0.94));
+  align-content: start;
+  grid-template-rows: auto auto auto auto auto 1fr auto;
+}
+
+.page-block.home-hero .home-guidance-card h2 {
+  margin: 0;
+  max-width: 30ch;
+  font-size: clamp(1.12rem, 1.5vw, 1.42rem);
+  line-height: 1.24;
+  letter-spacing: -0.01em;
+}
+
+.page-block.home-hero .home-guidance-card > p {
+  max-width: 62ch;
+  font-size: 0.98rem;
+  line-height: 1.5;
+}
+
+.page-block.home-hero .home-guidance-card h3 {
+  font-size: clamp(1rem, 1.35vw, 1.2rem);
 }
 
 .home-map-card {
   background: rgba(255, 255, 255, 0.92);
+  grid-template-rows: auto auto 1fr;
 }
 
 .home-guidance-card h3 {
@@ -75,6 +98,7 @@
   padding: 0;
   display: grid;
   gap: 0.85rem;
+  align-content: start;
 }
 
 .home-step-list li {
@@ -114,6 +138,7 @@
   display: grid;
   gap: 0.75rem;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin-top: auto;
 }
 
 .home-guidance-note {
@@ -138,10 +163,15 @@
 
 .home-map-card .caps-map-wrapper {
   margin-top: 0;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  min-height: 0;
+  height: 100%;
 }
 
 .home-map-card .caps-map {
-  height: clamp(320px, 34vw, 420px);
+  height: 100%;
+  min-height: 320px;
 }
 
 /* ---- Urgent carousel ---- */
@@ -413,6 +443,11 @@
   font-weight: 600;
 }
 
+.legend-upa {
+  color: #2d8a3f;
+  font-weight: 600;
+}
+
 .caps-marker {
   filter: hue-rotate(0deg);
 }
@@ -421,9 +456,18 @@
   filter: hue-rotate(180deg);
 }
 
+.upa-marker {
+  filter: hue-rotate(95deg) saturate(1.25);
+}
+
 @media (max-width: 920px) {
   .home-hero-layout {
     grid-template-columns: 1fr;
+  }
+
+  .page-block.home-hero .home-guidance-card h2,
+  .page-block.home-hero .home-guidance-card > p {
+    max-width: 100%;
   }
 
   .home-urgent-header {

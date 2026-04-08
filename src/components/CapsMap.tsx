@@ -41,6 +41,63 @@ const rtIcon = new L.Icon({
   className: 'rt-marker',
 })
 
+// Ícone para unidades UPA (verde).
+const upaIcon = new L.Icon({
+  iconUrl: markerIconUrl,
+  iconRetinaUrl: markerIcon2xUrl,
+  shadowUrl: markerShadowUrl,
+  iconSize: [22, 34],
+  iconAnchor: [11, 34],
+  popupAnchor: [0, -34],
+  className: 'upa-marker',
+})
+
+type UpaUnit = {
+  id: string
+  title: string
+  address: string
+  lat: number
+  lng: number
+}
+
+const upaUnits: UpaUnit[] = [
+  {
+    id: 'upa-coronel-antonino',
+    title: 'UPA Coronel Antonino',
+    address: 'Rua Caarapó, 1329 - Coronel Antonino',
+    lat: -20.4348,
+    lng: -54.6162,
+  },
+  {
+    id: 'upa-universitario',
+    title: 'UPA Universitário',
+    address: 'Av. Gunter Hans, 4574 - Universitário',
+    lat: -20.5292,
+    lng: -54.6207,
+  },
+  {
+    id: 'upa-moreninhas',
+    title: 'UPA Moreninhas',
+    address: 'Rua Anacá, 935 - Moreninhas',
+    lat: -20.5184,
+    lng: -54.5636,
+  },
+  {
+    id: 'upa-santa-monica',
+    title: 'UPA Santa Mônica',
+    address: 'Rua Cândido Lima de Barros, 739 - Santa Mônica',
+    lat: -20.4421,
+    lng: -54.5489,
+  },
+  {
+    id: 'upa-leblon',
+    title: 'UPA Leblon',
+    address: 'Rua Arthur Jorge, 6110 - Jardim Leblon',
+    lat: -20.4787,
+    lng: -54.6577,
+  },
+]
+
 // Centro inicial do mapa (Campo Grande/MS).
 const CAMPO_GRANDE_CENTER: [number, number] = [-20.4697, -54.6201]
 
@@ -95,10 +152,28 @@ export default function CapsMap(): React.ReactElement {
             </Popup>
           </Marker>
         ))}
+
+        {/* Marcadores das UPAs de Campo Grande */}
+        {upaUnits.map((upa) => (
+          <Marker
+            key={upa.id}
+            position={[upa.lat, upa.lng]}
+            icon={upaIcon}
+          >
+            <Popup>
+              <strong>{upa.title}</strong>
+              <br />
+              <span>{upa.address}</span>
+              <br />
+              <em style={{ fontSize: '0.8rem', color: '#2d8a3f' }}>UPA</em>
+            </Popup>
+          </Marker>
+        ))}
       </MapContainer>
       <p className="caps-map-legend">
         <span className="legend-caps">● CAPS</span>
         <span className="legend-rt">● Residência Terapêutica</span>
+        <span className="legend-upa">● UPA</span>
       </p>
     </div>
   )

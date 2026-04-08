@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Cap, Donation, Host } from '../../types'
 import { caps } from '../../data/mock'
 import api from '../../lib/api'
+import { isLocalAuthBypassEnabled } from '../../lib/auth'
 
 import '../../Styles/Dashboard.css'
 
@@ -67,6 +68,18 @@ export default function Dashboard(): React.ReactElement {
   const [residents, setResidents] = useState<DashboardResident[]>([])
   const [residentSearch, setResidentSearch] = useState('')
   const navigate = useNavigate()
+  const localAuthBypassEnabled = isLocalAuthBypassEnabled()
+
+  const createLocalDemoHost = (): Host & { unitId: string } => ({
+    id: 'local-dev-admin',
+    name: 'Administrador local',
+    email: 'local@localhost',
+    password: '',
+    capId: 'c1',
+    contact: '',
+    role: 'admin',
+    unitId: 'local-unit-c1',
+  })
 
   useEffect(() => {
     let mounted = true
@@ -79,30 +92,49 @@ export default function Dashboard(): React.ReactElement {
         localStorage.setItem('loggedHost', JSON.stringify(host))
         setLoggedHost(host)
 
-        const [allNeeds, donationsResponse, residentsResponse] = await Promise.all([
-          api.get('/api/needs'),
-          api.get('/api/donations'),
-          api.get('/api/residents'),
-        ])
+        try {
+          const [allNeeds, donationsResponse, residentsResponse] = await Promise.all([
+            api.get('/api/needs'),
+            api.get('/api/donations'),
+            api.get('/api/residents'),
+          ])
 
-        if (!mounted) return
+          if (!mounted) return
 
-        const normalizedNeeds: NeedCardItem[] = (Array.isArray(allNeeds) ? allNeeds : [])
-          .filter((need: any) => (need.unitId ?? need.unit?.id) === host.unitId)
-          .map((need: any) => ({
-            id: need.id,
-            title: need.title,
-            amount: need.amount,
-            description: need.description,
-            priority: need.priority,
-            category: need.category,
-            unitId: need.unitId ?? need.unit?.id ?? host.unitId,
-          }))
+          const normalizedNeeds: NeedCardItem[] = (Array.isArray(allNeeds) ? allNeeds : [])
+            .filter((need: any) => (need.unitId ?? need.unit?.id) === host.unitId)
+            .map((need: any) => ({
+              id: need.id,
+              title: need.title,
+              amount: need.amount,
+              description: need.description,
+              priority: need.priority,
+              category: need.category,
+              unitId: need.unitId ?? need.unit?.id ?? host.unitId,
+            }))
 
-        setPublishedNeeds(normalizedNeeds)
-        setHostDonations(Array.isArray(donationsResponse?.data) ? donationsResponse.data : [])
-        setResidents(Array.isArray(residentsResponse) ? residentsResponse : [])
+          setPublishedNeeds(normalizedNeeds)
+          setHostDonations(Array.isArray(donationsResponse?.data) ? donationsResponse.data : [])
+          setResidents(Array.isArray(residentsResponse) ? residentsResponse : [])
+        } catch {
+          // Em modo apresentação local, mantém o painel aberto mesmo sem backend.
+          if (localAuthBypassEnabled && mounted) {
+            setPublishedNeeds([])
+            setHostDonations([])
+            setResidents([])
+          }
+        }
       } catch {
+        if (localAuthBypassEnabled && mounted) {
+          const demoHost = createLocalDemoHost()
+          localStorage.setItem('loggedHost', JSON.stringify(demoHost))
+          setLoggedHost(demoHost)
+          setPublishedNeeds([])
+          setHostDonations([])
+          setResidents([])
+          return
+        }
+
         localStorage.removeItem('loggedHost')
         if (mounted) {
           navigate('/admin/login')
@@ -113,7 +145,7 @@ export default function Dashboard(): React.ReactElement {
     return () => {
       mounted = false
     }
-  }, [navigate])
+  }, [localAuthBypassEnabled, navigate])
 
   // Encerra sessão local e redireciona para o login.
   const handleLogout = async () => {
