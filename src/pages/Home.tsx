@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import CapsMap from '../components/CapsMap'
-import { needs } from '../data/mock'
+import { fetchPublicNeeds } from '../lib/needs'
+import { Need } from '../types'
 import '../Styles/Home.css'
 
 // Define quantos cards o carrossel mostra, conforme largura de tela.
@@ -23,14 +24,16 @@ function getCardsPerView(): number {
 }
 
 export default function Home(): React.ReactElement {
-  // Lista apenas necessidades marcadas como urgentes.
-  const urgentNeeds = needs.filter((need) => need.priority === 'alta')
+  const [needs, setNeeds] = useState<Need[]>([])
 
   // cardsPerView: quantidade de cards visíveis por "página" no carrossel.
   const [cardsPerView, setCardsPerView] = useState<number>(getCardsPerView)
 
   // activeIndex: posição atual do carrossel (deslocamento horizontal).
   const [activeIndex, setActiveIndex] = useState(0)
+
+  // Lista apenas necessidades marcadas como urgentes.
+  const urgentNeeds = needs.filter((need) => need.priority === 'alta')
 
   useEffect(() => {
     // Recalcula o layout do carrossel quando a janela muda de tamanho.
@@ -43,6 +46,21 @@ export default function Home(): React.ReactElement {
 
     return () => {
       window.removeEventListener('resize', handleResize)
+    }
+  }, [])
+
+  useEffect(() => {
+    let mounted = true
+
+    ;(async () => {
+      const loadedNeeds = await fetchPublicNeeds()
+      if (mounted) {
+        setNeeds(loadedNeeds)
+      }
+    })()
+
+    return () => {
+      mounted = false
     }
   }, [])
 

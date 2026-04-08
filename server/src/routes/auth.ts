@@ -104,6 +104,28 @@ router.post('/logout', (_req: Request, res: Response): void => {
 // GET /auth/me
 // Retorna os dados do host logado (sem senha).
 router.get('/me', requireAuth, async (req: Request, res: Response): Promise<void> => {
+  if (req.authHost?.hostId === 'local-dev-admin') {
+    const localUnitSlug = process.env.LOCAL_AUTH_BYPASS_UNIT_SLUG ?? 'c1'
+    const localUnit = await prisma.unit.findUnique({ where: { slug: localUnitSlug } })
+
+    if (!localUnit) {
+      res.status(500).json({ error: 'Unidade configurada para bypass local não encontrada.' })
+      return
+    }
+
+    res.json({
+      id: 'local-dev-admin',
+      name: 'Administrador local',
+      email: 'local@localhost',
+      role: 'admin',
+      unitId: localUnit.id,
+      capId: localUnit.slug,
+      contact: '',
+      password: '',
+    })
+    return
+  }
+
   if (req.authHost!.hostId.startsWith(ENV_ADMIN_TOKEN_PREFIX)) {
     const envAdminEmail = process.env.SEED_ADMIN_EMAIL ?? ''
     const envAdminCapSlug = process.env.SEED_ADMIN_CAP_SLUG ?? 'c1'

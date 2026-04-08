@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Donation, Host } from '../../types'
-import { caps, donations, residents } from '../../data/mock'
+import { Cap, Donation, Host } from '../../types'
+import { caps } from '../../data/mock'
 import api from '../../lib/api'
 
 import '../../Styles/Dashboard.css'
@@ -17,6 +17,26 @@ type NeedCardItem = {
   priority: 'alta' | 'media'
   category: string
   unitId: string
+}
+
+type DashboardDonation = {
+  id: string
+  category: Donation['category']
+  quantity: string
+  donorName?: string | null
+  donorEmail?: string | null
+  isAnonymous: boolean
+  date: string
+  time: string
+  registeredAt: string
+}
+
+type DashboardResident = {
+  id: string
+  name: string
+  emergencyContact?: string | null
+  entryDate: string
+  status: 'ativo' | 'inativo' | 'transferido'
 }
 
 // Configuração de categorias usada no resumo e gráfico de analytics.
@@ -43,23 +63,32 @@ export default function Dashboard(): React.ReactElement {
   const [requestFeedback, setRequestFeedback] = useState('')
   const [isPublishingRequest, setIsPublishingRequest] = useState(false)
   const [publishedNeeds, setPublishedNeeds] = useState<NeedCardItem[]>([])
+  const [hostDonations, setHostDonations] = useState<DashboardDonation[]>([])
+  const [residents, setResidents] = useState<DashboardResident[]>([])
+  const [residentSearch, setResidentSearch] = useState('')
   const navigate = useNavigate()
 
   useEffect(() => {
-    // Recupera sessão local (mock) e protege acesso ao dashboard.
-    const storedHost = localStorage.getItem('loggedHost')
-    if (!storedHost) {
-      navigate('/admin/login')
-      return
-    }
-    const host: Host = JSON.parse(storedHost)
-    setLoggedHost(host)
+    let mounted = true
 
     ;(async () => {
       try {
-        const allNeeds = await api.get('/api/needs')
-        const normalized: NeedCardItem[] = (allNeeds || [])
-          .filter((need: any) => need.unitId === host.unitId)
+        const host = (await api.get('/api/auth/me')) as Host & { unitId: string }
+        if (!mounted) return
+
+        localStorage.setItem('loggedHost', JSON.stringify(host))
+        setLoggedHost(host)
+
+        const [allNeeds, donationsResponse, residentsResponse] = await Promise.all([
+          api.get('/api/needs'),
+          api.get('/api/donations'),
+          api.get('/api/residents'),
+        ])
+
+        if (!mounted) return
+
+        const normalizedNeeds: NeedCardItem[] = (Array.isArray(allNeeds) ? allNeeds : [])
+          .filter((need: any) => (need.unitId ?? need.unit?.id) === host.unitId)
           .map((need: any) => ({
             id: need.id,
             title: need.title,
@@ -67,20 +96,35 @@ export default function Dashboard(): React.ReactElement {
             description: need.description,
             priority: need.priority,
             category: need.category,
-            unitId: need.unitId,
+            unitId: need.unitId ?? need.unit?.id ?? host.unitId,
           }))
 
-        setPublishedNeeds(normalized)
+        setPublishedNeeds(normalizedNeeds)
+        setHostDonations(Array.isArray(donationsResponse?.data) ? donationsResponse.data : [])
+        setResidents(Array.isArray(residentsResponse) ? residentsResponse : [])
       } catch {
-        setPublishedNeeds([])
+        localStorage.removeItem('loggedHost')
+        if (mounted) {
+          navigate('/admin/login')
+        }
       }
     })()
+
+    return () => {
+      mounted = false
+    }
   }, [navigate])
 
   // Encerra sessão local e redireciona para o login.
-  const handleLogout = () => {
-    localStorage.removeItem('loggedHost')
-    navigate('/admin/login')
+  const handleLogout = async () => {
+    try {
+      await api.post('/api/auth/logout', {})
+    } catch {
+      // Mesmo se o backend já tiver perdido a sessão, limpamos o estado local.
+    } finally {
+      localStorage.removeItem('loggedHost')
+      navigate('/admin/login')
+    }
   }
 
   const handleNeedPublish = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -133,8 +177,15 @@ export default function Dashboard(): React.ReactElement {
   }
 
   // Dados derivados para o host logado (unidade, doações e agregações).
-  const hostCaps = caps.find(c => c.id === loggedHost.capId)
-  const hostDonations = donations.filter(d => d.capId === loggedHost.capId)
+  const hostCaps: Cap | undefined = caps.find(c => c.id === loggedHost.capId)
+  const normalizedResidentSearch = residentSearch.trim().toLowerCase()
+  const filteredResidents = residents.filter((resident) => {
+    if (!normalizedResidentSearch) {
+      return true
+    }
+
+    return resident.name.toLowerCase().includes(normalizedResidentSearch)
+  })
 
   // Conta quantas doações existem em cada categoria.
   const donationCategoryCounts = hostDonations.reduce<Record<Donation['category'], number>>(
@@ -519,14 +570,16 @@ export default function Dashboard(): React.ReactElement {
         {/* TAB: RESIDENTS - lista de residentes de outras unidades */}
         {activeTab === 'residents' && (
           <section className="dashboard-tab">
-            <h2>Controle Social - Residentes em Outros CAPS</h2>
-            <p>Visualize informações de residentes em outras unidades para fins de controle social.</p>
+            <h2>Residentes da Unidade</h2>
+            <p>Visualize os residentes cadastrados na sua unidade para acompanhamento interno.</p>
 
             <div className="residents-filter">
               <input
                 type="text"
-                placeholder="Buscar por nome ou CAPS..."
+                placeholder="Buscar por nome..."
                 className="residents-search"
+                value={residentSearch}
+                onChange={(event) => setResidentSearch(event.target.value)}
               />
             </div>
 
@@ -535,24 +588,24 @@ export default function Dashboard(): React.ReactElement {
                 <thead>
                   <tr>
                     <th>Nome</th>
-                    <th>CAPS</th>
                     <th>Contato de Emergência</th>
                     <th>Data de Entrada</th>
                     <th>Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {residents
-                    .filter(r => r.capId !== loggedHost.capId)
-                    .map(resident => (
+                  {filteredResidents.map(resident => (
                       <tr key={resident.id}>
-                        <td>Em sigilo</td>
-                        <td>{resident.capName}</td>
-                        <td>{resident.emergencyContact}</td>
+                        <td>{resident.name}</td>
+                        <td>{resident.emergencyContact || 'Nao informado'}</td>
                         <td>{new Date(resident.entryDate).toLocaleDateString('pt-BR')}</td>
                         <td>
                           <span className={`status-badge status-${resident.status}`}>
-                            {resident.status === 'ativo' ? '🟢 Ativo' : '⚪ Egresso'}
+                            {resident.status === 'ativo'
+                              ? 'Ativo'
+                              : resident.status === 'transferido'
+                                ? 'Transferido'
+                                : 'Inativo'}
                           </span>
                         </td>
                       </tr>
@@ -560,6 +613,11 @@ export default function Dashboard(): React.ReactElement {
                 </tbody>
               </table>
             </div>
+            {filteredResidents.length === 0 && (
+              <p style={{ color: '#666', fontSize: '0.9rem' }}>
+                Nenhum residente encontrado para o filtro informado.
+              </p>
+            )}
           </section>
         )}
       </main>

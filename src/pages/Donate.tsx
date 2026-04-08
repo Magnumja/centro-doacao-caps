@@ -3,7 +3,7 @@ import { IconType } from 'react-icons'
 import { FaBroom, FaBoxOpen, FaSoap, FaTools, FaTshirt, FaUtensils } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 
-import { needs } from '../data/mock'
+import { fetchPublicNeeds } from '../lib/needs'
 import { Need } from '../types'
 import '../Styles/Home.css'
 
@@ -79,6 +79,8 @@ function getNeedIconConfig(need: Need): NeedIconConfig {
 }
 
 export default function Donate(): React.ReactElement {
+  const [needs, setNeeds] = useState<Need[]>([])
+
   // Divide as necessidades por prioridade para renderizar dois carrosséis.
   const urgentNeeds = needs.filter((need) => need.priority === 'alta')
   const normalNeeds = needs.filter((need) => need.priority === 'media')
@@ -89,6 +91,21 @@ export default function Donate(): React.ReactElement {
   // Índices ativos independentes para urgentes e não urgentes.
   const [urgentActiveIndex, setUrgentActiveIndex] = useState(0)
   const [normalActiveIndex, setNormalActiveIndex] = useState(0)
+
+  useEffect(() => {
+    let mounted = true
+
+    ;(async () => {
+      const loadedNeeds = await fetchPublicNeeds()
+      if (mounted) {
+        setNeeds(loadedNeeds)
+      }
+    })()
+
+    return () => {
+      mounted = false
+    }
+  }, [])
 
   useEffect(() => {
     // Recalcula quantidade de cards por view quando a janela é redimensionada.

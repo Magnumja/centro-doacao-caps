@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { isLocalAuthBypassEnabled } from '../../lib/auth'
 import api from '../../lib/api'
 
 import '../../Styles/Login.css'
@@ -10,6 +11,22 @@ export default function Login(): React.ReactElement {
     const [errorMessage, setErrorMessage] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const navigate = useNavigate()
+    const localAuthBypassEnabled = isLocalAuthBypassEnabled()
+
+    const handleDirectLocalAccess = async () => {
+        setErrorMessage('')
+        setIsLoading(true)
+
+        try {
+            const host = await api.get('/api/auth/me')
+            localStorage.setItem('loggedHost', JSON.stringify(host))
+            navigate('/admin/dashboard')
+        } catch (err: any) {
+            setErrorMessage(err?.message || 'Nao foi possivel acessar o painel local.')
+        } finally {
+            setIsLoading(false)
+        }
+    }
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault()
@@ -92,6 +109,17 @@ export default function Login(): React.ReactElement {
                     <button type="submit" className="login-submit" disabled={isLoading}>
                         {isLoading ? 'Autenticando...' : 'Entrar'}
                     </button>
+
+                    {localAuthBypassEnabled && (
+                        <button
+                            type="button"
+                            className="login-submit"
+                            disabled={isLoading}
+                            onClick={handleDirectLocalAccess}
+                        >
+                            Entrar direto no localhost
+                        </button>
+                    )}
 
                     <div className="login-help">
                         <a href="#" className="login-help__link">
