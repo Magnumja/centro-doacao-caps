@@ -1,44 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Cap, Donation, Host } from '../../types'
+import { Cap, Donation } from '../../types'
 import { caps } from '../../data/mock'
 import api from '../../lib/api'
-import { isLocalAuthBypassEnabled } from '../../lib/auth'
+import { useDashboardData } from '../../hooks/useDashboardData'
 
 import '../../Styles/Dashboard.css'
 
 // Abas disponíveis na área administrativa.
 type TabType = 'overview' | 'donations' | 'analytics' | 'profile' | 'residents'
-
-type NeedCardItem = {
-  id: string
-  title: string
-  amount: number
-  description: string
-  priority: 'alta' | 'media'
-  category: string
-  unitId: string
-}
-
-type DashboardDonation = {
-  id: string
-  category: Donation['category']
-  quantity: string
-  donorName?: string | null
-  donorEmail?: string | null
-  isAnonymous: boolean
-  date: string
-  time: string
-  registeredAt: string
-}
-
-type DashboardResident = {
-  id: string
-  name: string
-  emergencyContact?: string | null
-  entryDate: string
-  status: 'ativo' | 'inativo' | 'transferido'
-}
 
 // Configuração de categorias usada no resumo e gráfico de analytics.
 const analyticsCategories: Array<{
@@ -55,98 +25,16 @@ export default function Dashboard(): React.ReactElement {
   // activeTab controla qual seção da interface será exibida.
   const [activeTab, setActiveTab] = useState<TabType>('overview')
 
-  // loggedHost guarda o gestor autenticado para personalizar dados do painel.
-  const [loggedHost, setLoggedHost] = useState<Host | null>(null)
   const [requestCategory, setRequestCategory] = useState('Roupas')
   const [requestDescription, setRequestDescription] = useState('')
   const [requestAmount, setRequestAmount] = useState('')
   const [requestPriority, setRequestPriority] = useState<'media' | 'alta'>('media')
   const [requestFeedback, setRequestFeedback] = useState('')
   const [isPublishingRequest, setIsPublishingRequest] = useState(false)
-  const [publishedNeeds, setPublishedNeeds] = useState<NeedCardItem[]>([])
-  const [hostDonations, setHostDonations] = useState<DashboardDonation[]>([])
-  const [residents, setResidents] = useState<DashboardResident[]>([])
   const [residentSearch, setResidentSearch] = useState('')
+
+  const { loggedHost, publishedNeeds, hostDonations, residents, setPublishedNeeds } = useDashboardData()
   const navigate = useNavigate()
-  const localAuthBypassEnabled = isLocalAuthBypassEnabled()
-
-  const createLocalDemoHost = (): Host & { unitId: string } => ({
-    id: 'local-dev-admin',
-    name: 'Administrador local',
-    email: 'local@localhost',
-    password: '',
-    capId: 'c1',
-    contact: '',
-    role: 'admin',
-    unitId: 'local-unit-c1',
-  })
-
-  useEffect(() => {
-    let mounted = true
-
-    ;(async () => {
-      try {
-        const host = (await api.get('/api/auth/me')) as Host & { unitId: string }
-        if (!mounted) return
-
-        localStorage.setItem('loggedHost', JSON.stringify(host))
-        setLoggedHost(host)
-
-        try {
-          const [allNeeds, donationsResponse, residentsResponse] = await Promise.all([
-            api.get('/api/needs'),
-            api.get('/api/donations'),
-            api.get('/api/residents'),
-          ])
-
-          if (!mounted) return
-
-          const normalizedNeeds: NeedCardItem[] = (Array.isArray(allNeeds) ? allNeeds : [])
-            .filter((need: any) => (need.unitId ?? need.unit?.id) === host.unitId)
-            .map((need: any) => ({
-              id: need.id,
-              title: need.title,
-              amount: need.amount,
-              description: need.description,
-              priority: need.priority,
-              category: need.category,
-              unitId: need.unitId ?? need.unit?.id ?? host.unitId,
-            }))
-
-          setPublishedNeeds(normalizedNeeds)
-          setHostDonations(Array.isArray(donationsResponse?.data) ? donationsResponse.data : [])
-          setResidents(Array.isArray(residentsResponse) ? residentsResponse : [])
-        } catch {
-          // Em modo apresentação local, mantém o painel aberto mesmo sem backend.
-          if (localAuthBypassEnabled && mounted) {
-            setPublishedNeeds([])
-            setHostDonations([])
-            setResidents([])
-          }
-        }
-      } catch {
-        if (localAuthBypassEnabled && mounted) {
-          const demoHost = createLocalDemoHost()
-          localStorage.setItem('loggedHost', JSON.stringify(demoHost))
-          setLoggedHost(demoHost)
-          setPublishedNeeds([])
-          setHostDonations([])
-          setResidents([])
-          return
-        }
-
-        localStorage.removeItem('loggedHost')
-        if (mounted) {
-          navigate('/admin/login')
-        }
-      }
-    })()
-
-    return () => {
-      mounted = false
-    }
-  }, [localAuthBypassEnabled, navigate])
-
   // Encerra sessão local e redireciona para o login.
   const handleLogout = async () => {
     try {
