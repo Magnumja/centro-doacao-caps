@@ -1,7 +1,17 @@
-// Pequeno helper para chamadas à API do backend.
 const BASE = (import.meta as any).env?.VITE_API_URL ?? ''
 
-async function handleRes(res: Response) {
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    public readonly status: number,
+    public readonly details?: unknown,
+  ) {
+    super(message)
+    this.name = 'ApiError'
+  }
+}
+
+async function handleRes<T>(res: Response): Promise<T> {
   const text = await res.text()
 
   let parsed: any = null
@@ -12,34 +22,31 @@ async function handleRes(res: Response) {
   }
 
   if (!res.ok) {
-    const message =
-      (parsed && typeof parsed.error === 'string' && parsed.error) ||
-      text ||
-      res.statusText
-    throw new Error(message)
+    const message = (parsed && typeof parsed.error === 'string' && parsed.error) || text || res.statusText
+    throw new ApiError(message, res.status, parsed?.details)
   }
 
-  return parsed ?? text
+  return (parsed ?? text) as T
 }
 
-export async function get(path: string) {
+export async function get<T = any>(path: string): Promise<T> {
   const res = await fetch(`${BASE}${path}`, { credentials: 'include' })
-  return handleRes(res)
+  return handleRes<T>(res)
 }
 
-export async function post(path: string, body: unknown) {
+export async function post<T = any>(path: string, body: unknown): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   })
-  return handleRes(res)
+  return handleRes<T>(res)
 }
 
-export async function del(path: string) {
+export async function del<T = any>(path: string): Promise<T> {
   const res = await fetch(`${BASE}${path}`, { method: 'DELETE', credentials: 'include' })
-  return handleRes(res)
+  return handleRes<T>(res)
 }
 
 export default { get, post, del }

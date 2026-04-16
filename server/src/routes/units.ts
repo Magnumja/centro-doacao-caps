@@ -1,11 +1,10 @@
 import { Router, Request, Response } from 'express'
 import prisma from '../lib/prisma'
+import { asyncHandler } from '../utils/async-handler'
 
 const router = Router()
 
-// GET /units
-// Lista todas as unidades públicas (sem dados sensíveis de residentes/hosts).
-router.get('/', async (_req: Request, res: Response): Promise<void> => {
+router.get('/', asyncHandler(async (_req: Request, res: Response): Promise<void> => {
   const units = await prisma.unit.findMany({
     orderBy: { title: 'asc' },
     select: {
@@ -25,11 +24,9 @@ router.get('/', async (_req: Request, res: Response): Promise<void> => {
   })
 
   res.json(units)
-})
+}))
 
-// GET /units/:slug
-// Retorna uma unidade específica pelo slug (ex.: c1, r1).
-router.get('/:slug', async (req: Request, res: Response): Promise<void> => {
+router.get('/:slug', asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const unit = await prisma.unit.findUnique({
     where: { slug: req.params.slug },
     select: {
@@ -57,6 +54,6 @@ router.get('/:slug', async (req: Request, res: Response): Promise<void> => {
   }
 
   res.json(unit)
-})
+}))
 
 export default router
