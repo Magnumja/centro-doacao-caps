@@ -17,6 +17,22 @@ export class NeedsService {
     return this.repository.findMany(filters)
   }
 
+  async listPaginated(filters: NeedFilters, page = '1', limit = '12') {
+    const pageNum = Math.max(1, parseInt(String(page), 10))
+    const limitNum = Math.min(60, Math.max(1, parseInt(String(limit), 10)))
+    const skip = (pageNum - 1) * limitNum
+
+    const [data, total] = await this.repository.listPaginated(filters, skip, limitNum)
+
+    return {
+      data,
+      page: pageNum,
+      limit: limitNum,
+      total,
+      hasMore: skip + data.length < total,
+    }
+  }
+
   async create(payload: unknown, unitId: string) {
     const parsed = createNeedSchema.safeParse(payload)
     if (!parsed.success) {
