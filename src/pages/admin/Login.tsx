@@ -1,76 +1,22 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { isLocalAuthBypassEnabled } from '../../lib/auth'
-import api from '../../lib/api'
+import { useAdminLogin } from '../../hooks/useAdminLogin'
 
 import '../../Styles/Login.css'
 
 export default function Login(): React.ReactElement {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const [errorMessage, setErrorMessage] = useState('')
-    const [isLoading, setIsLoading] = useState(false)
-    const navigate = useNavigate()
-    const localAuthBypassEnabled = isLocalAuthBypassEnabled()
-
-    const createLocalDemoHost = () => ({
-        id: 'local-dev-admin',
-        name: 'Administrador local',
-        email: 'local@localhost',
-        password: '',
-        capId: 'c1',
-        contact: '',
-        role: 'admin' as const,
-        unitId: 'local-unit-c1',
-    })
-
-    const handleDirectLocalAccess = async () => {
-        setErrorMessage('')
-        setIsLoading(true)
-
-        try {
-            const host = await api.get('/api/auth/me')
-            localStorage.setItem('loggedHost', JSON.stringify(host))
-            navigate('/admin/dashboard')
-        } catch (err: any) {
-            if (localAuthBypassEnabled) {
-                localStorage.setItem('loggedHost', JSON.stringify(createLocalDemoHost()))
-                navigate('/admin/dashboard')
-                return
-            }
-
-            setErrorMessage(err?.message || 'Nao foi possivel acessar o painel local.')
-        } finally {
-            setIsLoading(false)
-        }
-    }
+    const {
+        errorMessage,
+        isLoading,
+        localAuthBypassEnabled,
+        directLocalAccess,
+        login,
+    } = useAdminLogin()
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault()
-        setErrorMessage('')
-        setIsLoading(true)
-
-        try {
-            // envia credenciais ao backend; backend devolve cookie httpOnly
-            await api.post('/api/auth/login', { email, password })
-
-            // busca dados do host autenticado
-            const host = await api.get('/api/auth/me')
-
-            // salva e redireciona
-            localStorage.setItem('loggedHost', JSON.stringify(host))
-            navigate('/admin/dashboard')
-        } catch (err: any) {
-            if (localAuthBypassEnabled) {
-                localStorage.setItem('loggedHost', JSON.stringify(createLocalDemoHost()))
-                navigate('/admin/dashboard')
-                return
-            }
-
-            setErrorMessage(err?.message || 'Erro ao autenticar.')
-        } finally {
-            setIsLoading(false)
-        }
+        await login(email, password)
     }
 
     return (
@@ -138,7 +84,7 @@ export default function Login(): React.ReactElement {
                             type="button"
                             className="login-submit"
                             disabled={isLoading}
-                            onClick={handleDirectLocalAccess}
+                            onClick={directLocalAccess}
                         >
                             Entrar direto no localhost
                         </button>
