@@ -2,8 +2,9 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
 import CapsCard from '../components/CapsCard'
-import * as api from '../lib/api'
 import { Cap } from '../types'
+import { registerDonations, validateDonationInput } from '../services/donations-service'
+import { fetchUnits } from '../services/units-service'
 import { caps as mockCaps } from '../data/mock'
 
 import '../Styles/CapsPage.css'
@@ -81,22 +82,7 @@ export default function CapsPage(): React.ReactElement {
 
     async function loadUnits() {
       try {
-        const units = await api.get('/api/units')
-        // O backend retorna { id, slug, title, ... } — aqui mapeamos para a
-        // forma que a UI espera: usamos `slug` como `id` para manter compat.
-        const mapped: Cap[] = (units || []).map((u: any) => ({
-          id: u.slug ?? u.id,
-          title: u.title,
-          unitType: u.unitType === 'RESIDENCIA_TERAPEUTICA' ? 'Residência Terapêutica' : u.unitType,
-          address: u.address,
-          contact: u.contact,
-          description: u.description,
-          capacity: u.capacity,
-          privacyNote: u.privacyNote,
-          lat: u.lat,
-          lng: u.lng,
-          photo: resolveUnitPhotoPath(u.photo),
-        }))
+        const mapped: Cap[] = await fetchUnits(resolveUnitPhotoPath)
 
         if (mounted) {
           // If backend returned an empty list, fall back to local mock data to
@@ -257,47 +243,40 @@ export default function CapsPage(): React.ReactElement {
   // Valida e registra a intenção de doação (atualmente só no estado local).
   const handleRegisterDonation = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault()
-    // Campos mínimos obrigatórios do formulário.
-    if (!selectedUnit || selectedItems.length === 0 || !donationDate || !donationTime) {
-      setFormMessage('Preencha dia, horário e selecione ao menos um tipo de doação.')
+    const validationError = validateDonationInput({
+      unitSlug: selectedUnit?.id ?? '',
+      selectedItems,
+      itemQuantities,
+      donationDate,
+      donationTime,
+      anonymousDonation,
+      donorName,
+      donorEmail,
+    })
+
+    if (validationError) {
+      setFormMessage(validationError)
       return
     }
 
-    // Exige quantidade para todos os itens selecionados.
-    const missingQty = selectedItems.some((item) => !itemQuantities[item]?.trim())
-    if (missingQty) {
-      setFormMessage('Informe a quantidade para cada item selecionado.')
+    const unit = selectedUnit
+    if (!unit) {
+      setFormMessage('Selecione uma unidade para continuar.')
       return
     }
 
-    // Se não for anônimo, nome e e-mail são obrigatórios.
-    if (anonymousDonation === 'não' && (!donorName.trim() || !donorEmail.trim())) {
-      setFormMessage('Preencha seu nome e e-mail para continuar.')
-      return
-    }
-
-    // Mapeia rótulos da UI para os valores esperados pela API.
-    const categoryMap: Record<string, 'roupa' | 'comida' | 'utensilios'> = {
-      Roupas: 'roupa',
-      Comida: 'comida',
-      Utensílios: 'utensilios',
-    }
-
-    // Faz uma requisição por item selecionado (cada categoria vira um registro).
     ;(async () => {
       try {
-        const payloads = selectedItems.map((item) => ({
-          unitSlug: selectedUnit.id,
-          category: categoryMap[item],
-          quantity: itemQuantities[item],
-          isAnonymous: anonymousDonation === 'sim',
-          donorName: anonymousDonation === 'sim' ? undefined : donorName,
-          donorEmail: anonymousDonation === 'sim' ? undefined : donorEmail,
-          date: donationDate,
-          time: donationTime,
-        }))
-
-        await Promise.all(payloads.map((p) => api.post('/api/donations', p)))
+        await registerDonations({
+          unitSlug: unit.id,
+          selectedItems,
+          itemQuantities,
+          donationDate,
+          donationTime,
+          anonymousDonation,
+          donorName,
+          donorEmail,
+        })
 
         const itensList = selectedItems
           .map((it) => `${it}: ${itemQuantities[it]}`)
@@ -305,7 +284,7 @@ export default function CapsPage(): React.ReactElement {
 
         const identidade = anonymousDonation === 'sim' ? 'Doador anônimo' : `Doador: ${donorName} (${donorEmail})`
 
-        const successMsg = `Registro salvo para ${selectedUnit.title}. Dia: ${donationDate}, Horário: ${donationTime}. Itens: ${itensList}. ${identidade}.`
+        const successMsg = `Registro salvo para ${unit.title}. Dia: ${donationDate}, Horário: ${donationTime}. Itens: ${itensList}. ${identidade}.`
 
         setSuccessMessage(successMsg)
         setShowSuccessOverlay(true)
