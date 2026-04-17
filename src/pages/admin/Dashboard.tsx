@@ -2,8 +2,9 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Cap, Donation } from '../../types'
 import { caps } from '../../data/mock'
-import api from '../../lib/api'
 import { useDashboardData } from '../../hooks/useDashboardData'
+import { logoutHost } from '../../services/auth-service'
+import { createNeed } from '../../services/needs-service'
 
 import '../../Styles/Dashboard.css'
 
@@ -38,7 +39,7 @@ export default function Dashboard(): React.ReactElement {
   // Encerra sessão local e redireciona para o login.
   const handleLogout = async () => {
     try {
-      await api.post('/api/auth/logout', {})
+      await logoutHost()
     } catch {
       // Mesmo se o backend já tiver perdido a sessão, limpamos o estado local.
     } finally {
@@ -59,7 +60,7 @@ export default function Dashboard(): React.ReactElement {
 
     setIsPublishingRequest(true)
     try {
-      const createdNeed = await api.post('/api/needs', {
+      const createdNeed = await createNeed({
         title: requestCategory,
         amount,
         description: requestDescription,

@@ -24,6 +24,14 @@ export type CreateNeedPayload = {
   priority: 'alta' | 'media'
 }
 
+export type NeedsPageResponse = {
+  data: ApiNeed[]
+  page: number
+  limit: number
+  total: number
+  hasMore: boolean
+}
+
 export function normalizeNeed(need: ApiNeed): Need {
   const unitId = need.unit?.slug ?? need.unitId ?? need.unit?.id ?? ''
 
@@ -42,6 +50,17 @@ export function normalizeNeed(need: ApiNeed): Need {
 export async function fetchNeeds(): Promise<ApiNeed[]> {
   const response = await api.get<ApiNeed[]>('/api/needs')
   return Array.isArray(response) ? response : []
+}
+
+export async function fetchNeedsPage(params: { page?: number, limit?: number, priority?: 'alta' | 'media' }): Promise<NeedsPageResponse> {
+  const query = new URLSearchParams({
+    paginate: 'true',
+    page: String(params.page ?? 1),
+    limit: String(params.limit ?? 12),
+    ...(params.priority ? { priority: params.priority } : {}),
+  })
+
+  return api.get<NeedsPageResponse>(`/api/needs?${query.toString()}`)
 }
 
 export async function createNeed(payload: CreateNeedPayload): Promise<ApiNeed> {

@@ -372,3 +372,114 @@ body {
 		grid-template-columns: 1fr;
 	}
 }
+
+/* ---- Tema escuro ---- */
+:root[data-theme='dark'] {
+  --health-bg-top: #061712;
+  --health-bg-mid: #0a1f1a;
+  --health-bg-bottom: #102722;
+  --health-accent: #2dc2a7;
+  --health-accent-strong: #96f3df;
+  --health-secondary: #7bc6ff;
+  --health-text: #e5f4f1;
+  --health-soft-text: #c2d7d2;
+  --health-panel: rgba(13, 30, 26, 0.86);
+  --health-border: rgba(123, 198, 255, 0.24);
+  --health-shadow: 0 18px 40px rgba(0, 0, 0, 0.44);
+}
+
+:root[data-theme='dark'] .site-banner,
+:root[data-theme='dark'] .health-header {
+  background: rgba(7, 20, 17, 0.88);
+}
+
+:root[data-theme='dark'] .site-banner__logo {
+  background: #0c211c;
+}
+
+:root[data-theme='dark'] .health-nav__link {
+  background: rgba(16, 39, 34, 0.92);
+  color: var(--health-text);
+}
+
+/* ---- Micro-interações globais ---- */
+button,
+a,
+input,
+textarea,
+select {
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, background-color 160ms ease;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+a:focus-visible {
+  outline: 2px solid rgba(47, 124, 157, 0.55);
+  outline-offset: 2px;
+}
+
+button:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+input:hover,
+textarea:hover,
+select:hover {
+  border-color: rgba(15, 143, 121, 0.38);
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 143, 121, 0.24);
+  background: rgba(255, 255, 255, 0.84);
+  color: var(--health-text);
+  font-family: 'Lexend', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.5rem 0.74rem;
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(15, 143, 121, 0.14);
+}
+
+:root[data-theme='dark'] .theme-toggle {
+  background: rgba(12, 33, 28, 0.84);
+  color: #d7ece8;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 999;
+  background: #17333a;
+  color: #fff;
+  padding: 0.55rem 0.8rem;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  left: 0.8rem;
+  top: 0.8rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

@@ -9,6 +9,8 @@ import unitsRouter from './routes/units'
 import needsRouter from './routes/needs'
 import donationsRouter from './routes/donations'
 import residentsRouter from './routes/residents'
+import highlightsRouter from './routes/highlights'
+import telemetryRouter from './routes/telemetry'
 import { errorHandler, notFoundHandler } from './middleware/error-handler'
 
 const app = express()
@@ -64,6 +66,8 @@ app.use('/api/units', unitsRouter)
 app.use('/api/needs', needsRouter)
 app.use('/api/donations', donationsRouter)
 app.use('/api/residents', residentsRouter)
+app.use('/api/highlights', highlightsRouter)
+app.use('/api/telemetry', telemetryRouter)
 
 // ─── Healthcheck ──────────────────────────────────────────────────────────────
 
