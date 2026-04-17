@@ -9,6 +9,9 @@ import unitsRouter from './routes/units'
 import needsRouter from './routes/needs'
 import donationsRouter from './routes/donations'
 import residentsRouter from './routes/residents'
+import highlightsRouter from './routes/highlights'
+import telemetryRouter from './routes/telemetry'
+import { errorHandler, notFoundHandler } from './middleware/error-handler'
 
 const app = express()
 
@@ -63,6 +66,8 @@ app.use('/api/units', unitsRouter)
 app.use('/api/needs', needsRouter)
 app.use('/api/donations', donationsRouter)
 app.use('/api/residents', residentsRouter)
+app.use('/api/highlights', highlightsRouter)
+app.use('/api/telemetry', telemetryRouter)
 
 // ─── Healthcheck ──────────────────────────────────────────────────────────────
 
@@ -75,8 +80,7 @@ app.get('/api/health', (_req, res) => {
 
 // ─── 404 handler ─────────────────────────────────────────────────────────────
 
-app.use((_req, res) => {
-  res.status(404).json({ error: 'Rota não encontrada.' })
-})
+app.use(notFoundHandler)
+app.use(errorHandler)
 
 export default app
