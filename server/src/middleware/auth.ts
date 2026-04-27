@@ -16,13 +16,25 @@ function isLocalHostname(hostname?: string): boolean {
   return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1'
 }
 
+function isLoopbackAddress(address?: string): boolean {
+  if (!address) {
+    return false
+  }
+
+  // Node may expose IPv4-mapped IPv6 addresses like ::ffff:127.0.0.1
+  return address === '127.0.0.1' || address === '::1' || address === '::ffff:127.0.0.1'
+}
+
 function canBypassLocalAuth(req: Request): boolean {
-  const bypassEnabled = process.env.ENABLE_LOCAL_AUTH_BYPASS !== 'false'
+  const bypassEnabled = process.env.ENABLE_LOCAL_AUTH_BYPASS === 'true'
+  const isDevelopment = process.env.NODE_ENV === 'development'
+  const comesFromLoopback = isLoopbackAddress(req.socket.remoteAddress)
 
   return (
     bypassEnabled
-    && process.env.NODE_ENV !== 'production'
+    && isDevelopment
     && isLocalHostname(req.hostname)
+    && comesFromLoopback
   )
 }
 
@@ -50,8 +62,13 @@ export async function attachLocalBypassAuth(req: Request): Promise<boolean> {
 // Middleware que valida o JWT enviado via cookie httpOnly.
 // Rejeita requisições sem token ou com token inválido/expirado.
 export async function requireAuth(req: Request, res: Response, next: NextFunction): Promise<void> {
-  if (await attachLocalBypassAuth(req)) {
-    next()
+  try {
+    if (await attachLocalBypassAuth(req)) {
+      next()
+      return
+    }
+  } catch (err) {
+    next(err)
     return
   }
 
@@ -72,7 +89,7 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
 
 // Middleware que exige perfil de administrador (beyond host).
 export function requireAdmin(req: Request, res: Response, next: NextFunction): void {
-  requireAuth(req, res, () => {
+  void requireAuth(req, res, () => {
     if (req.authHost?.role !== 'admin') {
       res.status(403).json({ error: 'Acesso restrito a administradores.' })
       return

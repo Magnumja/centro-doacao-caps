@@ -71,3 +71,8 @@ O servidor estará disponível em `http://localhost:3333`.
 - **Zod** para validação de todos os inputs
 - **Prepared statements** via Prisma (proteção contra SQL Injection)
 - Escopo por `unitId`: host só acessa dados da própria unidade
+
+## Variáveis de segurança (importante)
+
+- `ENABLE_LOCAL_AUTH_BYPASS`: por padrão **desligado**. Ative somente em ambiente local com valor `true`.
+- `TRUST_PROXY`: por padrão **desligado**. Ative (`true` ou `1`) apenas quando a API estiver atrás de proxy confiável (ex.: Render/Ingress).

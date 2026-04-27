@@ -15,8 +15,13 @@ import { errorHandler, notFoundHandler } from './middleware/error-handler'
 
 const app = express()
 
-// Em provedores como Render, confia no primeiro proxy para IP real e cookies seguros.
-app.set('trust proxy', 1)
+// Só habilita trust proxy quando configurado explicitamente no ambiente.
+const trustProxyValue = process.env.TRUST_PROXY
+if (trustProxyValue === '1' || trustProxyValue === 'true') {
+  app.set('trust proxy', 1)
+} else {
+  app.set('trust proxy', false)
+}
 app.disable('x-powered-by')
 
 // ─── Segurança HTTP ───────────────────────────────────────────────────────────
