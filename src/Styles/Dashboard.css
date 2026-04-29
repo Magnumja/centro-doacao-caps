@@ -783,3 +783,107 @@
     padding: 1rem;
   }
 }
+
+/* ---- Tema escuro: painel administrativo ---- */
+:root[data-theme='dark'] .dashboard-container {
+  background: transparent;
+}
+
+:root[data-theme='dark'] .dashboard-nav,
+:root[data-theme='dark'] .dashboard-tab,
+:root[data-theme='dark'] .dashboard-card,
+:root[data-theme='dark'] .donation-request-form,
+:root[data-theme='dark'] .analytics-card,
+:root[data-theme='dark'] .analytics-chart-card,
+:root[data-theme='dark'] .analytics-legend__item,
+:root[data-theme='dark'] .profile-card {
+  border-color: rgba(123, 198, 255, 0.18);
+  background: linear-gradient(145deg, rgba(14, 35, 30, 0.94), rgba(9, 24, 21, 0.92));
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+}
+
+:root[data-theme='dark'] .dashboard-header {
+  border-bottom-color: rgba(123, 198, 255, 0.18);
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.24);
+}
+
+:root[data-theme='dark'] .dashboard-nav__item,
+:root[data-theme='dark'] .dashboard-tab > p,
+:root[data-theme='dark'] .dashboard-card__label,
+:root[data-theme='dark'] .analytics-label,
+:root[data-theme='dark'] .analytics-chart-card__header p,
+:root[data-theme='dark'] .analytics-chart-card__empty,
+:root[data-theme='dark'] .analytics-legend__item span,
+:root[data-theme='dark'] .profile-value,
+:root[data-theme='dark'] .donations-table td,
+:root[data-theme='dark'] .residents-table td {
+  color: var(--health-soft-text);
+}
+
+:root[data-theme='dark'] .dashboard-tab h2,
+:root[data-theme='dark'] .dashboard-section h3,
+:root[data-theme='dark'] .analytics-section h3,
+:root[data-theme='dark'] .analytics-chart-card__header h3,
+:root[data-theme='dark'] .analytics-legend__item strong,
+:root[data-theme='dark'] .donation-request-form .form-group label,
+:root[data-theme='dark'] .donations-table th,
+:root[data-theme='dark'] .residents-table th {
+  color: var(--health-text);
+}
+
+:root[data-theme='dark'] .dashboard-card h3,
+:root[data-theme='dark'] .dashboard-card__value,
+:root[data-theme='dark'] .dashboard-nav__item:hover,
+:root[data-theme='dark'] .dashboard-nav__item.active,
+:root[data-theme='dark'] .profile-field label,
+:root[data-theme='dark'] .analytics-chart-card__eyebrow,
+:root[data-theme='dark'] .analytics-legend__percentage {
+  color: var(--health-accent-strong);
+}
+
+:root[data-theme='dark'] .dashboard-section,
+:root[data-theme='dark'] .profile-actions,
+:root[data-theme='dark'] .profile-field,
+:root[data-theme='dark'] .dashboard-nav {
+  border-color: rgba(123, 198, 255, 0.16);
+}
+
+:root[data-theme='dark'] .donation-request-form .form-group input,
+:root[data-theme='dark'] .donation-request-form .form-group select,
+:root[data-theme='dark'] .donation-request-form .form-group textarea,
+:root[data-theme='dark'] .residents-search {
+  border-color: rgba(123, 198, 255, 0.24);
+  background: rgba(8, 22, 19, 0.82);
+  color: var(--health-text);
+}
+
+:root[data-theme='dark'] .donations-table thead,
+:root[data-theme='dark'] .residents-table thead,
+:root[data-theme='dark'] .donations-table tbody tr:hover,
+:root[data-theme='dark'] .residents-table tbody tr:hover {
+  background: rgba(123, 198, 255, 0.08);
+}
+
+:root[data-theme='dark'] .donations-table th,
+:root[data-theme='dark'] .residents-table th,
+:root[data-theme='dark'] .donations-table td,
+:root[data-theme='dark'] .residents-table td {
+  border-color: rgba(123, 198, 255, 0.12);
+}
+
+:root[data-theme='dark'] .btn-secondary {
+  background: rgba(16, 39, 34, 0.92);
+  color: var(--health-accent-strong);
+  border-color: var(--health-accent);
+}
+
+:root[data-theme='dark'] .btn-secondary:hover {
+  background: rgba(45, 194, 167, 0.12);
+}
+
+:root[data-theme='dark'] .analytics-pie-chart {
+  border-color: rgba(16, 39, 34, 0.9);
+  box-shadow:
+    inset 0 0 0 1px rgba(123, 198, 255, 0.12),
+    0 18px 32px rgba(0, 0, 0, 0.38);
+}

@@ -636,3 +636,91 @@
     width: 100%;
   }
 }
+
+/* ---- Tema escuro: fluxo CAPS e formulario de doacao ---- */
+:root[data-theme='dark'] .donation-unit-card,
+:root[data-theme='dark'] .selected-unit-spotlight,
+:root[data-theme='dark'] .donation-panel {
+  border-color: rgba(123, 198, 255, 0.18);
+  background: rgba(14, 35, 30, 0.78);
+}
+
+:root[data-theme='dark'] .donation-unit-card:hover,
+:root[data-theme='dark'] .donation-unit-card--selected {
+  border-color: rgba(45, 194, 167, 0.48);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.36);
+}
+
+:root[data-theme='dark'] .selected-unit-spotlight__content h3,
+:root[data-theme='dark'] .donation-panel h3,
+:root[data-theme='dark'] .donation-form label,
+:root[data-theme='dark'] .donation-form legend,
+:root[data-theme='dark'] .donation-guidelines__unit {
+  color: var(--health-text);
+}
+
+:root[data-theme='dark'] .unit-type-badge {
+  background: rgba(45, 194, 167, 0.14);
+  color: var(--health-accent-strong);
+}
+
+:root[data-theme='dark'] .donation-action-button {
+  border-color: rgba(123, 198, 255, 0.24);
+  background: rgba(16, 39, 34, 0.92);
+  color: var(--health-text);
+}
+
+:root[data-theme='dark'] .donation-action-button--active {
+  border-color: transparent;
+  color: #ffffff;
+  background: linear-gradient(125deg, #0f8f79 0%, #1a9e8a 40%, #2f7c9d 100%);
+}
+
+:root[data-theme='dark'] .donation-guidelines {
+  border-color: rgba(123, 198, 255, 0.22);
+  background: rgba(15, 46, 43, 0.66);
+}
+
+:root[data-theme='dark'] .guideline-warning {
+  background: rgba(255, 139, 130, 0.14);
+  color: #ffb2aa;
+}
+
+:root[data-theme='dark'] .donation-form input[type='date'],
+:root[data-theme='dark'] .donation-form input[type='time'],
+:root[data-theme='dark'] .donation-form input[type='text'],
+:root[data-theme='dark'] .donation-form input[type='email'],
+:root[data-theme='dark'] .donation-form fieldset {
+  border-color: rgba(123, 198, 255, 0.24);
+  background: rgba(8, 22, 19, 0.82);
+  color: var(--health-text);
+}
+
+:root[data-theme='dark'] .form-feedback,
+:root[data-theme='dark'] .donation-success-details {
+  background: rgba(45, 194, 167, 0.12);
+  color: var(--health-accent-strong);
+}
+
+:root[data-theme='dark'] .donation-success-overlay {
+  background: rgba(0, 0, 0, 0.68);
+}
+
+:root[data-theme='dark'] .donation-success-card {
+  border: 1px solid rgba(123, 198, 255, 0.18);
+  background: linear-gradient(135deg, #102722 0%, #091815 100%);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.5);
+}
+
+:root[data-theme='dark'] .donation-success-card h2 {
+  color: var(--health-text);
+}
+
+:root[data-theme='dark'] .donation-success-card p {
+  color: var(--health-soft-text);
+}
+
+:root[data-theme='dark'] .donation-success-close {
+  color: var(--health-accent-strong);
+  border-color: var(--health-accent);
+}
