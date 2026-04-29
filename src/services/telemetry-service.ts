@@ -1,6 +1,8 @@
 import api from '../lib/api'
 
 type TelemetryCategory = 'carousel' | 'scroll' | 'navigation' | 'theme' | 'interaction' | 'performance'
+const env = (import.meta as any).env
+const telemetryEnabled = env?.DEV ? env?.VITE_ENABLE_TELEMETRY === 'true' : env?.VITE_ENABLE_TELEMETRY !== 'false'
 
 export async function trackEvent(payload: {
   eventName: string
@@ -8,11 +10,15 @@ export async function trackEvent(payload: {
   value?: number
   metadata?: Record<string, string | number | boolean>
 }): Promise<void> {
+  if (!telemetryEnabled) {
+    return
+  }
+
   const body = { ...payload, at: new Date().toISOString() }
 
   try {
     if (typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function') {
-      const endpoint = `${(import.meta as any).env?.VITE_API_URL ?? ''}/api/telemetry`
+      const endpoint = `${env?.VITE_API_URL ?? ''}/api/telemetry`
       const sent = navigator.sendBeacon(endpoint, new Blob([JSON.stringify(body)], { type: 'application/json' }))
       if (sent) {
         return

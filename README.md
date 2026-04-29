@@ -8,17 +8,27 @@ Como usar:
 
    npm install
 
-2. Rodar em modo desenvolvimento
+2. Rodar somente o frontend em modo desenvolvimento
 
    npm run dev
 
-3. Gerar build de produção
+3. Rodar frontend + API em modo desenvolvimento
+
+   npm run dev:all
+
+4. Gerar build de produção
 
    npm run build
 
-4. Visualizar build localmente
+5. Visualizar build localmente
 
    npm run preview
+
+6. Validar build de publicacao do frontend e da API
+
+   npm run deploy:check
+
+Para publicar o projeto, siga o checklist em `DEPLOYMENT.md`.
 
 Observações:
 - Repositório inicializado sem alterar histórico git local.

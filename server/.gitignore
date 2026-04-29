@@ -1,7 +1,9 @@
 node_modules/
 dist/
 .env
-*.env.local
+.env.*
+!.env.example
+!.env.production.example
 
 # Prisma migrations geradas localmente (commitar apenas em repositório compartilhado)
 # prisma/migrations/

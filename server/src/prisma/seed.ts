@@ -36,6 +36,7 @@ async function main(): Promise<void> {
   const isProduction = process.env.NODE_ENV === 'production'
   const seedAdminEmail = process.env.SEED_ADMIN_EMAIL ?? 'admin@local.test'
   const seedAdminPassword = process.env.SEED_ADMIN_PASSWORD ?? 'dev-only-change-me'
+  const seedAdminName = process.env.SEED_ADMIN_NAME ?? 'Administrador'
 
   if (isProduction && (!process.env.SEED_ADMIN_EMAIL || !process.env.SEED_ADMIN_PASSWORD)) {
     throw new Error('Em produção, defina SEED_ADMIN_EMAIL e SEED_ADMIN_PASSWORD antes do seed.')
@@ -64,13 +65,13 @@ async function main(): Promise<void> {
   await prisma.host.upsert({
     where: { email: seedAdminEmail },
     update: {
-      name: '',
+      name: seedAdminName,
       password: requestedHash,
       role: 'admin',
       unitId: c1.id,
     },
     create: {
-      name: '',
+      name: seedAdminName,
       email: seedAdminEmail,
       password: requestedHash,
       contact: '',
