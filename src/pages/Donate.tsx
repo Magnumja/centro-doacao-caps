@@ -3,11 +3,13 @@ import { IconType } from 'react-icons'
 import { FaBroom, FaBoxOpen, FaSoap, FaTools, FaTshirt, FaUtensils } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 
+import CategoryFilter from '../components/CategoryFilter'
 import NewsCarousel from '../components/ui/NewsCarousel'
 import { HighlightItem } from '../data/highlights'
+import { donationCategories } from '../data/mockData'
 import { fetchPublicNeeds } from '../lib/needs'
 import { fetchHighlights } from '../services/highlights-service'
-import { Need } from '../types'
+import { DonationCategoryName, Need } from '../types'
 import '../Styles/Home.css'
 
 type NeedIconConfig = {
@@ -84,10 +86,14 @@ function getNeedIconConfig(need: Need): NeedIconConfig {
 export default function Donate(): React.ReactElement {
   const [needs, setNeeds] = useState<Need[]>([])
   const [highlights, setHighlights] = useState<HighlightItem[]>([])
+  const [activeCategory, setActiveCategory] = useState<DonationCategoryName | 'Todas'>('Todas')
 
   // Divide as necessidades por prioridade para renderizar dois carrosséis.
-  const urgentNeeds = needs.filter((need) => need.priority === 'alta')
-  const normalNeeds = needs.filter((need) => need.priority === 'media')
+  const visibleNeeds = activeCategory === 'Todas'
+    ? needs
+    : needs.filter((need) => need.category === activeCategory)
+  const urgentNeeds = visibleNeeds.filter((need) => need.priority === 'alta')
+  const normalNeeds = visibleNeeds.filter((need) => need.priority !== 'alta')
 
   // cardsPerView controla responsividade dos carrosséis.
   const [cardsPerView, setCardsPerView] = useState<number>(getCardsPerView)
@@ -207,6 +213,12 @@ export default function Donate(): React.ReactElement {
           urgente e não urgente.
         </p>
       </div>
+
+      <CategoryFilter
+        categories={donationCategories}
+        activeCategory={activeCategory}
+        onChange={setActiveCategory}
+      />
 
       <section className="home-highlights-section donate-news-section" aria-label="Notícias da rede psicossocial">
         <div className="home-urgent-header">

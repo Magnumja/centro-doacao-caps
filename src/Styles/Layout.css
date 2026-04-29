@@ -288,6 +288,87 @@ body {
 	background: rgba(15, 143, 121, 0.22);
 }
 
+.section-heading {
+	display: grid;
+	gap: 0.45rem;
+}
+
+.section-heading h2 {
+	max-width: 760px;
+}
+
+.category-filter {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	align-items: center;
+}
+
+.category-filter__button {
+	border: 1px solid rgba(15, 143, 121, 0.2);
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.84);
+	color: var(--health-text);
+	font-family: 'Lexend', sans-serif;
+	font-size: 0.82rem;
+	font-weight: 600;
+	padding: 0.5rem 0.75rem;
+	cursor: pointer;
+}
+
+.category-filter__button:hover {
+	border-color: rgba(15, 143, 121, 0.38);
+	transform: translateY(-1px);
+}
+
+.category-filter__button--active {
+	border-color: transparent;
+	background: linear-gradient(125deg, var(--health-accent), var(--health-secondary));
+	color: #ffffff;
+	box-shadow: 0 8px 18px rgba(15, 143, 121, 0.18);
+}
+
+.urgency-badge,
+.status-request-badge {
+	width: fit-content;
+	border-radius: 999px;
+	padding: 0.25rem 0.58rem;
+	font-family: 'Lexend', sans-serif;
+	font-size: 0.72rem;
+	font-weight: 700;
+	line-height: 1.2;
+}
+
+.urgency-badge--high {
+	background: rgba(185, 56, 45, 0.12);
+	color: #9d2f26;
+}
+
+.urgency-badge--medium {
+	background: rgba(191, 132, 20, 0.14);
+	color: #80570e;
+}
+
+.urgency-badge--low {
+	background: rgba(47, 124, 157, 0.13);
+	color: #245d76;
+}
+
+.status-request-badge--pending {
+	background: rgba(47, 124, 157, 0.12);
+	color: #245d76;
+}
+
+.status-request-badge--partial {
+	background: rgba(15, 143, 121, 0.13);
+	color: #0b6d5d;
+}
+
+.status-request-badge--done {
+	background: rgba(64, 128, 78, 0.14);
+	color: #315f3a;
+}
+
 @media (max-width: 740px) {
 	.site-banner__logo {
 		width: 96px;
@@ -429,6 +510,38 @@ body {
 :root[data-theme='dark'] .page-kicker,
 :root[data-theme='dark'] .inline-link {
   background: rgba(123, 198, 255, 0.12);
+}
+
+:root[data-theme='dark'] .category-filter__button {
+  border-color: rgba(123, 198, 255, 0.24);
+  background: rgba(16, 39, 34, 0.92);
+  color: var(--health-text);
+}
+
+:root[data-theme='dark'] .urgency-badge--high {
+  background: rgba(255, 139, 130, 0.14);
+  color: #ffb2aa;
+}
+
+:root[data-theme='dark'] .urgency-badge--medium {
+  background: rgba(255, 207, 113, 0.16);
+  color: #ffd77f;
+}
+
+:root[data-theme='dark'] .urgency-badge--low,
+:root[data-theme='dark'] .status-request-badge--pending {
+  background: rgba(123, 198, 255, 0.13);
+  color: #b6ddff;
+}
+
+:root[data-theme='dark'] .status-request-badge--partial {
+  background: rgba(45, 194, 167, 0.14);
+  color: var(--health-accent-strong);
+}
+
+:root[data-theme='dark'] .status-request-badge--done {
+  background: rgba(125, 218, 142, 0.14);
+  color: #b9f4c4;
 }
 
 :root[data-theme='dark'] input,

@@ -1,3 +1,184 @@
+/* ---- Hero institucional e secoes de impacto ---- */
+.home-institutional-hero {
+  width: min(1360px, 97vw);
+  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.55fr);
+  align-items: center;
+  gap: clamp(1rem, 3vw, 2.2rem);
+  padding-block: clamp(1.4rem, 4vw, 3.4rem);
+}
+
+.home-institutional-hero__content {
+  display: grid;
+  gap: 1rem;
+}
+
+.home-institutional-hero__content h2 {
+  max-width: 760px;
+  font-size: clamp(2rem, 5vw, 4.5rem);
+  line-height: 1.04;
+}
+
+.home-institutional-hero__content p {
+  max-width: 780px;
+  font-size: clamp(1.02rem, 1.6vw, 1.22rem);
+}
+
+.home-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 0.3rem;
+}
+
+.home-hero-button {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.48rem;
+  border-radius: 12px;
+  padding: 0.78rem 1rem;
+  font-family: 'Lexend', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.home-hero-button--primary {
+  background: linear-gradient(125deg, #0f8f79 0%, #1a9e8a 40%, #2f7c9d 100%);
+  color: #ffffff;
+  box-shadow: 0 12px 24px rgba(15, 143, 121, 0.22);
+}
+
+.home-hero-button--secondary {
+  border: 1px solid rgba(15, 143, 121, 0.28);
+  background: rgba(255, 255, 255, 0.84);
+  color: #17333a;
+}
+
+.home-institutional-hero__panel {
+  border-radius: 18px;
+  border: 1px solid rgba(15, 143, 121, 0.22);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.94), rgba(228, 244, 241, 0.92));
+  padding: 1.2rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.home-hero-panel-icon,
+.how-it-works-card__icon,
+.impact-card__icon {
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: rgba(15, 143, 121, 0.12);
+  color: #0b6d5d;
+}
+
+.home-institutional-hero__panel strong {
+  font-family: 'Lexend', sans-serif;
+  font-size: clamp(1.18rem, 2vw, 1.55rem);
+  color: #17333a;
+}
+
+.how-it-works-section,
+.impact-section,
+.needed-ranking-section {
+  width: min(1360px, 97vw);
+}
+
+.how-it-works-grid,
+.impact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.85rem;
+}
+
+.how-it-works-card,
+.impact-card {
+  position: relative;
+  border-radius: 18px;
+  border: 1px solid rgba(15, 143, 121, 0.18);
+  background: rgba(255, 255, 255, 0.84);
+  padding: 1rem;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.how-it-works-card__step {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: #17333a;
+  color: #ffffff;
+  font-family: 'Lexend', sans-serif;
+  font-weight: 700;
+}
+
+.how-it-works-card h3,
+.impact-card span,
+.needed-ranking-list strong {
+  font-family: 'Lexend', sans-serif;
+}
+
+.impact-card strong {
+  font-family: 'Lexend', sans-serif;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  line-height: 1;
+  color: #0b6d5d;
+}
+
+.impact-card > span:not(.impact-card__icon) {
+  color: #17333a;
+  font-weight: 700;
+}
+
+.needed-ranking-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.needed-ranking-list li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 16px;
+  border: 1px solid rgba(15, 143, 121, 0.16);
+  background: rgba(255, 255, 255, 0.82);
+  padding: 0.75rem;
+}
+
+.needed-ranking-list__position {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(15, 143, 121, 0.12);
+  color: #0b6d5d;
+  font-family: 'Lexend', sans-serif;
+  font-weight: 700;
+}
+
+.needed-ranking-list__amount {
+  border-radius: 999px;
+  padding: 0.28rem 0.6rem;
+  background: rgba(47, 124, 157, 0.12);
+  color: #245d76;
+  font-weight: 700;
+}
+
 /* ---- Home hero ---- */
 .home-hero {
   position: relative;
@@ -461,6 +642,10 @@
 }
 
 @media (max-width: 920px) {
+  .home-institutional-hero {
+    grid-template-columns: 1fr;
+  }
+
   .home-hero-layout {
     grid-template-columns: 1fr;
   }
@@ -485,6 +670,30 @@
 }
 
 @media (max-width: 740px) {
+  .home-institutional-hero,
+  .how-it-works-section,
+  .impact-section,
+  .needed-ranking-section {
+    width: min(100%, 95vw);
+  }
+
+  .home-hero-actions {
+    flex-direction: column;
+  }
+
+  .home-hero-button {
+    width: 100%;
+  }
+
+  .needed-ranking-list li {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .needed-ranking-list__amount {
+    grid-column: 2;
+    justify-self: start;
+  }
+
   .home-hero::before {
     inset: -35% auto auto 55%;
     width: 220px;
@@ -1043,6 +1252,10 @@
 
 :root[data-theme='dark'] .home-guidance-card,
 :root[data-theme='dark'] .home-map-card,
+:root[data-theme='dark'] .home-institutional-hero__panel,
+:root[data-theme='dark'] .how-it-works-card,
+:root[data-theme='dark'] .impact-card,
+:root[data-theme='dark'] .needed-ranking-list li,
 :root[data-theme='dark'] .donate-carousel-group,
 :root[data-theme='dark'] .news-carousel,
 :root[data-theme='dark'] .home-need-feed-card,
@@ -1058,6 +1271,10 @@
 
 :root[data-theme='dark'] .home-guidance-card h2,
 :root[data-theme='dark'] .home-guidance-card h3,
+:root[data-theme='dark'] .home-institutional-hero__panel strong,
+:root[data-theme='dark'] .how-it-works-card h3,
+:root[data-theme='dark'] .impact-card > span:not(.impact-card__icon),
+:root[data-theme='dark'] .needed-ranking-list strong,
 :root[data-theme='dark'] .home-step-list strong,
 :root[data-theme='dark'] .home-urgent-card h3,
 :root[data-theme='dark'] .home-urgent-meta strong,
@@ -1079,8 +1296,17 @@
 
 :root[data-theme='dark'] .home-card-tag,
 :root[data-theme='dark'] .home-urgent-amount,
+:root[data-theme='dark'] .impact-card strong,
+:root[data-theme='dark'] .needed-ranking-list__position,
 :root[data-theme='dark'] .analytics-legend__percentage {
   color: var(--health-accent-strong);
+}
+
+:root[data-theme='dark'] .home-hero-button--secondary,
+:root[data-theme='dark'] .needed-ranking-list__amount {
+  border-color: rgba(123, 198, 255, 0.22);
+  background: rgba(16, 39, 34, 0.92);
+  color: var(--health-text);
 }
 
 :root[data-theme='dark'] .home-carousel-controls button,

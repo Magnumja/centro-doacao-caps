@@ -1,5 +1,5 @@
 import api from '../lib/api'
-import { Need } from '../types'
+import { DonationStatus, DonationUrgency, Need } from '../types'
 
 export type ApiNeed = {
   id: string
@@ -7,7 +7,10 @@ export type ApiNeed = {
   amount: number
   description: string
   category: string
-  priority: 'alta' | 'media'
+  priority: 'alta' | 'media' | 'baixa'
+  urgency?: DonationUrgency
+  status?: DonationStatus
+  donatedAmount?: number
   unitId?: string
   unit?: {
     id: string
@@ -21,7 +24,7 @@ export type CreateNeedPayload = {
   amount: number
   description: string
   category: string
-  priority: 'alta' | 'media'
+  priority: 'alta' | 'media' | 'baixa'
 }
 
 export type NeedsPageResponse = {
@@ -30,6 +33,12 @@ export type NeedsPageResponse = {
   limit: number
   total: number
   hasMore: boolean
+}
+
+const urgencyByPriority: Record<Need['priority'], DonationUrgency> = {
+  alta: 'Urgente',
+  media: 'Moderado',
+  baixa: 'Baixa prioridade',
 }
 
 export function normalizeNeed(need: ApiNeed): Need {
@@ -42,8 +51,11 @@ export function normalizeNeed(need: ApiNeed): Need {
     description: need.description,
     category: need.category,
     priority: need.priority,
+    urgency: need.urgency ?? urgencyByPriority[need.priority],
+    status: need.status ?? 'Pendente',
+    donatedAmount: need.donatedAmount ?? 0,
     unitId,
-    unitName: need.unit?.title ?? 'Unidade não informada',
+    unitName: need.unit?.title ?? 'Unidade nao informada',
   }
 }
 
@@ -52,7 +64,7 @@ export async function fetchNeeds(): Promise<ApiNeed[]> {
   return Array.isArray(response) ? response : []
 }
 
-export async function fetchNeedsPage(params: { page?: number, limit?: number, priority?: 'alta' | 'media' }): Promise<NeedsPageResponse> {
+export async function fetchNeedsPage(params: { page?: number, limit?: number, priority?: 'alta' | 'media' | 'baixa' }): Promise<NeedsPageResponse> {
   const query = new URLSearchParams({
     paginate: 'true',
     page: String(params.page ?? 1),

@@ -2,6 +2,10 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import CapsMap from '../components/CapsMap'
+import HeroSection from '../components/HeroSection'
+import HowItWorks from '../components/HowItWorks'
+import ImpactCards from '../components/ImpactCards'
+import NeededItemsRanking from '../components/NeededItemsRanking'
 import NewsCarousel from '../components/ui/NewsCarousel'
 import { NeedListSkeleton, UrgentCarouselSkeleton } from '../components/ui/Skeletons'
 import { HighlightItem } from '../data/highlights'
@@ -11,6 +15,7 @@ import { fetchHighlights } from '../services/highlights-service'
 import { fetchNeedsPage, normalizeNeed } from '../services/needs-service'
 import { Need } from '../types'
 import { trackEvent } from '../services/telemetry-service'
+import { neededItemsRanking, projectStats } from '../data/mockData'
 import '../Styles/Home.css'
 
 const FEED_PAGE_SIZE = 6
@@ -201,6 +206,12 @@ export default function Home(): React.ReactElement {
 
   return (
     <>
+      <HeroSection stats={projectStats} />
+
+      <HowItWorks />
+
+      <ImpactCards stats={projectStats} />
+
       <section className="page-block home-highlights-section">
         <div className="home-urgent-header">
           <div>
@@ -333,6 +344,8 @@ export default function Home(): React.ReactElement {
           </>
         )}
       </section>
+
+      <NeededItemsRanking items={neededItemsRanking} />
     </>
   )
 }

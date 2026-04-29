@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import AdminDashboardSummary from '../../components/AdminDashboard'
 import { Cap, Donation } from '../../types'
-import { caps } from '../../data/mock'
+import { caps, needs as mockNeeds, projectStats } from '../../data/mock'
 import { useDashboardData } from '../../hooks/useDashboardData'
 import { logoutHost } from '../../services/auth-service'
 import { createNeed } from '../../services/needs-service'
@@ -212,6 +213,8 @@ export default function Dashboard(): React.ReactElement {
           <section className="dashboard-tab">
             <h2>Visão Geral</h2>
             <p>Bem-vindo ao painel de gestão. Você gerencia <strong>{hostCaps?.title}</strong>.</p>
+
+            <AdminDashboardSummary stats={projectStats} needs={mockNeeds} />
 
             <div className="dashboard-cards">
               <article className="dashboard-card">
