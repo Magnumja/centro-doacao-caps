@@ -14,6 +14,7 @@ export default function Layout(): React.ReactElement {
     { to: '/', label: 'Início' },
     { to: '/caps', label: 'Unidades CAPS' },
     { to: '/donate', label: 'Doações' },
+    { to: '/suas-doacoes', label: 'Suas Doações' },
     { to: canOpenAdminDirectly ? '/admin/dashboard' : '/admin/login', label: 'Área Admin' },
   ]
 

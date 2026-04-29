@@ -4,6 +4,7 @@ import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
 import Home from '../pages/Home'
 import CapsPage from '../pages/CapsPage'
 import Donate from '../pages/Donate'
+import YourDonations from '../pages/YourDonations'
 import Login from '../pages/admin/Login'
 import Dashboard from '../pages/admin/Dashboard'
 import Layout from '../components/Layout'
@@ -29,6 +30,7 @@ export default function Router(): React.ReactElement {
 
           {/* Vitrine pública de necessidades */}
           <Route path="/donate" element={<Donate />} />
+          <Route path="/suas-doacoes" element={<YourDonations />} />
 
           {/* Entrada da área administrativa */}
           <Route path="/admin/login" element={<Login />} />

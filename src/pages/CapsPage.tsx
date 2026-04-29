@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 
 import CapsCard from '../components/CapsCard'
 import { Cap } from '../types'
 import { registerDonations, validateDonationInput } from '../services/donations-service'
+import { saveDonorIntention } from '../services/donor-intentions-service'
 import { fetchUnits } from '../services/units-service'
 import { caps as mockCaps } from '../data/mock'
 
@@ -278,6 +279,19 @@ export default function CapsPage(): React.ReactElement {
           donorEmail,
         })
 
+        saveDonorIntention({
+          unitSlug: unit.id,
+          unitName: unit.title,
+          items: selectedItems.map((item) => ({
+            name: item,
+            quantity: itemQuantities[item],
+          })),
+          donationDate,
+          donationTime,
+          isAnonymous: anonymousDonation === 'sim',
+          donorName: anonymousDonation === 'sim' ? undefined : donorName,
+        })
+
         const itensList = selectedItems
           .map((it) => `${it}: ${itemQuantities[it]}`)
           .join(', ')
@@ -333,6 +347,9 @@ export default function CapsPage(): React.ReactElement {
               >
                 Voltar à seleção de unidades
               </button>
+              <Link className="donation-success-link" to="/suas-doacoes">
+                Ver suas doações
+              </Link>
             </div>
           </article>
         </div>
