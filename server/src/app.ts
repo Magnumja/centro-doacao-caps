@@ -14,6 +14,10 @@ import telemetryRouter from './routes/telemetry'
 import { errorHandler, notFoundHandler } from './middleware/error-handler'
 
 const app = express()
+const allowedOrigins = (process.env.FRONTEND_URL ?? 'http://localhost:5173,http://127.0.0.1:5173')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean)
 
 // Só habilita trust proxy quando configurado explicitamente no ambiente.
 const trustProxyValue = process.env.TRUST_PROXY
@@ -32,7 +36,14 @@ app.use(helmet())
 // CORS — permite somente o front configurado em .env ; bloqueia outras origens.
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL ?? 'http://localhost:5173',
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true)
+        return
+      }
+
+      callback(new Error('Origem nao permitida pelo CORS.'))
+    },
     credentials: true, // necessário para cookies
   }),
 )

@@ -1,1 +1,5 @@
-# server .dockerignore removed per user request
+node_modules
+dist
+.env
+npm-debug.log
+coverage

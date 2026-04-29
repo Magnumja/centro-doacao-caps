@@ -1,4 +1,5 @@
-const BASE = (import.meta as any).env?.VITE_API_URL ?? ''
+const rawBase = (import.meta as any).env?.VITE_API_URL ?? ''
+const BASE = String(rawBase).replace(/\/$/, '')
 
 export class ApiError extends Error {
   constructor(

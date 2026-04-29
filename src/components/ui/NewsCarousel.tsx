@@ -15,6 +15,8 @@ export default function NewsCarousel({ items, autoPlayMs = 5500 }: Props): React
   const touchStartX = useRef<number | null>(null)
 
   const total = items.length
+  const activeItem = useMemo(() => items[activeIndex], [activeIndex, items])
+  const activeItemIsExternal = activeItem?.ctaLink.startsWith('http')
 
   useEffect(() => {
     if (total <= 1 || isPaused || document.hidden) {
@@ -37,9 +39,6 @@ export default function NewsCarousel({ items, autoPlayMs = 5500 }: Props): React
       window.clearInterval(timer)
     }
   }, [activeIndex, autoPlayMs, isPaused, total])
-
-  const activeItem = useMemo(() => items[activeIndex], [activeIndex, items])
-  const activeItemIsExternal = activeItem?.ctaLink.startsWith('http')
 
   useEffect(() => {
     if (!activeItem) return
@@ -99,6 +98,22 @@ export default function NewsCarousel({ items, autoPlayMs = 5500 }: Props): React
     return <p className="home-urgent-empty">Nenhum destaque disponível no momento.</p>
   }
 
+  const renderSlideLink = (className: string, children: React.ReactNode): React.ReactElement => {
+    if (activeItemIsExternal) {
+      return (
+        <a className={className} href={activeItem.ctaLink} target="_blank" rel="noreferrer">
+          {children}
+        </a>
+      )
+    }
+
+    return (
+      <Link className={className} to={activeItem.ctaLink}>
+        {children}
+      </Link>
+    )
+  }
+
   return (
     <section
       className="news-carousel"
@@ -122,30 +137,32 @@ export default function NewsCarousel({ items, autoPlayMs = 5500 }: Props): React
       </div>
 
       <article className="news-carousel__slide">
-        <img
-          src={activeItem.image}
-          alt={activeItem.title}
-          className="news-carousel__image"
-          loading="lazy"
-          decoding="async"
-        />
+        {renderSlideLink(
+          'news-carousel__media-link',
+          <img
+            src={activeItem.image}
+            alt={activeItem.title}
+            className="news-carousel__image"
+            loading="lazy"
+            decoding="async"
+          />,
+        )}
 
         <div className="news-carousel__content">
-          <span className="home-card-tag">Destaque</span>
-          <h3>{activeItem.title}</h3>
-          <p>{activeItem.description}</p>
-          {activeItemIsExternal ? (
-            <a className="home-urgent-link" href={activeItem.ctaLink} target="_blank" rel="noreferrer">
-              {activeItem.ctaLabel}
-            </a>
-          ) : (
-            <Link className="home-urgent-link" to={activeItem.ctaLink}>{activeItem.ctaLabel}</Link>
+          {renderSlideLink(
+            'news-carousel__text-link',
+            <>
+              <span className="home-card-tag">Destaque</span>
+              <h3>{activeItem.title}</h3>
+              <p>{activeItem.description}</p>
+            </>,
           )}
+          {renderSlideLink('home-urgent-link', activeItem.ctaLabel)}
         </div>
       </article>
 
       <div className="news-carousel__controls">
-        <button type="button" onClick={goPrev} aria-label="Ver destaque anterior">◀</button>
+        <button type="button" onClick={goPrev} aria-label="Ver destaque anterior">Anterior</button>
         <div className="news-carousel__dots" role="tablist" aria-label="Selecionar destaque">
           {items.map((item, index) => (
             <button
@@ -159,7 +176,7 @@ export default function NewsCarousel({ items, autoPlayMs = 5500 }: Props): React
             />
           ))}
         </div>
-        <button type="button" onClick={goNext} aria-label="Ver próximo destaque">▶</button>
+        <button type="button" onClick={goNext} aria-label="Ver próximo destaque">Próximo</button>
       </div>
     </section>
   )
