@@ -39,6 +39,7 @@ export default function NewsCarousel({ items, autoPlayMs = 5500 }: Props): React
   }, [activeIndex, autoPlayMs, isPaused, total])
 
   const activeItem = useMemo(() => items[activeIndex], [activeIndex, items])
+  const activeItemIsExternal = activeItem?.ctaLink.startsWith('http')
 
   useEffect(() => {
     if (!activeItem) return
@@ -133,7 +134,13 @@ export default function NewsCarousel({ items, autoPlayMs = 5500 }: Props): React
           <span className="home-card-tag">Destaque</span>
           <h3>{activeItem.title}</h3>
           <p>{activeItem.description}</p>
-          <Link className="home-urgent-link" to={activeItem.ctaLink}>{activeItem.ctaLabel}</Link>
+          {activeItemIsExternal ? (
+            <a className="home-urgent-link" href={activeItem.ctaLink} target="_blank" rel="noreferrer">
+              {activeItem.ctaLabel}
+            </a>
+          ) : (
+            <Link className="home-urgent-link" to={activeItem.ctaLink}>{activeItem.ctaLabel}</Link>
+          )}
         </div>
       </article>
 

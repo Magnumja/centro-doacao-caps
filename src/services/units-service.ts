@@ -21,7 +21,7 @@ export function mapApiUnitToCap(unit: ApiUnit, resolvePhoto?: (photo?: string) =
     id: unit.slug ?? unit.id,
     title: unit.title,
     unitType: unit.unitType === 'RESIDENCIA_TERAPEUTICA' ? 'Residência Terapêutica' : unit.unitType,
-    address: unit.address,
+    address: unit.address ?? 'Endereço não informado',
     contact: unit.contact,
     description: unit.description,
     capacity: unit.capacity,

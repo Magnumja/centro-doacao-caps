@@ -3,8 +3,8 @@ import { AppError } from '../errors/app-error'
 
 const telemetrySchema = z.object({
   eventName: z.string().min(2).max(80),
-  category: z.enum(['carousel', 'scroll', 'navigation', 'theme', 'interaction']),
-  value: z.number().min(0).max(100).optional(),
+  category: z.enum(['carousel', 'scroll', 'navigation', 'theme', 'interaction', 'performance']),
+  value: z.number().min(0).max(60000).optional(),
   metadata: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
   at: z.string().datetime().optional(),
 })

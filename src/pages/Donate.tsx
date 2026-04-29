@@ -3,7 +3,10 @@ import { IconType } from 'react-icons'
 import { FaBroom, FaBoxOpen, FaSoap, FaTools, FaTshirt, FaUtensils } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 
+import NewsCarousel from '../components/ui/NewsCarousel'
+import { HighlightItem } from '../data/highlights'
 import { fetchPublicNeeds } from '../lib/needs'
+import { fetchHighlights } from '../services/highlights-service'
 import { Need } from '../types'
 import '../Styles/Home.css'
 
@@ -80,6 +83,7 @@ function getNeedIconConfig(need: Need): NeedIconConfig {
 
 export default function Donate(): React.ReactElement {
   const [needs, setNeeds] = useState<Need[]>([])
+  const [highlights, setHighlights] = useState<HighlightItem[]>([])
 
   // Divide as necessidades por prioridade para renderizar dois carrosséis.
   const urgentNeeds = needs.filter((need) => need.priority === 'alta')
@@ -96,9 +100,13 @@ export default function Donate(): React.ReactElement {
     let mounted = true
 
     ;(async () => {
-      const loadedNeeds = await fetchPublicNeeds()
+      const [loadedNeeds, loadedHighlights] = await Promise.all([
+        fetchPublicNeeds(),
+        fetchHighlights(),
+      ])
       if (mounted) {
         setNeeds(loadedNeeds)
+        setHighlights(loadedHighlights)
       }
     })()
 
@@ -199,6 +207,16 @@ export default function Donate(): React.ReactElement {
           urgente e não urgente.
         </p>
       </div>
+
+      <section className="home-highlights-section donate-news-section" aria-label="Notícias da rede psicossocial">
+        <div className="home-urgent-header">
+          <div>
+            <span className="page-kicker">Campo Grande MS</span>
+            <h2>Notícias da rede psicossocial</h2>
+          </div>
+        </div>
+        <NewsCarousel items={highlights} />
+      </section>
 
       <article className="donate-carousel-group">
         <h3>Necessidades urgentes</h3>

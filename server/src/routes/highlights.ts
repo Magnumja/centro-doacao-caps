@@ -5,10 +5,10 @@ import { asyncHandler } from '../utils/async-handler'
 
 const router = Router()
 
-router.get('/', (_req: Request, res: Response): void => {
+router.get('/', asyncHandler(async (_req: Request, res: Response): Promise<void> => {
   res.setHeader('Cache-Control', 'public, max-age=120')
-  res.json(highlightsService.list())
-})
+  res.json(await highlightsService.listPublic())
+}))
 
 router.post('/', requireAdmin, asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const created = highlightsService.create(req.body)

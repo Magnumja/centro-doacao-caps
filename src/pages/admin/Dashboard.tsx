@@ -76,7 +76,7 @@ export default function Dashboard(): React.ReactElement {
           description: createdNeed.description,
           priority: createdNeed.priority,
           category: createdNeed.category,
-          unitId: createdNeed.unitId,
+          unitId: createdNeed.unit?.slug ?? createdNeed.unitId ?? createdNeed.unit?.id ?? '',
         },
         ...current,
       ])

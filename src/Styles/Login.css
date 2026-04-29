@@ -1,8 +1,9 @@
-/* Escopa reset apenas para a tela de login, sem afetar o restante da aplicação. */
-.login-page,
+/* Escopo reset apenas para a tela de login, sem afetar o restante da aplicação. */
+.login-page {
+  box-sizing: border-box;
+}
+
 .login-page * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
 }
 
@@ -334,7 +335,13 @@
   }
 }
 
+.signup-link a {
+  color: #0f8f79;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 160ms ease;
+}
 
-.signup-link a:hover{
-    text-decoration: underline;
+.signup-link a:hover {
+  text-decoration: underline;
 }

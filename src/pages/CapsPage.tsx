@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
 import CapsCard from '../components/CapsCard'
@@ -108,8 +108,8 @@ export default function CapsPage(): React.ReactElement {
 
   // Resolve os dados completos da unidade a partir do ID selecionado.
   const selectedUnit = useMemo(
-    () => caps.find((unit) => unit.id === selectedUnitId) ?? null,
-    [selectedUnitId, caps]
+    () => caps.find(c => c.id === selectedUnitId),
+    [caps, selectedUnitId]
   )
 
   useEffect(() => {
@@ -290,8 +290,15 @@ export default function CapsPage(): React.ReactElement {
         setShowSuccessOverlay(true)
         setFormMessage('')
       } catch (err: any) {
-        // Exibe mensagem genérica ou específica vinda da API.
-        const msg = err?.message ? String(err.message) : 'Erro ao registrar doação.'
+        // Trata diferentes tipos de erro com mensagem significativa
+        let msg = 'Erro ao registrar doação.'
+        if (err instanceof Error && err.message) {
+          msg = err.message
+        } else if (typeof err === 'string') {
+          msg = err
+        } else if (err?.message) {
+          msg = String(err.message)
+        }
         setFormMessage(msg)
       }
     })()
@@ -347,6 +354,10 @@ export default function CapsPage(): React.ReactElement {
                 src={selectedUnit.photo}
                 alt={`Foto da unidade ${selectedUnit.title}`}
                 onError={(event) => {
+                  // Prevenir loop infinito marcando que erro já foi tratado
+                  if (event.currentTarget.dataset.errorHandled === 'true') return
+                  event.currentTarget.dataset.errorHandled = 'true'
+
                   const fallback = selectedUnit.photo?.startsWith('/')
                     ? resolveUnitPhotoPath(selectedUnit.photo)
                     : undefined

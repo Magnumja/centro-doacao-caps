@@ -1,6 +1,6 @@
 import api from '../lib/api'
 
-type TelemetryCategory = 'carousel' | 'scroll' | 'navigation' | 'theme' | 'interaction'
+type TelemetryCategory = 'carousel' | 'scroll' | 'navigation' | 'theme' | 'interaction' | 'performance'
 
 export async function trackEvent(payload: {
   eventName: string

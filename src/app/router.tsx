@@ -8,7 +8,7 @@ import Login from '../pages/admin/Login'
 import Dashboard from '../pages/admin/Dashboard'
 import Layout from '../components/Layout'
 
-export default function Router(): JSX.Element {
+export default function Router(): React.ReactElement {
   return (
     // HashRouter evita erro de refresh em hospedagens estáticas sem rewrite.
     <HashRouter>

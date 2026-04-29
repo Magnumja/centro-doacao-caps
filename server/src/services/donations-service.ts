@@ -6,7 +6,7 @@ import { DonationsRepository } from '../repositories/donations-repository'
 const createDonationSchema = z.object({
   unitSlug: z.string().min(1, 'Unidade obrigatória.'),
   category: z.enum(['roupa', 'comida', 'utensilios'], { message: 'Categoria inválida.' }),
-  quantity: z.string().min(1, 'Quantidade obrigatória.').max(100),
+  quantity: z.string().trim().min(1, 'Quantidade obrigatória.').max(100),
   isAnonymous: z.boolean(),
   donorName: z.string().max(120).optional(),
   donorEmail: z.string().email('E-mail inválido.').max(200).optional(),

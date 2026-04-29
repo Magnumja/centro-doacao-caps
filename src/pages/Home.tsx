@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import CapsMap from '../components/CapsMap'
@@ -6,18 +6,12 @@ import NewsCarousel from '../components/ui/NewsCarousel'
 import { NeedListSkeleton, UrgentCarouselSkeleton } from '../components/ui/Skeletons'
 import { HighlightItem } from '../data/highlights'
 import { fetchPublicNeeds } from '../lib/needs'
+import { getCardsPerView } from '../lib/ui-utils'
 import { fetchHighlights } from '../services/highlights-service'
 import { fetchNeedsPage, normalizeNeed } from '../services/needs-service'
 import { Need } from '../types'
 import { trackEvent } from '../services/telemetry-service'
 import '../Styles/Home.css'
-
-function getCardsPerView(): number {
-  if (typeof window === 'undefined') return 1
-  if (window.innerWidth >= 1180) return 3
-  if (window.innerWidth >= 820) return 2
-  return 1
-}
 
 const FEED_PAGE_SIZE = 6
 
@@ -27,7 +21,7 @@ export default function Home(): React.ReactElement {
   const [highlights, setHighlights] = useState<HighlightItem[]>([])
   const [isLoadingUrgent, setIsLoadingUrgent] = useState(true)
   const [isLoadingFeed, setIsLoadingFeed] = useState(true)
-  const [cardsPerView, setCardsPerView] = useState<number>(getCardsPerView)
+  const [cardsPerView, setCardsPerView] = useState<number>(() => getCardsPerView())
   const [activeIndex, setActiveIndex] = useState(0)
   const [feedPage, setFeedPage] = useState(1)
   const [feedHasMore, setFeedHasMore] = useState(true)
@@ -77,6 +71,9 @@ export default function Home(): React.ReactElement {
       mounted = false
     }
   }, [])
+
+  // Ref para milestones - mantém state entre renders do listener
+  const milestonesRef = useRef(new Set<number>())
 
   useEffect(() => {
     let mounted = true
@@ -156,10 +153,8 @@ export default function Home(): React.ReactElement {
     }
   }, [feedPage])
 
-
+  // Scroll tracking com ref para preservar milestones
   useEffect(() => {
-    const milestones = new Set<number>()
-
     const onScroll = () => {
       const scrollTop = window.scrollY
       const fullHeight = document.documentElement.scrollHeight - window.innerHeight
@@ -171,8 +166,8 @@ export default function Home(): React.ReactElement {
       const checkpoints = [25, 50, 75, 100]
 
       checkpoints.forEach((checkpoint) => {
-        if (percentage >= checkpoint && !milestones.has(checkpoint)) {
-          milestones.add(checkpoint)
+        if (percentage >= checkpoint && !milestonesRef.current.has(checkpoint)) {
+          milestonesRef.current.add(checkpoint)
           void trackEvent({
             eventName: 'scroll_depth',
             category: 'scroll',
@@ -193,12 +188,16 @@ export default function Home(): React.ReactElement {
   }, [cardsPerView, urgentNeeds.length])
 
   const maxIndex = Math.max(0, urgentNeeds.length - cardsPerView)
-  const carouselStyle = {
+  
+  const carouselStyle = useMemo(() => ({
     ['--cards-per-view' as string]: cardsPerView,
     ['--active-index' as string]: activeIndex,
-  } as React.CSSProperties
+  } as React.CSSProperties), [cardsPerView, activeIndex])
 
-  const isFeedEmpty = !isLoadingFeed && nonUrgentNeeds.length === 0
+  const isFeedEmpty = useMemo(
+    () => !isLoadingFeed && nonUrgentNeeds.length === 0,
+    [isLoadingFeed, nonUrgentNeeds.length]
+  )
 
   return (
     <>
@@ -249,8 +248,22 @@ export default function Home(): React.ReactElement {
 
           {urgentNeeds.length > cardsPerView ? (
             <div className="home-carousel-controls" aria-label="Navegação do carrossel de urgências">
-              <button type="button" onClick={() => setActiveIndex((currentIndex) => Math.max(0, currentIndex - 1))} disabled={activeIndex === 0}>Anterior</button>
-              <button type="button" onClick={() => setActiveIndex((currentIndex) => Math.min(maxIndex, currentIndex + 1))} disabled={activeIndex >= maxIndex}>Próximo</button>
+              <button 
+                type="button" 
+                onClick={() => setActiveIndex((currentIndex) => Math.max(0, currentIndex - 1))} 
+                disabled={activeIndex === 0}
+                aria-label="Mostrar doações urgentes anteriores"
+              >
+                Anterior
+              </button>
+              <button 
+                type="button" 
+                onClick={() => setActiveIndex((currentIndex) => Math.min(maxIndex, currentIndex + 1))} 
+                disabled={activeIndex >= maxIndex}
+                aria-label="Mostrar próximas doações urgentes"
+              >
+                Próximo
+              </button>
             </div>
           ) : null}
         </div>

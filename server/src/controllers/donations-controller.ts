@@ -15,7 +15,6 @@ export class DonationsController {
       req.query.page as string | undefined,
       req.query.limit as string | undefined,
     )
-
     res.json(result)
   }
 

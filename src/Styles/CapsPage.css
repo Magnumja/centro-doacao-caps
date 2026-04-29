@@ -5,11 +5,10 @@
 
 .donation-unit-card {
   display: grid;
-  gap: 0.45rem;
-  cursor: pointer;
-  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+  grid-template-rows: auto auto 1fr auto;
+  border-radius: 16px;
+  border: 1px solid rgba(15, 143, 121, 0.22);
   overflow: hidden;
-  padding: 0 !important;
 }
 
 .caps-card__photo {
@@ -24,8 +23,8 @@
 .donation-unit-card h3,
 .donation-unit-card p,
 .donation-unit-card .unit-donate-button {
-  margin-left: 0.95rem;
-  margin-right: 0.95rem;
+  padding-left: 0.95rem;
+  padding-right: 0.95rem;
 }
 
 .donation-unit-card .unit-type-badge {
@@ -329,6 +328,14 @@
     flex: 1 1 calc(50% - 0.5rem);
     text-align: center;
   }
+
+  .donation-success-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .donation-success-actions {
+    flex-direction: column;
+  }
 }
 
 .donation-success-overlay {
@@ -382,7 +389,7 @@
   border-radius: 8px;
   font-size: 0.9rem;
   color: #0b6d5d;
-  margin: 1.5rem 0 !important;
+  margin: 1.5rem 0;
   font-style: italic;
 }
 
@@ -435,16 +442,6 @@
   }
 }
 
-@media (max-width: 740px) {
-  .donation-success-card {
-    padding: 2rem 1.5rem;
-  }
-
-  .donation-success-actions {
-    flex-direction: column;
-  }
-}
-
 @media (max-width: 560px) {
   .page-block.caps-page {
     width: min(1360px, 95vw);
@@ -470,5 +467,172 @@
 
   .donation-success-card {
     padding: 1.35rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-block.caps-page {
+    width: 100%;
+    padding-inline: 0.5rem;
+  }
+
+  .caps-card__photo {
+    height: 120px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .donation-unit-card {
+    border-radius: 12px;
+  }
+
+  .donation-unit-card .unit-type-badge,
+  .donation-unit-card h3,
+  .donation-unit-card p,
+  .donation-unit-card .unit-donate-button {
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
+  }
+
+  .donation-unit-card .unit-type-badge {
+    margin-top: 0.65rem;
+    font-size: 0.68rem;
+  }
+
+  .donation-unit-card h3 {
+    font-size: 1.05rem;
+  }
+
+  .donation-unit-card p {
+    font-size: 0.88rem;
+  }
+
+  .donation-unit-card .unit-donate-button {
+    margin-bottom: 0.7rem;
+    font-size: 0.8rem;
+    padding: 0.42rem 0.7rem;
+  }
+
+  .selected-unit-spotlight {
+    gap: 0.8rem;
+  }
+
+  .selected-unit-spotlight__photo {
+    min-height: 200px;
+  }
+
+  .selected-unit-spotlight__content {
+    padding: 0 0.7rem 0.8rem;
+    gap: 0.45rem;
+  }
+
+  .selected-unit-spotlight__content h3 {
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+  }
+
+  .unit-type-badge {
+    padding: 0.14rem 0.55rem;
+    font-size: 0.66rem;
+  }
+
+  .unit-donate-button {
+    padding: 0.42rem 0.7rem;
+    font-size: 0.78rem;
+  }
+
+  .donation-panel h3 {
+    font-size: 0.98rem;
+  }
+
+  .donation-actions {
+    gap: 0.35rem;
+    margin-top: 0.2rem;
+  }
+
+  .donation-action-button {
+    padding: 0.38rem 0.65rem;
+    font-size: 0.76rem;
+    flex: 1 1 calc(50% - 0.35rem);
+  }
+
+  .donation-guidelines {
+    border-radius: 8px;
+    padding: 0.8rem;
+  }
+
+  .guideline-warning {
+    font-size: 0.8rem;
+    padding: 0.24rem 0.55rem;
+  }
+
+  .donation-form {
+    gap: 0.5rem;
+  }
+
+  .donation-form label,
+  .donation-form legend {
+    font-size: 0.8rem;
+  }
+
+  .donation-form input[type='date'],
+  .donation-form input[type='time'],
+  .donation-form input[type='text'],
+  .donation-form input[type='email'] {
+    padding: 0.4rem 0.5rem;
+    font-size: 0.88rem;
+  }
+
+  .donation-form fieldset {
+    padding: 0.4rem 0.55rem;
+    gap: 0.7rem;
+  }
+
+  .form-feedback {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .donation-success-overlay {
+    padding: 0.75rem;
+  }
+
+  .donation-success-card {
+    border-radius: 12px;
+    padding: 1.2rem 0.9rem;
+    max-width: none;
+  }
+
+  .donation-success-card .page-kicker {
+    font-size: 0.75rem;
+    letter-spacing: 0.6px;
+  }
+
+  .donation-success-card h2 {
+    font-size: 1.2rem;
+    margin: 0.6rem 0;
+  }
+
+  .donation-success-card p {
+    font-size: 0.9rem;
+    margin: 0.8rem 0;
+  }
+
+  .donation-success-details {
+    padding: 1rem;
+    font-size: 0.85rem;
+    margin: 1rem 0;
+  }
+
+  .donation-success-actions {
+    gap: 0.8rem;
+    margin-top: 1.5rem;
+  }
+
+  .donation-success-actions button {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.88rem;
+  }
+
+  .donation-success-close {
+    width: 100%;
   }
 }
