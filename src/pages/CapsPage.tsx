@@ -53,6 +53,7 @@ export default function CapsPage(): React.ReactElement {
   const [donorName, setDonorName] = useState('')
   const [donorEmail, setDonorEmail] = useState('')
   const [formMessage, setFormMessage] = useState<string>('')
+  const [isSubmittingDonation, setIsSubmittingDonation] = useState(false)
   const [showSuccessOverlay, setShowSuccessOverlay] = useState(false)
   const [successMessage, setSuccessMessage] = useState<string>('')
 
@@ -233,6 +234,8 @@ export default function CapsPage(): React.ReactElement {
 
   const handleRegisterDonation = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault()
+    if (isSubmittingDonation) return
+
     const validationError = validateDonationInput({
       unitSlug: selectedUnit?.id ?? '',
       selectedItems,
@@ -254,6 +257,8 @@ export default function CapsPage(): React.ReactElement {
       setFormMessage('Selecione uma unidade para continuar.')
       return
     }
+
+    setIsSubmittingDonation(true)
 
     ;(async () => {
       try {
@@ -290,6 +295,8 @@ export default function CapsPage(): React.ReactElement {
         setFormMessage('')
       } catch (err: any) {
         setFormMessage(err?.message || 'Nao foi possivel registrar a doacao agora. Tente novamente em instantes.')
+      } finally {
+        setIsSubmittingDonation(false)
       }
     })()
   }
@@ -520,11 +527,11 @@ export default function CapsPage(): React.ReactElement {
                 </>
               ) : null}
 
-              <button type="submit" className="unit-donate-button">
-                Registrar intencao de doacao
+              <button type="submit" className="unit-donate-button" disabled={isSubmittingDonation}>
+                {isSubmittingDonation ? 'Registrando...' : 'Registrar intencao de doacao'}
               </button>
 
-              {formMessage ? <p className="form-feedback">{formMessage}</p> : null}
+              {formMessage ? <p className="form-feedback" role="status" aria-live="polite">{formMessage}</p> : null}
             </form>
           </article>
         </div>

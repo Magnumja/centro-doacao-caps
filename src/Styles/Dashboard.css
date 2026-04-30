@@ -12,6 +12,7 @@
   color: white;
   padding: 2.5rem clamp(1rem, 3vw, 2rem);
   border-bottom: 4px solid rgba(15, 143, 121, 0.3);
+  animation: healthSectionReveal 560ms ease both;
 }
 
 .dashboard-header__content {
@@ -147,6 +148,7 @@
   border-bottom: 2px solid rgba(15, 143, 121, 0.1);
   overflow-x: auto;
   background: white;
+  box-shadow: 0 10px 24px rgba(23, 51, 58, 0.06);
 }
 
 .dashboard-nav__item {
@@ -164,11 +166,13 @@
 
 .dashboard-nav__item:hover {
   color: #0f8f79;
+  transform: translateY(-2px);
 }
 
 .dashboard-nav__item.active {
   color: #0f8f79;
   border-bottom-color: #0f8f79;
+  transform: translateY(-1px);
 }
 
 /* Main Content */
@@ -229,8 +233,18 @@
 
 .dashboard-card:hover {
   border-color: rgba(15, 143, 121, 0.3);
-  box-shadow: 0 8px 16px rgba(15, 143, 121, 0.08);
-  transform: translateY(-2px);
+  box-shadow: 0 16px 30px rgba(15, 143, 121, 0.12);
+  transform: translateY(-4px);
+}
+
+.analytics-card:hover,
+.analytics-chart-card:hover,
+.profile-card:hover,
+.admin-summary-grid article:hover,
+.admin-summary-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(15, 143, 121, 0.32);
+  box-shadow: 0 16px 30px rgba(14, 66, 57, 0.12);
 }
 
 .dashboard-card h3 {
@@ -383,6 +397,7 @@
   border-radius: 12px;
   padding: 1.5rem;
   text-align: center;
+  transition: transform 190ms ease, box-shadow 190ms ease, border-color 190ms ease;
 }
 
 .analytics-card h3 {
@@ -424,6 +439,7 @@
   background:
     radial-gradient(circle at top right, rgba(15, 143, 121, 0.08), transparent 42%),
     linear-gradient(135deg, #f8fcfb 0%, #ffffff 100%);
+  transition: transform 190ms ease, box-shadow 190ms ease, border-color 190ms ease;
 }
 
 .analytics-chart-card__header h3 {
@@ -631,6 +647,7 @@
   border-radius: 12px;
   padding: 2rem;
   margin: 2rem 0;
+  transition: transform 190ms ease, box-shadow 190ms ease, border-color 190ms ease;
 }
 
 .profile-field {

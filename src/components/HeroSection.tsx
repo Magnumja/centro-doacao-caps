@@ -3,6 +3,7 @@ import { FaArrowRight, FaHandsHelping } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 
 import { ProjectStats } from '../types'
+import CountUpStat from './CountUpStat'
 
 type HeroSectionProps = {
   stats: ProjectStats
@@ -25,9 +26,9 @@ export default function HeroSection({ stats }: HeroSectionProps): React.ReactEle
             Ver necessidades
             <FaArrowRight aria-hidden="true" />
           </Link>
-          <a className="home-hero-button home-hero-button--secondary" href="#como-funciona">
+          <Link className="home-hero-button home-hero-button--secondary" to="/sobre-o-projeto">
             Conhecer o projeto
-          </a>
+          </Link>
         </div>
       </div>
 
@@ -35,7 +36,7 @@ export default function HeroSection({ stats }: HeroSectionProps): React.ReactEle
         <span className="home-hero-panel-icon" aria-hidden="true">
           <FaHandsHelping />
         </span>
-        <strong>{stats.activeRequests} pedidos ativos</strong>
+        <strong><CountUpStat value={stats.activeRequests} /> pedidos ativos</strong>
         <p>
           {stats.urgentRequests} demandas urgentes aguardam apoio da comunidade. Cada doacao registrada
           melhora a visibilidade da rede e ajuda a priorizar o cuidado.

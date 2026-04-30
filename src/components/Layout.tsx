@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { FaBars, FaTimes } from 'react-icons/fa'
 import { NavLink, Outlet } from 'react-router-dom'
 
 import { isLocalAuthBypassEnabled } from '../lib/auth'
@@ -7,6 +8,7 @@ import ThemeToggle from './ui/ThemeToggle'
 import logo from '../public/logosesau.png'
 
 export default function Layout(): React.ReactElement {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const hasAdminSession = typeof window !== 'undefined' && !!localStorage.getItem('loggedHost')
   const canOpenAdminDirectly = hasAdminSession || isLocalAuthBypassEnabled()
 
@@ -37,12 +39,28 @@ export default function Layout(): React.ReactElement {
 
       <header className="health-header">
         <div className="health-header__inner">
-          <nav id="primary-navigation" className="health-nav" aria-label="Menu principal">
+          <button
+            type="button"
+            className="mobile-nav-toggle"
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="primary-navigation"
+            onClick={() => setIsMobileMenuOpen((current) => !current)}
+          >
+            {isMobileMenuOpen ? <FaTimes aria-hidden="true" /> : <FaBars aria-hidden="true" />}
+            <span>Menu</span>
+          </button>
+
+          <nav
+            id="primary-navigation"
+            className={`health-nav${isMobileMenuOpen ? ' health-nav--open' : ''}`}
+            aria-label="Menu principal"
+          >
             {navigationItems.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 end={item.to === '/'}
+                onClick={() => setIsMobileMenuOpen(false)}
                 className={({ isActive }) =>
                   `health-nav__link${isActive ? ' health-nav__link--active' : ''}`
                 }

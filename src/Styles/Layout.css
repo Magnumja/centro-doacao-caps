@@ -123,9 +123,10 @@ body {
 	top: 0;
 	z-index: 30;
 	border-bottom: 1px solid var(--health-border);
-	background: rgba(244, 253, 250, 0.9);
+	background: rgba(244, 253, 250, 0.82);
 	box-shadow: 0 10px 24px rgba(23, 51, 58, 0.08);
-	backdrop-filter: blur(10px);
+	backdrop-filter: blur(14px) saturate(1.08);
+	transition: box-shadow 220ms ease, background-color 220ms ease, border-color 220ms ease;
 }
 
 .health-header__inner {
@@ -183,7 +184,32 @@ body {
 	flex-wrap: wrap;
 }
 
+.mobile-nav-toggle {
+	display: none;
+	align-items: center;
+	justify-content: center;
+	gap: 0.45rem;
+	min-height: 42px;
+	border-radius: 12px;
+	border: 1px solid rgba(15, 143, 121, 0.2);
+	background: rgba(255, 255, 255, 0.86);
+	color: var(--health-text);
+	font-family: 'Lexend', sans-serif;
+	font-size: 0.88rem;
+	font-weight: 700;
+	padding: 0.55rem 0.8rem;
+	cursor: pointer;
+	box-shadow: 0 8px 18px rgba(14, 66, 57, 0.08);
+}
+
+.mobile-nav-toggle svg {
+	width: 0.95rem;
+	height: 0.95rem;
+}
+
 .health-nav__link {
+	position: relative;
+	overflow: hidden;
 	text-decoration: none;
 	border-radius: 12px;
 	border: 1px solid rgba(15, 143, 121, 0.1);
@@ -193,13 +219,35 @@ body {
 	font-size: 0.86rem;
 	font-weight: 600;
 	background: rgba(255, 255, 255, 0.68);
-	transition: all 160ms ease;
+	transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background-color 180ms ease, color 180ms ease;
+	will-change: transform;
+}
+
+.health-nav__link::after {
+	content: '';
+	position: absolute;
+	left: 0.82rem;
+	right: 0.82rem;
+	bottom: 0.28rem;
+	height: 2px;
+	border-radius: 999px;
+	background: currentColor;
+	opacity: 0;
+	transform: scaleX(0.35);
+	transform-origin: center;
+	transition: transform 180ms ease, opacity 180ms ease;
 }
 
 .health-nav__link:hover {
 	border-color: rgba(15, 143, 121, 0.28);
 	background: rgba(255, 255, 255, 0.96);
-	transform: translateY(-1px);
+	transform: translateY(-2px);
+	box-shadow: 0 8px 18px rgba(14, 66, 57, 0.1);
+}
+
+.health-nav__link:hover::after {
+	opacity: 0.35;
+	transform: scaleX(1);
 }
 
 .health-nav__link--active {
@@ -207,6 +255,11 @@ body {
 	color: #fff;
 	border-color: transparent;
 	box-shadow: 0 8px 20px rgba(15, 143, 121, 0.28);
+}
+
+.health-nav__link--active::after {
+	opacity: 0.7;
+	transform: scaleX(1);
 }
 
 .page-block {
@@ -219,6 +272,28 @@ body {
 	box-shadow: var(--health-shadow);
 	display: grid;
 	gap: 0.82rem;
+	animation: healthSectionReveal 560ms ease both;
+	will-change: transform, opacity;
+}
+
+main > .page-block:nth-of-type(2),
+main > section > .page-block:nth-of-type(2) {
+	animation-delay: 80ms;
+}
+
+main > .page-block:nth-of-type(3),
+main > section > .page-block:nth-of-type(3) {
+	animation-delay: 140ms;
+}
+
+main > .page-block:nth-of-type(4),
+main > section > .page-block:nth-of-type(4) {
+	animation-delay: 200ms;
+}
+
+main > .page-block:nth-of-type(5),
+main > section > .page-block:nth-of-type(5) {
+	animation-delay: 260ms;
 }
 
 .page-kicker {
@@ -259,6 +334,13 @@ body {
 	border: 1px solid var(--health-border);
 	background: rgba(255, 255, 255, 0.72);
 	padding: 0.86rem 0.95rem;
+	transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background-color 180ms ease;
+}
+
+.page-card:hover {
+	transform: translateY(-3px);
+	border-color: rgba(15, 143, 121, 0.34);
+	box-shadow: 0 16px 30px rgba(14, 66, 57, 0.12);
 }
 
 .page-card h3 {
@@ -314,11 +396,13 @@ body {
 	font-weight: 600;
 	padding: 0.5rem 0.75rem;
 	cursor: pointer;
+	transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background-color 180ms ease, color 180ms ease;
 }
 
 .category-filter__button:hover {
 	border-color: rgba(15, 143, 121, 0.38);
-	transform: translateY(-1px);
+	transform: translateY(-2px);
+	box-shadow: 0 8px 16px rgba(14, 66, 57, 0.1);
 }
 
 .category-filter__button--active {
@@ -381,7 +465,12 @@ body {
 
 	.health-header__inner {
 		align-items: flex-start;
+		justify-content: flex-start;
 		padding: 0.72rem 0;
+	}
+
+	.mobile-nav-toggle {
+		display: inline-flex;
 	}
 
 	.health-nav {
@@ -389,6 +478,19 @@ body {
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: 0.45rem;
+		max-height: 0;
+		opacity: 0;
+		overflow: hidden;
+		pointer-events: none;
+		transform: translateY(-6px);
+		transition: max-height 240ms ease, opacity 180ms ease, transform 180ms ease;
+	}
+
+	.health-nav--open {
+		max-height: 360px;
+		opacity: 1;
+		pointer-events: auto;
+		transform: translateY(0);
 	}
 
 	.health-nav__link {
@@ -494,6 +596,12 @@ body {
   color: var(--health-text);
 }
 
+:root[data-theme='dark'] .mobile-nav-toggle {
+  border-color: rgba(123, 198, 255, 0.24);
+  background: rgba(16, 39, 34, 0.92);
+  color: var(--health-text);
+}
+
 :root[data-theme='dark'] .health-nav__link:hover {
   background: rgba(23, 55, 48, 0.98);
 }
@@ -563,7 +671,7 @@ a,
 input,
 textarea,
 select {
-  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, background-color 160ms ease;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background-color 180ms ease, color 180ms ease, filter 180ms ease;
 }
 
 button:focus-visible,
@@ -577,6 +685,13 @@ a:focus-visible {
 
 button:active {
   transform: translateY(1px) scale(0.99);
+}
+
+button:disabled,
+a[aria-disabled='true'] {
+  cursor: not-allowed;
+  opacity: 0.62;
+  transform: none;
 }
 
 input:hover,
@@ -612,8 +727,106 @@ select:hover {
 }
 
 .theme-toggle:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 16px rgba(15, 143, 121, 0.14);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 10px 20px rgba(15, 143, 121, 0.18);
+}
+
+.home-hero-button,
+.unit-donate-button,
+.home-urgent-link,
+.inline-link,
+.donation-success-link,
+.unit-secondary-button,
+.dashboard-action-btn,
+.btn-primary,
+.btn-secondary {
+  position: relative;
+  overflow: hidden;
+}
+
+.home-hero-button::before,
+.unit-donate-button::before,
+.home-urgent-link::before,
+.dashboard-action-btn::before,
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 0%, rgba(255, 255, 255, 0.28) 48%, transparent 70%);
+  transform: translateX(-130%);
+  transition: transform 420ms ease;
+  pointer-events: none;
+}
+
+.home-hero-button:hover,
+.unit-donate-button:hover,
+.home-urgent-link:hover,
+.inline-link:hover,
+.donation-success-link:hover,
+.unit-secondary-button:hover,
+.dashboard-action-btn:hover,
+.btn-primary:hover,
+.btn-secondary:hover {
+  transform: translateY(-2px) scale(1.01);
+}
+
+.home-hero-button:hover::before,
+.unit-donate-button:hover::before,
+.home-urgent-link:hover::before,
+.dashboard-action-btn:hover::before,
+.btn-primary:hover::before {
+  transform: translateX(130%);
+}
+
+.home-hero-button svg,
+.unit-donate-button svg,
+.home-urgent-link svg,
+.unit-secondary-button svg {
+  transition: transform 180ms ease;
+}
+
+.home-hero-button:hover svg,
+.home-urgent-link:hover svg,
+.unit-secondary-button:hover svg {
+  transform: translateX(3px);
+}
+
+.unit-donate-button:hover svg {
+  transform: translateY(-1px) scale(1.06);
+}
+
+.form-feedback {
+  animation: healthFeedbackPop 260ms ease both;
+}
+
+.skeleton-card,
+.skeleton-line {
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes healthSectionReveal {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes healthFeedbackPop {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 :root[data-theme='dark'] .theme-toggle {
@@ -670,4 +883,43 @@ select:hover {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .page-block,
+  .page-card,
+  .health-nav__link,
+  .home-hero-button,
+  .unit-donate-button,
+  .home-urgent-link,
+  .inline-link,
+  .donation-success-link,
+  .unit-secondary-button,
+  .dashboard-action-btn,
+  .btn-primary,
+  .btn-secondary {
+    transform: none !important;
+  }
+}
+
+@media (hover: none) {
+  .page-card:hover,
+  .health-nav__link:hover,
+  .home-hero-button:hover,
+  .unit-donate-button:hover,
+  .home-urgent-link:hover,
+  .inline-link:hover,
+  .donation-success-link:hover,
+  .unit-secondary-button:hover {
+    transform: none;
+  }
 }

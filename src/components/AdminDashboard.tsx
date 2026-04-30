@@ -3,6 +3,7 @@ import React from 'react'
 import { Need, ProjectStats } from '../types'
 import UrgencyBadge from './UrgencyBadge'
 import StatusBadge from './StatusBadge'
+import CountUpStat from './CountUpStat'
 
 type AdminDashboardProps = {
   stats: ProjectStats
@@ -17,19 +18,19 @@ export default function AdminDashboard({ stats, needs }: AdminDashboardProps): R
       <div className="admin-summary-grid">
         <article>
           <span>Total de CAPS cadastrados</span>
-          <strong>{stats.capsCount}</strong>
+          <strong><CountUpStat value={stats.capsCount} /></strong>
         </article>
         <article>
           <span>Pedidos ativos</span>
-          <strong>{stats.activeRequests}</strong>
+          <strong><CountUpStat value={stats.activeRequests} /></strong>
         </article>
         <article>
           <span>Pedidos concluidos</span>
-          <strong>{stats.completedRequests}</strong>
+          <strong><CountUpStat value={stats.completedRequests} /></strong>
         </article>
         <article>
           <span>Pedidos urgentes</span>
-          <strong>{stats.urgentRequests}</strong>
+          <strong><CountUpStat value={stats.urgentRequests} /></strong>
         </article>
       </div>
 

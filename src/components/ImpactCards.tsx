@@ -2,6 +2,7 @@ import React from 'react'
 import { FaBoxes, FaChartLine, FaCheckCircle, FaHospital } from 'react-icons/fa'
 
 import { ProjectStats } from '../types'
+import CountUpStat from './CountUpStat'
 
 type ImpactCardsProps = {
   stats: ProjectStats
@@ -48,7 +49,9 @@ export default function ImpactCards({ stats }: ImpactCardsProps): React.ReactEle
             <span className="impact-card__icon" aria-hidden="true">
               <ItemIcon />
             </span>
-            <strong>{value}</strong>
+            <strong>
+              <CountUpStat value={value} />
+            </strong>
             <span>{label}</span>
             <p>{helper}</p>
           </article>

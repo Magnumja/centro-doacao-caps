@@ -12,6 +12,22 @@
   gap: 1rem;
 }
 
+.home-institutional-hero__content > * {
+  animation: healthHeroRise 620ms ease both;
+}
+
+.home-institutional-hero__content > *:nth-child(2) {
+  animation-delay: 90ms;
+}
+
+.home-institutional-hero__content > *:nth-child(3) {
+  animation-delay: 160ms;
+}
+
+.home-institutional-hero__content > *:nth-child(4) {
+  animation-delay: 230ms;
+}
+
 .home-institutional-hero__content h2 {
   max-width: 760px;
   font-size: clamp(2rem, 5vw, 4.5rem);
@@ -63,6 +79,14 @@
   padding: 1.2rem;
   display: grid;
   gap: 0.75rem;
+  animation: healthPanelFloatIn 720ms ease 180ms both;
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+}
+
+.home-institutional-hero__panel:hover {
+  transform: translateY(-4px);
+  border-color: rgba(15, 143, 121, 0.34);
+  box-shadow: 0 18px 34px rgba(14, 66, 57, 0.13);
 }
 
 .home-hero-panel-icon,
@@ -75,6 +99,7 @@
   place-items: center;
   background: rgba(15, 143, 121, 0.12);
   color: #0b6d5d;
+  transition: transform 180ms ease, background-color 180ms ease;
 }
 
 .home-institutional-hero__panel strong {
@@ -105,6 +130,28 @@
   padding: 1rem;
   display: grid;
   gap: 0.65rem;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.how-it-works-card:hover,
+.impact-card:hover,
+.needed-ranking-list li:hover,
+.home-guidance-card:hover,
+.home-map-card:hover,
+.home-urgent-card:hover,
+.donate-carousel-group:hover,
+.news-carousel:hover,
+.home-need-feed-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(15, 143, 121, 0.34);
+  box-shadow: 0 16px 32px rgba(14, 66, 57, 0.12);
+}
+
+.how-it-works-card:hover .how-it-works-card__icon,
+.impact-card:hover .impact-card__icon,
+.home-institutional-hero__panel:hover .home-hero-panel-icon {
+  transform: translateY(-2px) scale(1.08);
+  background: rgba(15, 143, 121, 0.18);
 }
 
 .how-it-works-card__step {
@@ -133,6 +180,7 @@
   font-size: clamp(1.8rem, 4vw, 2.6rem);
   line-height: 1;
   color: #0b6d5d;
+  animation: healthStatGlow 2.8s ease-in-out infinite;
 }
 
 .impact-card > span:not(.impact-card__icon) {
@@ -157,6 +205,7 @@
   border: 1px solid rgba(15, 143, 121, 0.16);
   background: rgba(255, 255, 255, 0.82);
   padding: 0.75rem;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
 
 .needed-ranking-list__position {
@@ -218,6 +267,7 @@
   gap: 0.95rem;
   min-width: 0;
   height: 100%;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
 
 .home-guidance-card {
@@ -430,6 +480,7 @@
   padding: 1rem;
   display: grid;
   gap: 0.8rem;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
 
 .home-urgent-card h3 {
@@ -529,6 +580,7 @@
   border-radius: 18px;
   border: 1px solid rgba(15, 143, 121, 0.14);
   background: linear-gradient(160deg, rgba(255, 255, 255, 0.96), rgba(239, 248, 245, 0.96));
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
 
 .donate-carousel-controls {
@@ -777,6 +829,7 @@
   gap: 0.65rem;
   padding: 0.75rem;
   outline: none;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
 
 .news-carousel:focus-visible {
@@ -797,6 +850,7 @@
   height: 100%;
   transform-origin: left;
   background: linear-gradient(90deg, #0f8f79, #2f7c9d);
+  animation: healthProgressPulse 2.6s ease-in-out infinite;
 }
 
 .news-carousel__slide {
@@ -1216,9 +1270,55 @@
 }
 
 .home-need-feed-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-4px);
   border-color: rgba(15, 143, 121, 0.34);
   box-shadow: 0 12px 20px rgba(15, 143, 121, 0.12);
+}
+
+@keyframes healthHeroRise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes healthPanelFloatIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes healthStatGlow {
+  0%,
+  100% {
+    text-shadow: 0 0 0 rgba(15, 143, 121, 0);
+  }
+
+  50% {
+    text-shadow: 0 8px 18px rgba(15, 143, 121, 0.12);
+  }
+}
+
+@keyframes healthProgressPulse {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+
+  50% {
+    filter: brightness(1.12);
+  }
 }
 
 .home-need-feed-card h3 {
