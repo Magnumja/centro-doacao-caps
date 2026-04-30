@@ -11,7 +11,8 @@
     "build": "vite build",
     "build:all": "npm run build && npm --prefix server run build",
     "deploy:check": "node --check scripts/dev-all.mjs && npm run build:all",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "vite preview --host 0.0.0.0 --port $PORT"
   },
   "dependencies": {
     "@react-icons/all-files": "^4.1.0",
