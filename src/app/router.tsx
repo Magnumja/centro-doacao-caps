@@ -2,6 +2,7 @@ import React from 'react'
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
 
 import Home from '../pages/Home'
+import AboutProject from '../pages/AboutProject'
 import CapsPage from '../pages/CapsPage'
 import Donate from '../pages/Donate'
 import YourDonations from '../pages/YourDonations'
@@ -24,6 +25,7 @@ export default function Router(): React.ReactElement {
 
           {/* Compatibilidade com o caminho antigo /home */}
           <Route path="/home" element={<Navigate to="/" replace />} />
+          <Route path="/sobre-o-projeto" element={<AboutProject />} />
 
           {/* Fluxo de doação por unidade (aceita query string como ?unit=c1) */}
           <Route path="/caps/*" element={<CapsPage />} />

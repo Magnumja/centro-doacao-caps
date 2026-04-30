@@ -12,6 +12,7 @@ export default function Layout(): React.ReactElement {
 
   const navigationItems = [
     { to: '/', label: 'Início' },
+    { to: '/sobre-o-projeto', label: 'Sobre o Projeto' },
     { to: '/caps', label: 'Unidades CAPS' },
     { to: '/donate', label: 'Doações' },
     { to: '/suas-doacoes', label: 'Suas Doações' },

@@ -1,0 +1,279 @@
+.about-project-page {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.about-hero,
+.about-story-grid,
+.about-purpose-section,
+.about-workflow-section,
+.about-impact-section,
+.about-creator-section,
+.about-final-cta {
+  width: min(1360px, 97vw);
+}
+
+.about-hero {
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.48fr);
+  align-items: stretch;
+  gap: clamp(1rem, 3vw, 2rem);
+  padding-block: clamp(1.4rem, 4vw, 3rem);
+}
+
+.about-hero__content {
+  display: grid;
+  align-content: center;
+  gap: 0.9rem;
+}
+
+.about-hero__content h2 {
+  font-size: clamp(2.2rem, 5vw, 4.4rem);
+  line-height: 1.04;
+}
+
+.about-hero__content p {
+  max-width: 760px;
+  font-size: clamp(1.05rem, 1.7vw, 1.25rem);
+}
+
+.about-hero__card,
+.about-info-card,
+.about-step-card,
+.about-impact-card,
+.about-creator-card {
+  border-radius: 18px;
+  border: 1px solid rgba(15, 143, 121, 0.18);
+  background: rgba(255, 255, 255, 0.84);
+  box-shadow: 0 16px 30px rgba(14, 66, 57, 0.08);
+}
+
+.about-hero__card {
+  display: grid;
+  align-content: center;
+  gap: 0.8rem;
+  padding: 1.2rem;
+}
+
+.about-hero__card > span,
+.about-info-card__icon,
+.about-impact-card > span {
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: rgba(15, 143, 121, 0.12);
+  color: #0b6d5d;
+}
+
+.about-hero__card strong,
+.about-info-card h3,
+.about-impact-card strong,
+.about-creator-card h3 {
+  color: #17333a;
+  font-family: 'Lexend', sans-serif;
+}
+
+.about-story-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.about-info-card {
+  display: grid;
+  gap: 0.7rem;
+  padding: 1.1rem;
+}
+
+.about-info-card h3 {
+  margin: 0;
+  font-size: 1.16rem;
+}
+
+.about-purpose-section > p {
+  max-width: 900px;
+  font-size: 1.04rem;
+}
+
+.about-workflow-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.about-step-card {
+  position: relative;
+  min-height: 150px;
+  display: grid;
+  align-content: end;
+  padding: 1rem;
+}
+
+.about-step-card__number {
+  position: absolute;
+  top: 0.9rem;
+  left: 0.9rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(125deg, #0f8f79, #2f7c9d);
+  color: #ffffff;
+  font-family: 'Lexend', sans-serif;
+  font-weight: 700;
+}
+
+.about-step-card p {
+  color: #17333a;
+  font-weight: 700;
+}
+
+.about-impact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.75rem;
+}
+
+.about-impact-card {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.about-creator-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.about-creator-layout > p {
+  align-self: center;
+}
+
+.about-creator-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1.1rem;
+}
+
+.about-creator-card__avatar {
+  width: 4.2rem;
+  height: 4.2rem;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #0f8f79, #2f7c9d);
+  color: #ffffff;
+  font-family: 'Lexend', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.about-creator-card h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1.2rem;
+}
+
+.about-creator-card strong {
+  display: block;
+  color: #0b6d5d;
+  font-size: 0.94rem;
+}
+
+.about-creator-card p {
+  margin-top: 0.65rem;
+}
+
+.about-final-cta {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+  background: linear-gradient(145deg, rgba(15, 143, 121, 0.14), rgba(255, 255, 255, 0.92));
+}
+
+.about-final-cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  justify-content: flex-end;
+}
+
+@media (max-width: 980px) {
+  .about-hero,
+  .about-story-grid,
+  .about-creator-layout,
+  .about-final-cta {
+    grid-template-columns: 1fr;
+  }
+
+  .about-workflow-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .about-final-cta__actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .about-hero,
+  .about-story-grid,
+  .about-purpose-section,
+  .about-workflow-section,
+  .about-impact-section,
+  .about-creator-section,
+  .about-final-cta {
+    width: min(100%, 95vw);
+  }
+
+  .about-workflow-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .about-step-card {
+    min-height: 120px;
+  }
+
+  .about-creator-card {
+    grid-template-columns: 1fr;
+  }
+
+  .about-final-cta__actions,
+  .about-final-cta__actions .home-hero-button {
+    width: 100%;
+  }
+}
+
+:root[data-theme='dark'] .about-hero__card,
+:root[data-theme='dark'] .about-info-card,
+:root[data-theme='dark'] .about-step-card,
+:root[data-theme='dark'] .about-impact-card,
+:root[data-theme='dark'] .about-creator-card {
+  border-color: rgba(123, 198, 255, 0.18);
+  background: rgba(14, 35, 30, 0.78);
+}
+
+:root[data-theme='dark'] .about-final-cta {
+  background: linear-gradient(145deg, rgba(14, 35, 30, 0.94), rgba(9, 24, 21, 0.92));
+}
+
+:root[data-theme='dark'] .about-hero__card strong,
+:root[data-theme='dark'] .about-info-card h3,
+:root[data-theme='dark'] .about-impact-card strong,
+:root[data-theme='dark'] .about-creator-card h3,
+:root[data-theme='dark'] .about-step-card p {
+  color: var(--health-text);
+}
+
+:root[data-theme='dark'] .about-hero__card > span,
+:root[data-theme='dark'] .about-info-card__icon,
+:root[data-theme='dark'] .about-impact-card > span {
+  background: rgba(45, 194, 167, 0.14);
+  color: var(--health-accent-strong);
+}
+
+:root[data-theme='dark'] .about-creator-card strong {
+  color: var(--health-accent-strong);
+}
