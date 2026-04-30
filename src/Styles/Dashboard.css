@@ -36,6 +36,7 @@
 }
 
 .dashboard-logout {
+  min-height: 44px;
   padding: 0.6rem 1.5rem;
   background: rgba(255, 255, 255, 0.2);
   color: white;
@@ -152,6 +153,7 @@
 }
 
 .dashboard-nav__item {
+  min-height: 44px;
   padding: 0.8rem 1.5rem;
   background: transparent;
   color: #666;
@@ -290,6 +292,7 @@
 }
 
 .dashboard-action-btn {
+  min-height: 48px;
   padding: 1rem;
   background: linear-gradient(135deg, #0f8f79 0%, #0b6d5d 100%);
   color: white;
@@ -330,11 +333,12 @@
 .donation-request-form .form-group input,
 .donation-request-form .form-group select,
 .donation-request-form .form-group textarea {
+  min-height: 44px;
   padding: 0.8rem;
   border: 1px solid #ddd;
   border-radius: 6px;
   font-family: inherit;
-  font-size: 0.95rem;
+  font-size: 1rem;
   transition: border-color 160ms ease;
 }
 
@@ -347,6 +351,7 @@
 }
 
 .btn-primary {
+  min-height: 48px;
   padding: 0.9rem 2rem;
   background: linear-gradient(135deg, #0f8f79 0%, #0b6d5d 100%);
   color: white;
@@ -368,6 +373,7 @@
 }
 
 .btn-secondary {
+  min-height: 44px;
   padding: 0.8rem 1.5rem;
   background: white;
   color: #0f8f79;
@@ -540,9 +546,15 @@
 
 /* Tables */
 .table-scroll {
+  position: relative;
   width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  border-radius: 12px;
+  outline: 1px solid rgba(15, 143, 121, 0.08);
+  background:
+    linear-gradient(90deg, rgba(15, 143, 121, 0.1), transparent 18px) left / 28px 100% no-repeat,
+    linear-gradient(270deg, rgba(15, 143, 121, 0.1), transparent 18px) right / 28px 100% no-repeat;
 }
 
 .table-scroll .donations-table {
@@ -700,10 +712,11 @@
 .residents-search {
   width: 100%;
   max-width: 400px;
+  min-height: 44px;
   padding: 0.8rem;
   border: 1px solid #ddd;
   border-radius: 6px;
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
 .residents-search:focus {
@@ -767,6 +780,7 @@
   }
 
   .dashboard-nav__item {
+    min-height: 46px;
     padding: 0.62rem 0.45rem;
     font-size: 0.82rem;
     text-align: center;
@@ -801,6 +815,7 @@
   .table-scroll {
     margin-inline: -0.2rem;
     padding-bottom: 0.25rem;
+    max-width: calc(100vw - 1.6rem);
   }
 
   .analytics-summary {
@@ -870,6 +885,31 @@
   .dashboard-nav {
     grid-template-columns: 1fr;
     padding: 0.8rem 0.75rem;
+  }
+
+  .dashboard-header__content,
+  .dashboard-logout,
+  .dashboard-action-btn,
+  .btn-primary,
+  .btn-secondary,
+  .profile-actions button {
+    width: 100%;
+  }
+
+  .dashboard-cards,
+  .dashboard-actions,
+  .admin-summary-grid,
+  .admin-summary-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-summary-card li,
+  .analytics-legend__item {
+    align-items: flex-start;
+  }
+
+  .donation-request-form .form-group {
+    margin-bottom: 1rem;
   }
 
   .dashboard-card {

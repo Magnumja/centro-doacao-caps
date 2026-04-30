@@ -210,6 +210,23 @@ export default function Home(): React.ReactElement {
 
       <HowItWorks />
 
+      <section className="page-block home-location-section">
+        <div className="home-location-header">
+          <div>
+            <span className="page-kicker">Localização das unidades</span>
+            <h2>Encontre a unidade CAPS mais próxima para direcionar sua doação.</h2>
+            <p>
+              Use o mapa para visualizar a rede territorial antes de escolher uma unidade
+              e combinar o apoio com segurança.
+            </p>
+          </div>
+        </div>
+
+        <div className="home-location-map">
+          <CapsMap />
+        </div>
+      </section>
+
       <ImpactCards stats={projectStats} />
 
       <section className="page-block home-highlights-section">
@@ -220,34 +237,6 @@ export default function Home(): React.ReactElement {
           </div>
         </div>
         <NewsCarousel items={highlights} />
-      </section>
-
-      <section className="page-block home-hero">
-        <div className="home-hero-layout">
-          <article className="home-guidance-card">
-            <span className="page-kicker">Jornada de cuidado</span>
-            <h2>Um roteiro inicial para ler prioridades, localizar a rede CAPS e acompanhar cada apoio.</h2>
-            <p>
-              A página inicial organiza a leitura da rede e orienta o próximo passo de quem acolhe,
-              doa ou acompanha a gestão, com foco no que precisa de resposta agora.
-            </p>
-
-            <span className="home-card-tag">Fluxo recomendado</span>
-            <h3>Comece pelas prioridades e avance até o registro do apoio em três movimentos.</h3>
-
-            <ol className="home-step-list">
-              <li><span className="home-step-number">1</span><div><strong>Observe o que pede resposta imediata</strong><p>Consulte necessidades abertas para identificar os itens mais críticos.</p></div></li>
-              <li><span className="home-step-number">2</span><div><strong>Encontre a unidade certa</strong><p>Use a rede CAPS para localizar contatos e direcionar melhor o apoio.</p></div></li>
-              <li><span className="home-step-number">3</span><div><strong>Registre a contribuição</strong><p>Formalize a doação para visibilidade e acompanhamento da gestão.</p></div></li>
-            </ol>
-          </article>
-
-          <article className="home-map-card">
-            <span className="home-card-tag">Rede territorial</span>
-            <p className="home-map-card__intro">O mapa facilita a identificação da unidade antes do encaminhamento.</p>
-            <CapsMap />
-          </article>
-        </div>
       </section>
 
       <section className="page-block home-urgent-section">

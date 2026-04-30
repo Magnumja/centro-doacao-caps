@@ -1,0 +1,26 @@
+
+> centrodoacao@0.1.0 dev
+> vite --host 127.0.0.1
+
+Port 5173 is in use, trying another one...
+
+  [32m[1mVITE[22m v5.4.21[39m  [2mready in [0m[1m361[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://127.0.0.1:[1m5174[22m/[39m
+[2m22:45:10[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2m.codex-edge-profile/Default/Extensions/ghbmnnjooekpmoecnnnilnnbdlolhkhi/1.104.1_0/offscreendocument.html[22m
+[2m22:47:27[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/Styles/Layout.css[22m
+[2m22:47:51[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/Styles/Home.css[22m
+[2m22:47:57[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/Styles/Home.css[22m
+[2m22:48:03[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/Styles/Login.css[22m
+[2m22:49:25[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/Styles/Home.css[22m
+[2m23:03:23[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2m.codex-edge-profile/Edge Shopping/2.1.103.0/shopping.html[22m
+[2m23:03:23[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2m.codex-edge-profile/Edge Shopping/2.1.103.0/shopping_fre.html[22m
+[2m23:06:36[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2m.codex-edge-profile/Edge Wallet/128.18367.18366.1/wallet-crypto.html[22m
+[2m23:06:36[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2m.codex-edge-profile/Edge Wallet/128.18367.18366.1/wallet.html[22m
+[2m23:06:36[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2m.codex-edge-profile/Edge Wallet/128.18367.18366.1/Mini-Wallet/mini-wallet.html[22m
+[2m23:06:36[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2m.codex-edge-profile/Edge Wallet/128.18367.18366.1/Wallet-Checkout/wallet-drawer.html[22m
+[2m23:06:36[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2m.codex-edge-profile/Edge Wallet/128.18367.18366.1/bnpl/bnpl.html[22m
+[2m23:06:36[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2m.codex-edge-profile/Edge Wallet/128.18367.18366.1/Tokenized-Card/tokenized-card.html[22m
+[2m23:06:36[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2m.codex-edge-profile/Edge Wallet/128.18367.18366.1/Wallet-BuyNow/wallet-buynow.html[22m
+[2m23:06:36[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2m.codex-edge-profile/Edge Wallet/128.18367.18366.1/Notification/notification.html[22m
+[2m23:06:36[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2m.codex-edge-profile/Edge Wallet/128.18367.18366.1/Notification/notification_fast.html[22m

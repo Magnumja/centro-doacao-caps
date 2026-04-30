@@ -502,6 +502,83 @@
   .about-final-cta__actions .home-hero-button {
     width: 100%;
   }
+
+  .about-hero {
+    gap: 1rem;
+    padding-block: 1.25rem;
+  }
+
+  .about-hero__content {
+    gap: 0.72rem;
+  }
+
+  .about-hero__content h2 {
+    font-size: clamp(2rem, 12vw, 2.85rem);
+    line-height: 1.08;
+  }
+
+  .about-hero__content p,
+  .about-purpose-section > p {
+    font-size: 1rem;
+    line-height: 1.58;
+  }
+
+  .about-hero__card,
+  .about-info-card,
+  .about-step-card,
+  .about-impact-card,
+  .about-creator-card {
+    border-radius: 16px;
+    padding: 0.95rem;
+  }
+
+  .about-step-card {
+    min-height: auto;
+    padding-top: 3.4rem;
+    align-content: start;
+  }
+
+  .about-impact-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .about-creator-card__avatar {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 14px;
+  }
+
+  .about-final-cta {
+    align-items: stretch;
+  }
+
+  .about-final-cta__actions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 380px) {
+  .about-hero__content h2 {
+    font-size: 1.9rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .about-hero__card,
+  .about-step-card,
+  .about-impact-card,
+  .about-creator-card__avatar,
+  .about-final-cta::after,
+  .about-final-cta__actions .home-hero-button--primary {
+    animation-duration: 220ms;
+  }
+
+  .about-info-card:hover,
+  .about-step-card:hover,
+  .about-impact-card:hover,
+  .about-creator-card:hover {
+    transform: none;
+  }
 }
 
 :root[data-theme='dark'] .about-hero__card,

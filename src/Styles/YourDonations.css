@@ -16,6 +16,7 @@
   width: fit-content;
   border: none;
   border-radius: 10px;
+  min-height: 44px;
   padding: 0.5rem 0.82rem;
   background: linear-gradient(125deg, #0f8f79 0%, #1a9e8a 40%, #2f7c9d 100%);
   color: #ffffff;
@@ -101,8 +102,8 @@
 .your-donation-remove {
   display: inline-grid;
   place-items: center;
-  width: 2.2rem;
-  height: 2.2rem;
+  width: 2.75rem;
+  height: 2.75rem;
   border: 1px solid rgba(186, 53, 53, 0.22);
   border-radius: 10px;
   background: rgba(186, 53, 53, 0.08);
@@ -186,9 +187,18 @@
 }
 
 @media (max-width: 700px) {
+  .your-donations-page {
+    width: min(100%, calc(100vw - 1rem));
+  }
+
   .your-donations-header,
-  .your-donation-card__footer {
+  .your-donation-card__footer,
+  .your-donation-card__top {
     flex-direction: column;
+  }
+
+  .your-donation-remove {
+    align-self: flex-end;
   }
 
   .your-donations-primary,
@@ -197,5 +207,11 @@
   .urgent-need-mini-card a {
     width: 100%;
     text-align: center;
+  }
+
+  .your-donations-list,
+  .donation-places-grid,
+  .urgent-needs-grid {
+    grid-template-columns: 1fr;
   }
 }

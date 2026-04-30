@@ -109,9 +109,53 @@
 }
 
 .how-it-works-section,
+.home-location-section,
 .impact-section,
 .needed-ranking-section {
   width: min(1360px, 97vw);
+}
+
+.home-location-section {
+  gap: 1rem;
+}
+
+.home-location-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 1rem;
+}
+
+.home-location-header h2 {
+  max-width: 760px;
+  margin-top: 0.35rem;
+}
+
+.home-location-header p {
+  max-width: 760px;
+  margin-top: 0.4rem;
+}
+
+.home-location-map {
+  border-radius: 20px;
+  border: 1px solid rgba(15, 143, 121, 0.18);
+  background: rgba(255, 255, 255, 0.86);
+  padding: 1rem;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.home-location-map:hover {
+  transform: translateY(-4px);
+  border-color: rgba(15, 143, 121, 0.34);
+  box-shadow: 0 16px 32px rgba(14, 66, 57, 0.12);
+}
+
+.home-location-map .caps-map-wrapper {
+  margin-top: 0;
+}
+
+.home-location-map .caps-map {
+  min-height: 360px;
 }
 
 .how-it-works-grid,
@@ -434,6 +478,7 @@
   font-family: 'Lexend', sans-serif;
   font-size: 0.86rem;
   font-weight: 600;
+  min-height: 44px;
   padding: 0.62rem 0.95rem;
   cursor: pointer;
   transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
@@ -452,6 +497,8 @@
 
 .home-carousel {
   --carousel-gap: 1rem;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .home-carousel-viewport {
@@ -546,6 +593,7 @@
 .home-urgent-link {
   width: fit-content;
   border-radius: 999px;
+  min-height: 44px;
   padding: 0.6rem 0.95rem;
   background: linear-gradient(125deg, #0f8f79 0%, #1a9e8a 40%, #2f7c9d 100%);
   color: #ffffff;
@@ -553,6 +601,9 @@
   font-size: 0.82rem;
   font-weight: 600;
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   box-shadow: 0 8px 18px rgba(15, 143, 121, 0.18);
   transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
 }
@@ -576,6 +627,8 @@
 .donate-carousel-group {
   display: grid;
   gap: 0.95rem;
+  min-width: 0;
+  overflow: hidden;
   padding: 1rem;
   border-radius: 18px;
   border: 1px solid rgba(15, 143, 121, 0.14);
@@ -635,6 +688,9 @@
 /* ---- Mapa interativo ---- */
 .caps-map-wrapper {
   margin-top: 2rem;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 16px;
 }
 
 .caps-map-title {
@@ -651,6 +707,7 @@
 
 .caps-map {
   width: 100%;
+  max-width: 100%;
   height: 420px;
   border-radius: 16px;
   border: 1px solid rgba(15, 143, 121, 0.28);
@@ -724,6 +781,7 @@
 @media (max-width: 740px) {
   .home-institutional-hero,
   .how-it-works-section,
+  .home-location-section,
   .impact-section,
   .needed-ranking-section {
     width: min(100%, 95vw);
@@ -927,6 +985,7 @@
 
 .news-carousel__controls > button {
   padding: 0.5rem 0.75rem;
+  min-height: 44px;
 }
 
 /* Mobile & Tablet Responsive Design */
@@ -1194,12 +1253,14 @@
   display: flex;
   align-items: center;
   gap: 0.4rem;
+  min-height: 44px;
 }
 
 .news-carousel__dot {
-  width: 0.72rem;
-  height: 0.72rem;
-  padding: 0;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0.9rem;
+  background-clip: content-box;
 }
 
 .news-carousel__dot.is-active {
@@ -1331,6 +1392,178 @@
   min-height: 22px;
 }
 
+@media (max-width: 740px) {
+  .home-institutional-hero {
+    gap: 1rem;
+    padding-block: 1.25rem;
+  }
+
+  .home-institutional-hero__content {
+    gap: 0.78rem;
+  }
+
+  .home-institutional-hero__content h2 {
+    max-width: 12ch;
+    font-size: clamp(2rem, 12vw, 3rem);
+    line-height: 1.08;
+  }
+
+  .home-institutional-hero__content p {
+    font-size: 1rem;
+    line-height: 1.58;
+  }
+
+  .home-institutional-hero__panel {
+    padding: 1rem;
+    border-radius: 16px;
+  }
+
+  .home-location-header,
+  .home-urgent-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .home-location-map {
+    padding: 0.65rem;
+    border-radius: 16px;
+  }
+
+  .home-location-map .caps-map,
+  .caps-map {
+    height: 300px;
+    min-height: 300px;
+    border-radius: 14px;
+  }
+
+  .how-it-works-grid,
+  .impact-grid,
+  .home-needs-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .how-it-works-card,
+  .impact-card,
+  .needed-ranking-list li,
+  .home-need-feed-card,
+  .news-carousel,
+  .donate-carousel-group {
+    border-radius: 16px;
+  }
+
+  .home-carousel-controls button,
+  .news-carousel__controls > button {
+    min-height: 44px;
+  }
+
+  .news-carousel__controls {
+    align-items: stretch;
+  }
+
+  .news-carousel__controls > button {
+    flex: 1 1 0;
+  }
+
+  .news-carousel__dots {
+    min-height: 44px;
+  }
+
+  .news-carousel__dot {
+    width: 1.9rem;
+    height: 1.9rem;
+    background-clip: content-box;
+    padding: 0.56rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .home-institutional-hero,
+  .how-it-works-section,
+  .home-location-section,
+  .impact-section,
+  .needed-ranking-section,
+  .home-highlights-section,
+  .home-needs-section,
+  .page-block.home-urgent-section,
+  .donate-page {
+    width: min(100%, calc(100vw - 1rem));
+  }
+
+  .home-institutional-hero__content h2 {
+    max-width: 11ch;
+    font-size: clamp(1.95rem, 11vw, 2.55rem);
+  }
+
+  .home-hero-actions,
+  .home-carousel-controls,
+  .news-carousel__controls {
+    width: 100%;
+  }
+
+  .home-hero-button,
+  .home-urgent-link {
+    min-height: 48px;
+    padding-inline: 0.85rem;
+  }
+
+  .home-urgent-card__top {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .home-location-map .caps-map,
+  .caps-map {
+    height: 260px;
+    min-height: 260px;
+  }
+
+  .caps-map-legend {
+    gap: 0.55rem 0.9rem;
+    font-size: 0.82rem;
+  }
+
+  .news-carousel {
+    padding: 0.55rem;
+  }
+
+  .news-carousel__content,
+  .news-carousel__text-link {
+    gap: 0.55rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .home-institutional-hero__content h2 {
+    font-size: 1.82rem;
+  }
+
+  .home-location-map .caps-map,
+  .caps-map {
+    height: 240px;
+    min-height: 240px;
+  }
+}
+
+@media (max-width: 640px) {
+  .home-institutional-hero__content > *,
+  .home-institutional-hero__panel,
+  .home-carousel-track,
+  .news-carousel__progress-value {
+    animation-duration: 220ms;
+  }
+
+  .how-it-works-card:hover,
+  .impact-card:hover,
+  .needed-ranking-list li:hover,
+  .home-location-map:hover,
+  .home-urgent-card:hover,
+  .donate-carousel-group:hover,
+  .news-carousel:hover,
+  .home-need-feed-card:hover {
+    transform: none;
+  }
+}
+
 @media (max-width: 920px) {
   .news-carousel__slide {
     grid-template-columns: 1fr;
@@ -1352,6 +1585,7 @@
 
 :root[data-theme='dark'] .home-guidance-card,
 :root[data-theme='dark'] .home-map-card,
+:root[data-theme='dark'] .home-location-map,
 :root[data-theme='dark'] .home-institutional-hero__panel,
 :root[data-theme='dark'] .how-it-works-card,
 :root[data-theme='dark'] .impact-card,
