@@ -3,6 +3,34 @@
   gap: 0.1rem;
 }
 
+.about-project-page .page-block {
+  animation: aboutSectionReveal 620ms ease both;
+}
+
+.about-project-page .page-block:nth-child(2) {
+  animation-delay: 90ms;
+}
+
+.about-project-page .page-block:nth-child(3) {
+  animation-delay: 160ms;
+}
+
+.about-project-page .page-block:nth-child(4) {
+  animation-delay: 230ms;
+}
+
+.about-project-page .page-block:nth-child(5) {
+  animation-delay: 300ms;
+}
+
+.about-project-page .page-block:nth-child(6) {
+  animation-delay: 370ms;
+}
+
+.about-project-page .page-block:nth-child(7) {
+  animation-delay: 440ms;
+}
+
 .about-hero,
 .about-story-grid,
 .about-purpose-section,
@@ -24,6 +52,20 @@
   display: grid;
   align-content: center;
   gap: 0.9rem;
+}
+
+.about-hero__content .page-kicker,
+.about-hero__content h2,
+.about-hero__content p {
+  animation: aboutTextRise 680ms ease both;
+}
+
+.about-hero__content h2 {
+  animation-delay: 120ms;
+}
+
+.about-hero__content p {
+  animation-delay: 220ms;
 }
 
 .about-hero__content h2 {
@@ -52,6 +94,7 @@
   align-content: center;
   gap: 0.8rem;
   padding: 1.2rem;
+  animation: aboutFloatIn 760ms ease 180ms both, aboutSoftFloat 5s ease-in-out 1.1s infinite;
 }
 
 .about-hero__card > span,
@@ -64,6 +107,7 @@
   place-items: center;
   background: rgba(15, 143, 121, 0.12);
   color: #0b6d5d;
+  transition: transform 180ms ease, background-color 180ms ease, color 180ms ease;
 }
 
 .about-hero__card strong,
@@ -82,6 +126,21 @@
   display: grid;
   gap: 0.7rem;
   padding: 1.1rem;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.about-info-card:hover,
+.about-impact-card:hover,
+.about-creator-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(15, 143, 121, 0.34);
+  box-shadow: 0 18px 36px rgba(14, 66, 57, 0.14);
+}
+
+.about-info-card:hover .about-info-card__icon,
+.about-impact-card:hover > span {
+  transform: translateY(-2px) scale(1.08);
+  background: rgba(15, 143, 121, 0.18);
 }
 
 .about-info-card h3 {
@@ -106,6 +165,46 @@
   display: grid;
   align-content: end;
   padding: 1rem;
+  overflow: hidden;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  animation: aboutCardRise 540ms ease both;
+}
+
+.about-step-card:nth-child(1) {
+  animation-delay: 180ms;
+}
+
+.about-step-card:nth-child(2) {
+  animation-delay: 280ms;
+}
+
+.about-step-card:nth-child(3) {
+  animation-delay: 380ms;
+}
+
+.about-step-card:nth-child(4) {
+  animation-delay: 480ms;
+}
+
+.about-step-card::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 4px;
+  background: linear-gradient(90deg, #0f8f79, #2f7c9d);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 260ms ease;
+}
+
+.about-step-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(15, 143, 121, 0.34);
+  box-shadow: 0 16px 32px rgba(14, 66, 57, 0.12);
+}
+
+.about-step-card:hover::after {
+  transform: scaleX(1);
 }
 
 .about-step-card__number {
@@ -121,6 +220,8 @@
   color: #ffffff;
   font-family: 'Lexend', sans-serif;
   font-weight: 700;
+  box-shadow: 0 8px 18px rgba(15, 143, 121, 0.22);
+  animation: aboutNumberPulse 3.6s ease-in-out infinite;
 }
 
 .about-step-card p {
@@ -138,6 +239,36 @@
   display: grid;
   gap: 0.75rem;
   padding: 1rem;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  animation: aboutCardRise 560ms ease both;
+}
+
+.about-impact-card:nth-child(1) {
+  animation-delay: 120ms;
+}
+
+.about-impact-card:nth-child(2) {
+  animation-delay: 180ms;
+}
+
+.about-impact-card:nth-child(3) {
+  animation-delay: 240ms;
+}
+
+.about-impact-card:nth-child(4) {
+  animation-delay: 300ms;
+}
+
+.about-impact-card:nth-child(5) {
+  animation-delay: 360ms;
+}
+
+.about-impact-card:nth-child(6) {
+  animation-delay: 420ms;
+}
+
+.about-impact-card:nth-child(7) {
+  animation-delay: 480ms;
 }
 
 .about-creator-layout {
@@ -156,6 +287,7 @@
   grid-template-columns: auto minmax(0, 1fr);
   gap: 1rem;
   padding: 1.1rem;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
 
 .about-creator-card__avatar {
@@ -169,6 +301,7 @@
   font-family: 'Lexend', sans-serif;
   font-size: 1.25rem;
   font-weight: 700;
+  animation: aboutAvatarGlow 3.8s ease-in-out infinite;
 }
 
 .about-creator-card h3 {
@@ -191,6 +324,23 @@
   align-items: center;
   gap: 1rem;
   background: linear-gradient(145deg, rgba(15, 143, 121, 0.14), rgba(255, 255, 255, 0.92));
+  position: relative;
+  overflow: hidden;
+}
+
+.about-final-cta::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 0%, rgba(255, 255, 255, 0.34) 42%, transparent 68%);
+  transform: translateX(-120%);
+  animation: aboutCtaSweep 5.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.about-final-cta > * {
+  position: relative;
+  z-index: 1;
 }
 
 .about-final-cta__actions {
@@ -198,6 +348,114 @@
   flex-wrap: wrap;
   gap: 0.65rem;
   justify-content: flex-end;
+}
+
+.about-final-cta__actions .home-hero-button--primary {
+  animation: aboutButtonBreathe 3.2s ease-in-out infinite;
+}
+
+@keyframes aboutSectionReveal {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes aboutTextRise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes aboutFloatIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes aboutSoftFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes aboutCardRise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes aboutNumberPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes aboutAvatarGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgba(15, 143, 121, 0);
+  }
+
+  50% {
+    box-shadow: 0 0 0 8px rgba(15, 143, 121, 0.12);
+  }
+}
+
+@keyframes aboutCtaSweep {
+  0%,
+  35% {
+    transform: translateX(-120%);
+  }
+
+  65%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+@keyframes aboutButtonBreathe {
+  0%,
+  100% {
+    box-shadow: 0 12px 24px rgba(15, 143, 121, 0.22);
+  }
+
+  50% {
+    box-shadow: 0 16px 30px rgba(15, 143, 121, 0.34);
+  }
 }
 
 @media (max-width: 980px) {
@@ -276,4 +534,38 @@
 
 :root[data-theme='dark'] .about-creator-card strong {
   color: var(--health-accent-strong);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-project-page .page-block,
+  .about-hero__content .page-kicker,
+  .about-hero__content h2,
+  .about-hero__content p,
+  .about-hero__card,
+  .about-step-card,
+  .about-impact-card,
+  .about-step-card__number,
+  .about-creator-card__avatar,
+  .about-final-cta::after,
+  .about-final-cta__actions .home-hero-button--primary {
+    animation: none;
+  }
+
+  .about-info-card,
+  .about-step-card,
+  .about-impact-card,
+  .about-creator-card,
+  .about-info-card__icon,
+  .about-impact-card > span {
+    transition: none;
+  }
+
+  .about-info-card:hover,
+  .about-step-card:hover,
+  .about-impact-card:hover,
+  .about-creator-card:hover,
+  .about-info-card:hover .about-info-card__icon,
+  .about-impact-card:hover > span {
+    transform: none;
+  }
 }
