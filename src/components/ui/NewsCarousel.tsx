@@ -12,14 +12,37 @@ export default function NewsCarousel({ items, autoPlayMs = 5500 }: Props): React
   const [activeIndex, setActiveIndex] = useState(0)
   const [progress, setProgress] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
+  const [isPageVisible, setIsPageVisible] = useState(() => {
+    if (typeof document === 'undefined') return true
+    return !document.hidden
+  })
   const touchStartX = useRef<number | null>(null)
 
   const total = items.length
   const activeItem = useMemo(() => items[activeIndex], [activeIndex, items])
-  const activeItemIsExternal = activeItem?.ctaLink.startsWith('http')
+  const activeItemIsExternal = Boolean(activeItem?.ctaLink.startsWith('http'))
 
   useEffect(() => {
-    if (total <= 1 || isPaused || document.hidden) {
+    if (activeIndex >= total && total > 0) {
+      setActiveIndex(0)
+      setProgress(0)
+    }
+  }, [activeIndex, total])
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsPageVisible(!document.hidden)
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (total <= 1 || isPaused || !isPageVisible) {
       return
     }
 
@@ -38,7 +61,7 @@ export default function NewsCarousel({ items, autoPlayMs = 5500 }: Props): React
     return () => {
       window.clearInterval(timer)
     }
-  }, [activeIndex, autoPlayMs, isPaused, total])
+  }, [activeIndex, autoPlayMs, isPageVisible, isPaused, total])
 
   useEffect(() => {
     if (!activeItem) return
@@ -52,7 +75,9 @@ export default function NewsCarousel({ items, autoPlayMs = 5500 }: Props): React
   }, [activeIndex, activeItem])
 
   const goTo = (index: number) => {
-    setActiveIndex(index)
+    if (total === 0) return
+
+    setActiveIndex(((index % total) + total) % total)
     setProgress(0)
   }
 
@@ -81,6 +106,8 @@ export default function NewsCarousel({ items, autoPlayMs = 5500 }: Props): React
     }
 
     const deltaX = event.changedTouches[0].clientX - touchStartX.current
+    touchStartX.current = null
+
     if (Math.abs(deltaX) < 45) {
       return
     }
@@ -90,12 +117,14 @@ export default function NewsCarousel({ items, autoPlayMs = 5500 }: Props): React
     } else {
       goNext()
     }
-
-    touchStartX.current = null
   }
 
   if (items.length === 0) {
     return <p className="home-urgent-empty">Nenhum destaque disponível no momento.</p>
+  }
+
+  if (!activeItem) {
+    return <p className="home-urgent-empty">Carregando destaque...</p>
   }
 
   const renderSlideLink = (className: string, children: React.ReactNode): React.ReactElement => {

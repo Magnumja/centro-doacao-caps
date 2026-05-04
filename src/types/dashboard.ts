@@ -1,11 +1,11 @@
-import { Host } from './index'
+import { Host, Need } from './index'
 
 export type NeedCardItem = {
   id: string
   title: string
   amount: number
   description: string
-  priority: 'alta' | 'media'
+  priority: Need['priority']
   category: string
   unitId: string
 }
