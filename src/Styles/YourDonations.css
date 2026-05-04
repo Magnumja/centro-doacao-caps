@@ -215,3 +215,44 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ---- Refinamento visual: minhas doacoes ---- */
+.your-donations-page {
+  width: min(1180px, 94vw);
+  gap: 1.35rem;
+}
+
+.your-donations-header {
+  align-items: center;
+}
+
+.your-donations-section {
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+  padding: 1rem;
+}
+
+.your-donation-card,
+.your-donations-empty,
+.donation-place-card,
+.urgent-need-mini-card {
+  border-color: var(--color-border);
+  background: var(--color-surface-soft);
+}
+
+.your-donation-meta span,
+.your-donation-items li {
+  border-radius: var(--radius-card);
+}
+
+.your-donation-remove {
+  border-radius: var(--radius-control);
+}
+
+@media (max-width: 700px) {
+  .your-donations-page {
+    width: min(100%, calc(100vw - 1rem));
+  }
+}

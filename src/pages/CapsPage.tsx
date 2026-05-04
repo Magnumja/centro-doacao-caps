@@ -303,6 +303,10 @@ export default function CapsPage(): React.ReactElement {
 
   const whatsappUrl = selectedUnit ? getWhatsAppUrl(selectedUnit) : undefined
   const mapsUrl = selectedUnit ? getMapsUrl(selectedUnit.address) : undefined
+  const selectedUnitOpenNeeds = selectedUnitNeeds.filter((need) => need.status !== 'Concluido').length
+  const selectedUnitUrgentNeeds = selectedUnitNeeds.filter(
+    (need) => need.priority === 'alta' || need.urgency === 'Urgente',
+  ).length
 
   return (
     <section className="page-block caps-page">
@@ -340,9 +344,9 @@ export default function CapsPage(): React.ReactElement {
 
       {selectedUnit && !showUnitChooser ? (
         <>
-          <article className={`page-card selected-unit-spotlight selected-unit-spotlight--enter${selectedUnit.photo ? '' : ' selected-unit-spotlight--no-photo'}`}>
+          <section className={`selected-unit-overview selected-unit-spotlight--enter${selectedUnit.photo ? '' : ' selected-unit-overview--no-photo'}`}>
             {selectedUnit.photo ? (
-              <div className="selected-unit-spotlight__media">
+              <article className="selected-unit-photo-card">
                 <img
                   className="selected-unit-spotlight__photo"
                   src={selectedUnit.photo}
@@ -354,21 +358,35 @@ export default function CapsPage(): React.ReactElement {
                     if (fallback && event.currentTarget.src !== fallback) event.currentTarget.src = fallback
                   }}
                 />
-              </div>
+              </article>
             ) : null}
 
-            <div className="selected-unit-spotlight__content">
+            <article className="selected-unit-info-card selected-unit-info-card--identity">
               <span className="unit-type-badge">Unidade selecionada</span>
               <h3>{selectedUnit.title}</h3>
-              <p><strong>Tipo:</strong> {selectedUnit.unitType}</p>
-              <p><strong>Endereco:</strong> {selectedUnit.address}</p>
-              <p><strong>Contato:</strong> {selectedUnit.contact ?? 'Contato nao informado'}</p>
-              {selectedUnit.operatingHours ? <p><strong>Horario:</strong> {selectedUnit.operatingHours}</p> : null}
-              {selectedUnit.needsSummary ? <p><strong>Resumo das necessidades:</strong> {selectedUnit.needsSummary}</p> : null}
-              {selectedUnit.description ? <p>{selectedUnit.description}</p> : null}
+              <p>{selectedUnit.description ?? 'Unidade da Rede de Atencao Psicossocial de Campo Grande/MS.'}</p>
               {selectedUnit.capacity ? <p>{selectedUnit.capacity}</p> : null}
               {selectedUnit.privacyNote ? <p>{selectedUnit.privacyNote}</p> : null}
+            </article>
 
+            <article className="selected-unit-info-card">
+              <span className="info-card-label">Endereco e contato</span>
+              <p><strong>Endereco</strong>{selectedUnit.address}</p>
+              <p><strong>Contato</strong>{selectedUnit.contact ?? 'Contato nao informado'}</p>
+              {selectedUnit.operatingHours ? <p><strong>Horario</strong>{selectedUnit.operatingHours}</p> : null}
+            </article>
+
+            <article className="selected-unit-info-card selected-unit-info-card--needs">
+              <span className="info-card-label">Resumo dos pedidos</span>
+              <div className="selected-unit-metrics">
+                <span><strong>{selectedUnitOpenNeeds}</strong> abertos</span>
+                <span><strong>{selectedUnitUrgentNeeds}</strong> urgentes</span>
+              </div>
+              <p>{selectedUnit.needsSummary ?? 'Confira os pedidos cadastrados abaixo e filtre por categoria.'}</p>
+            </article>
+
+            <article className="selected-unit-info-card selected-unit-actions-card">
+              <span className="info-card-label">Acoes</span>
               <div className="selected-unit-actions">
                 {whatsappUrl ? (
                   <a className="unit-donate-button" href={whatsappUrl} target="_blank" rel="noreferrer">
@@ -388,8 +406,8 @@ export default function CapsPage(): React.ReactElement {
                   Ver outras unidades
                 </button>
               </div>
-            </div>
-          </article>
+            </article>
+          </section>
 
           <section className="unit-needs-section">
             <div className="section-heading">

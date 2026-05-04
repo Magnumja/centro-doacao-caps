@@ -2,35 +2,26 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import CapsMap from '../components/CapsMap'
-import HeroSection from '../components/HeroSection'
+import DonationRequestCard from '../components/DonationRequestCard'
 import HowItWorks from '../components/HowItWorks'
-import ImpactCards from '../components/ImpactCards'
-import NeededItemsRanking from '../components/NeededItemsRanking'
 import NewsCarousel from '../components/ui/NewsCarousel'
-import { NeedListSkeleton, UrgentCarouselSkeleton } from '../components/ui/Skeletons'
+import { UrgentCarouselSkeleton } from '../components/ui/Skeletons'
 import { HighlightItem } from '../data/highlights'
 import { fetchPublicNeeds } from '../lib/needs'
 import { getCardsPerView } from '../lib/ui-utils'
 import { fetchHighlights } from '../services/highlights-service'
 import { fetchNeedsPage, normalizeNeed } from '../services/needs-service'
-import { Need } from '../types'
 import { trackEvent } from '../services/telemetry-service'
-import { neededItemsRanking, projectStats } from '../data/mockData'
+import { Need } from '../types'
 import '../Styles/Home.css'
-
-const FEED_PAGE_SIZE = 6
 
 export default function Home(): React.ReactElement {
   const [urgentNeeds, setUrgentNeeds] = useState<Need[]>([])
-  const [nonUrgentNeeds, setNonUrgentNeeds] = useState<Need[]>([])
   const [highlights, setHighlights] = useState<HighlightItem[]>([])
   const [isLoadingUrgent, setIsLoadingUrgent] = useState(true)
-  const [isLoadingFeed, setIsLoadingFeed] = useState(true)
   const [cardsPerView, setCardsPerView] = useState<number>(() => getCardsPerView())
   const [activeIndex, setActiveIndex] = useState(0)
-  const [feedPage, setFeedPage] = useState(1)
-  const [feedHasMore, setFeedHasMore] = useState(true)
-  const loadMoreRef = useRef<HTMLDivElement | null>(null)
+  const milestonesRef = useRef(new Set<number>())
 
   useEffect(() => {
     const handleResize = (): void => setCardsPerView(getCardsPerView())
@@ -59,14 +50,14 @@ export default function Home(): React.ReactElement {
       setIsLoadingUrgent(true)
 
       try {
-        const urgentResponse = await fetchNeedsPage({ page: 1, limit: 18, priority: 'alta' })
+        const urgentResponse = await fetchNeedsPage({ page: 1, limit: 9, priority: 'alta' })
         if (!mounted) return
 
         setUrgentNeeds((urgentResponse.data || []).map(normalizeNeed))
       } catch {
         const fallback = await fetchPublicNeeds()
         if (!mounted) return
-        setUrgentNeeds(fallback.filter((need) => need.priority === 'alta'))
+        setUrgentNeeds(fallback.filter((need) => need.priority === 'alta').slice(0, 9))
       } finally {
         if (mounted) setIsLoadingUrgent(false)
       }
@@ -77,95 +68,11 @@ export default function Home(): React.ReactElement {
     }
   }, [])
 
-  // Ref para milestones - mantém state entre renders do listener
-  const milestonesRef = useRef(new Set<number>())
-
-  useEffect(() => {
-    let mounted = true
-
-    ;(async () => {
-      setIsLoadingFeed(true)
-
-      try {
-        const response = await fetchNeedsPage({ page: 1, limit: FEED_PAGE_SIZE, priority: 'media' })
-        if (!mounted) return
-
-        setNonUrgentNeeds((response.data || []).map(normalizeNeed))
-        setFeedHasMore(response.hasMore)
-        setFeedPage(1)
-      } catch {
-        const fallback = await fetchPublicNeeds()
-        if (!mounted) return
-
-        const normalized = fallback.filter((need) => need.priority !== 'alta')
-        setNonUrgentNeeds(normalized.slice(0, FEED_PAGE_SIZE))
-        setFeedHasMore(normalized.length > FEED_PAGE_SIZE)
-        setFeedPage(1)
-      } finally {
-        if (mounted) setIsLoadingFeed(false)
-      }
-    })()
-
-    return () => {
-      mounted = false
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!loadMoreRef.current || !feedHasMore || isLoadingFeed) {
-      return
-    }
-
-    const observer = new IntersectionObserver((entries) => {
-      const [entry] = entries
-      if (!entry.isIntersecting) {
-        return
-      }
-
-      setFeedPage((current) => current + 1)
-    }, { threshold: 0.2, rootMargin: '120px' })
-
-    observer.observe(loadMoreRef.current)
-    return () => observer.disconnect()
-  }, [feedHasMore, isLoadingFeed])
-
-  useEffect(() => {
-    if (feedPage <= 1 || isLoadingFeed) {
-      return
-    }
-
-    let mounted = true
-
-    ;(async () => {
-      setIsLoadingFeed(true)
-      try {
-        const response = await fetchNeedsPage({ page: feedPage, limit: FEED_PAGE_SIZE, priority: 'media' })
-        if (!mounted) return
-
-        setNonUrgentNeeds((current) => [...current, ...(response.data || []).map(normalizeNeed)])
-        setFeedHasMore(response.hasMore)
-      } catch {
-        if (mounted) {
-          setFeedHasMore(false)
-        }
-      } finally {
-        if (mounted) setIsLoadingFeed(false)
-      }
-    })()
-
-    return () => {
-      mounted = false
-    }
-  }, [feedPage])
-
-  // Scroll tracking com ref para preservar milestones
   useEffect(() => {
     const onScroll = () => {
       const scrollTop = window.scrollY
       const fullHeight = document.documentElement.scrollHeight - window.innerHeight
-      if (fullHeight <= 0) {
-        return
-      }
+      if (fullHeight <= 0) return
 
       const percentage = Math.round((scrollTop / fullHeight) * 100)
       const checkpoints = [25, 50, 75, 100]
@@ -193,33 +100,35 @@ export default function Home(): React.ReactElement {
   }, [cardsPerView, urgentNeeds.length])
 
   const maxIndex = Math.max(0, urgentNeeds.length - cardsPerView)
-  
+
   const carouselStyle = useMemo(() => ({
     ['--cards-per-view' as string]: cardsPerView,
     ['--active-index' as string]: activeIndex,
   } as React.CSSProperties), [cardsPerView, activeIndex])
 
-  const isFeedEmpty = useMemo(
-    () => !isLoadingFeed && nonUrgentNeeds.length === 0,
-    [isLoadingFeed, nonUrgentNeeds.length]
-  )
-
   return (
     <>
-      <HeroSection stats={projectStats} />
+      <section className="page-block home-highlights-section home-highlights-section--featured">
+        <div className="home-urgent-header">
+          <div>
+            <span className="page-kicker">Noticias e destaques</span>
+            <h2>Campanhas e informacoes da rede CAPS</h2>
+            <p>Atualizacoes importantes aparecem primeiro para orientar quem deseja participar.</p>
+          </div>
+        </div>
+        <NewsCarousel items={highlights} />
+      </section>
 
       <HowItWorks />
 
       <section className="page-block home-location-section">
         <div className="home-location-header">
           <div>
-            <span className="page-kicker">Localização das unidades</span>
-            <h2>Encontre a unidade CAPS mais próxima para direcionar sua doação.</h2>
-            <p>
-              Use o mapa para visualizar a rede territorial antes de escolher uma unidade
-              e combinar o apoio com segurança.
-            </p>
+            <span className="page-kicker">Mapa das unidades</span>
+            <h2>Encontre uma unidade CAPS em Campo Grande</h2>
+            <p>Use o mapa para conhecer a localizacao das unidades antes de escolher onde doar.</p>
           </div>
+          <Link className="home-urgent-link" to="/caps">Ver unidades</Link>
         </div>
 
         <div className="home-location-map">
@@ -227,42 +136,31 @@ export default function Home(): React.ReactElement {
         </div>
       </section>
 
-      <ImpactCards stats={projectStats} />
-
-      <section className="page-block home-highlights-section">
-        <div className="home-urgent-header">
-          <div>
-            <span className="page-kicker">Notícias e destaques</span>
-            <h2>Novidades da rede e campanhas ativas</h2>
-          </div>
-        </div>
-        <NewsCarousel items={highlights} />
-      </section>
-
       <section className="page-block home-urgent-section">
         <div className="home-urgent-header">
           <div>
-            <span className="page-kicker">Prioridades imediatas</span>
-            <h2>Doações pedidas com urgência</h2>
+            <span className="page-kicker">Prioridades da rede</span>
+            <h2>Pedidos urgentes em destaque</h2>
+            <p>Uma selecao curta dos itens com maior prioridade no momento.</p>
           </div>
 
           {urgentNeeds.length > cardsPerView ? (
-            <div className="home-carousel-controls" aria-label="Navegação do carrossel de urgências">
-              <button 
-                type="button" 
-                onClick={() => setActiveIndex((currentIndex) => Math.max(0, currentIndex - 1))} 
+            <div className="home-carousel-controls" aria-label="Navegacao do carrossel de urgencias">
+              <button
+                type="button"
+                onClick={() => setActiveIndex((currentIndex) => Math.max(0, currentIndex - 1))}
                 disabled={activeIndex === 0}
-                aria-label="Mostrar doações urgentes anteriores"
+                aria-label="Mostrar doacoes urgentes anteriores"
               >
                 Anterior
               </button>
-              <button 
-                type="button" 
-                onClick={() => setActiveIndex((currentIndex) => Math.min(maxIndex, currentIndex + 1))} 
+              <button
+                type="button"
+                onClick={() => setActiveIndex((currentIndex) => Math.min(maxIndex, currentIndex + 1))}
                 disabled={activeIndex >= maxIndex}
-                aria-label="Mostrar próximas doações urgentes"
+                aria-label="Mostrar proximas doacoes urgentes"
               >
-                Próximo
+                Proximo
               </button>
             </div>
           ) : null}
@@ -276,65 +174,33 @@ export default function Home(): React.ReactElement {
               <div className="home-carousel-track">
                 {urgentNeeds.map((need) => (
                   <article key={need.id} className="home-carousel-slide">
-                    <div className="home-urgent-card">
-                      <div className="home-urgent-card__top">
-                        <span className="home-urgent-badge">Urgente</span>
-                        <span className="home-urgent-amount">{need.amount} unidades</span>
-                      </div>
-                      <h3>{need.title}</h3>
-                      <p>{need.description}</p>
-                      <div className="home-urgent-footer">
-                        <div className="home-urgent-meta"><strong>{need.unitName}</strong><span>{need.category}</span></div>
-                        <Link className="home-urgent-link" to={`/caps?unit=${need.unitId}`}>DOAR AGORA</Link>
-                      </div>
-                    </div>
+                    <DonationRequestCard
+                      need={need}
+                      compact
+                      actionTo={`/caps?unit=${need.unitId}`}
+                      actionLabel="Quero doar"
+                    />
                   </article>
                 ))}
               </div>
             </div>
           </div>
         ) : (
-          <p className="home-urgent-empty">Não há pedidos urgentes registrados no momento.</p>
+          <p className="home-urgent-empty">Nao ha pedidos urgentes registrados no momento.</p>
         )}
       </section>
 
-      <section className="page-block home-needs-section">
-        <div className="home-urgent-header">
-          <div>
-            <span className="page-kicker">Apoio contínuo</span>
-            <h2>Outras necessidades da rede</h2>
-            <p>Agora com paginação otimizada no backend + scroll progressivo no frontend.</p>
-          </div>
+      <section className="page-block home-final-cta">
+        <div>
+          <span className="page-kicker">Escolha seu caminho</span>
+          <h2>Veja todos os pedidos ou escolha uma unidade CAPS.</h2>
+          <p>A home mostra o essencial. As paginas internas trazem os detalhes para doar com seguranca.</p>
         </div>
-
-        {isLoadingFeed && nonUrgentNeeds.length === 0 ? (
-          <NeedListSkeleton />
-        ) : isFeedEmpty ? (
-          <p className="home-urgent-empty">Não há necessidades adicionais no momento.</p>
-        ) : (
-          <>
-            <div className="home-needs-grid">
-              {nonUrgentNeeds.map((need) => (
-                <article key={need.id} className="home-need-feed-card">
-                  <span className="home-card-tag">{need.category}</span>
-                  <h3>{need.title}</h3>
-                  <p>{need.description}</p>
-                  <div className="home-urgent-footer">
-                    <strong>{need.unitName}</strong>
-                    <Link className="home-urgent-link" to={`/caps?unit=${need.unitId}`}>Contribuir</Link>
-                  </div>
-                </article>
-              ))}
-            </div>
-
-            {feedHasMore ? (
-              <div ref={loadMoreRef} className="home-infinite-trigger" aria-label="Carregando mais necessidades" />
-            ) : null}
-          </>
-        )}
+        <div className="home-final-cta__actions">
+          <Link className="home-hero-button home-hero-button--primary" to="/donate">Ver necessidades</Link>
+          <Link className="home-hero-button home-hero-button--secondary" to="/caps">Escolher unidade</Link>
+        </div>
       </section>
-
-      <NeededItemsRanking items={neededItemsRanking} />
     </>
   )
 }

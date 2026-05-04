@@ -71,6 +71,10 @@ function CapsCard({
 
       <span className="unit-type-badge">{cap.unitType}</span>
       <h3>{cap.title}</h3>
+      <div className="caps-card__status-row">
+        <span className="status-request-badge status-request-badge--partial">Recebendo doacoes</span>
+        {cap.needsSummary ? <span className="status-request-badge status-request-badge--pending">Pedidos abertos</span> : null}
+      </div>
 
       <div className="caps-card__details">
         <p><strong>Endereco:</strong> {cap.address}</p>

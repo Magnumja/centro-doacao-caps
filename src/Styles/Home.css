@@ -1697,3 +1697,371 @@
   background: #102722;
   color: var(--health-text);
 }
+
+/* ---- Refinamento visual: home e necessidades ---- */
+.home-institutional-hero {
+  width: min(1180px, 94vw);
+  grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.58fr);
+  gap: clamp(1.4rem, 4vw, 3.2rem);
+  padding: clamp(2rem, 5vw, 4rem) 0 clamp(1.4rem, 4vw, 3rem);
+}
+
+.page-block.home-urgent-section,
+.page-block.home-needs-section,
+.page-block.home-highlights-section,
+.page-block.home-location-section,
+.page-block.impact-section,
+.page-block.how-it-works-section,
+.page-block.needed-ranking-section,
+.page-block.donate-page {
+  padding-inline: 0;
+}
+
+.home-institutional-hero__content {
+  gap: 1rem;
+  min-width: 0;
+}
+
+.home-institutional-hero__panel {
+  min-width: 0;
+}
+
+.home-institutional-hero__content h2 {
+  max-width: 780px;
+  font-size: clamp(2.35rem, 6vw, 4.75rem);
+  line-height: 1.02;
+}
+
+.home-institutional-hero__content p {
+  max-width: 680px;
+  color: var(--color-muted);
+  font-size: clamp(1rem, 1.4vw, 1.18rem);
+}
+
+.home-institutional-hero__panel {
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.home-hero-panel-stats {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.home-hero-panel-stats span {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 1rem;
+  border-radius: var(--radius-card);
+  background: var(--color-surface-soft);
+  padding: 0.62rem 0.7rem;
+  color: var(--color-muted);
+  font-weight: 700;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.home-hero-panel-stats span strong {
+  color: var(--color-primary-strong);
+  font-family: 'Lexend', sans-serif;
+  font-size: 1.05rem;
+}
+
+.home-hero-panel-stats span small {
+  text-align: right;
+  font: inherit;
+}
+
+.home-hero-panel-stats span::first-letter {
+  color: var(--color-primary-strong);
+}
+
+.home-hero-panel-icon,
+.how-it-works-card__icon,
+.impact-card__icon,
+.donate-need-icon {
+  border-radius: var(--radius-card);
+  background: var(--color-primary-soft);
+  color: var(--color-primary-strong);
+}
+
+.impact-section,
+.how-it-works-section,
+.home-location-section,
+.home-highlights-section,
+.home-urgent-section,
+.home-needs-section,
+.needed-ranking-section,
+.donate-page {
+  width: min(1180px, 94vw);
+}
+
+.impact-section .section-heading,
+.how-it-works-section .section-heading,
+.needed-ranking-section .section-heading {
+  max-width: 760px;
+}
+
+.impact-grid,
+.how-it-works-grid,
+.home-needs-grid,
+.donate-requests-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
+  gap: 1rem;
+}
+
+.impact-card,
+.how-it-works-card {
+  padding: 1rem;
+}
+
+.impact-card strong {
+  color: var(--color-primary-strong);
+  animation: none;
+}
+
+.how-it-works-card__step {
+  background: var(--color-text);
+}
+
+.home-urgent-header {
+  align-items: end;
+  gap: 1rem;
+}
+
+.home-urgent-header > div {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.home-carousel {
+  --carousel-gap: 1rem;
+}
+
+.home-carousel-slide {
+  display: flex;
+}
+
+.home-carousel-slide > .donation-request-card {
+  width: 100%;
+}
+
+.home-carousel-controls button,
+.news-carousel__controls > button {
+  border-radius: var(--radius-control);
+  border-color: var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.home-location-map {
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+}
+
+.home-location-map:hover {
+  transform: none;
+  box-shadow: var(--shadow-card);
+}
+
+.news-carousel {
+  padding: 0.8rem;
+}
+
+.news-carousel__image {
+  border-radius: var(--radius-card);
+}
+
+.needed-ranking-list li {
+  border-radius: var(--radius-card);
+  border-color: var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+}
+
+.needed-ranking-list__position,
+.needed-ranking-list__amount {
+  background: var(--color-primary-soft);
+  color: var(--color-primary-strong);
+}
+
+.home-final-cta {
+  width: min(1180px, 94vw);
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+  padding: clamp(1.2rem, 3vw, 2rem);
+  border-radius: var(--radius-card);
+  background: var(--color-primary-soft);
+}
+
+.home-final-cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.65rem;
+}
+
+.donate-page {
+  gap: 1.4rem;
+}
+
+.donate-page__header {
+  display: grid;
+  gap: 0.45rem;
+  max-width: 820px;
+}
+
+.donate-page__header h2 {
+  margin: 0;
+}
+
+.donate-page__header p {
+  margin: 0;
+}
+
+.donate-summary-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.donate-summary-strip article,
+.donate-filter-panel,
+.donate-requests-section {
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+}
+
+.donate-summary-strip article {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.95rem;
+}
+
+.donate-summary-strip svg,
+.donate-filter-panel__title svg {
+  color: var(--color-primary-strong);
+}
+
+.donate-summary-strip strong {
+  color: var(--color-text);
+  font-family: 'Lexend', sans-serif;
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+.donate-summary-strip span {
+  color: var(--color-muted);
+  font-weight: 700;
+}
+
+.donate-filter-panel,
+.donate-requests-section {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1rem;
+}
+
+.donate-filter-panel__title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text);
+}
+
+.donate-news-section {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (max-width: 920px) {
+  .home-institutional-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .home-final-cta {
+    grid-template-columns: 1fr;
+  }
+
+  .home-final-cta__actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 740px) {
+  .home-institutional-hero,
+  .impact-section,
+  .how-it-works-section,
+  .home-location-section,
+  .home-highlights-section,
+  .home-urgent-section,
+  .home-needs-section,
+  .needed-ranking-section,
+  .donate-page,
+  .home-final-cta {
+    width: min(100%, calc(100vw - 1rem));
+  }
+
+  .home-institutional-hero__content h2 {
+    max-width: 13ch;
+    font-size: clamp(2.05rem, 10vw, 3.1rem);
+    overflow-wrap: normal;
+  }
+
+  .home-institutional-hero__content,
+  .home-institutional-hero__panel {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .home-institutional-hero__content p {
+    max-width: 34ch;
+  }
+
+  .home-hero-panel-stats span {
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
+  }
+
+  .home-hero-panel-stats span small {
+    text-align: left;
+  }
+
+  .home-urgent-header,
+  .home-location-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .home-hero-actions,
+  .home-final-cta__actions,
+  .home-final-cta__actions .home-hero-button,
+  .home-location-header .home-urgent-link {
+    width: 100%;
+  }
+
+  .donate-summary-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .donate-filter-panel,
+  .donate-requests-section {
+    padding: 0.85rem;
+  }
+
+  .impact-grid,
+  .how-it-works-grid,
+  .home-needs-grid,
+  .donate-requests-grid {
+    grid-template-columns: 1fr;
+  }
+}

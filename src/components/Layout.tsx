@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { FaBars, FaTimes } from 'react-icons/fa'
-import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { FaBars, FaEnvelope, FaMapMarkerAlt, FaPhoneAlt, FaTimes } from 'react-icons/fa'
+import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 
 import { isLocalAuthBypassEnabled } from '../lib/auth'
 import '../Styles/Layout.css'
@@ -14,12 +14,12 @@ export default function Layout(): React.ReactElement {
   const canOpenAdminDirectly = hasAdminSession || isLocalAuthBypassEnabled()
 
   const navigationItems = [
-    { to: '/', label: 'Início' },
-    { to: '/caps', label: 'Unidades CAPS' },
-    { to: '/donate', label: 'Doações' },
-    { to: '/suas-doacoes', label: 'Suas Doações' },
-    { to: canOpenAdminDirectly ? '/admin/dashboard' : '/admin/login', label: 'Área Admin' },
-    { to: '/sobre-o-projeto', label: 'Sobre o Projeto' },
+    { to: '/', label: 'Inicio' },
+    { to: '/caps', label: 'CAPS' },
+    { to: '/donate', label: 'Necessidades' },
+    { to: '/sobre-o-projeto', label: 'Sobre' },
+    { to: '/suas-doacoes', label: 'Minhas doacoes' },
+    { to: canOpenAdminDirectly ? '/admin/dashboard' : '/admin/login', label: 'Dashboard' },
   ]
 
   useEffect(() => {
@@ -60,6 +60,10 @@ export default function Layout(): React.ReactElement {
             <h1 className="site-banner__title">Centro de Doação CAPS</h1>
             <p className="site-banner__desc">Rede de Atenção Psicossocial - Campo Grande (MS)</p>
             <span className="site-banner__kicker">Secretaria Municipal de Saúde</span>
+          </div>
+          <div className="site-banner__meta" aria-label="Resumo institucional">
+            <span>Campo Grande/MS</span>
+            <strong>Doacoes organizadas para a rede CAPS</strong>
           </div>
         </div>
       </div>
@@ -124,6 +128,42 @@ export default function Layout(): React.ReactElement {
       <main id="main-content" tabIndex={-1}>
         <Outlet />
       </main>
+
+      <footer className="site-footer" aria-labelledby="site-footer-title">
+        <div className="site-footer__inner">
+          <section className="site-footer__brand">
+            <img className="site-footer__logo" src={logo} alt="Logo SESAU" />
+            <div>
+              <span className="page-kicker">Centro de Doacao CAPS</span>
+              <h2 id="site-footer-title">Conectando solidariedade e cuidado em saude mental.</h2>
+              <p>
+                Plataforma institucional para divulgar necessidades das unidades CAPS de Campo Grande/MS
+                e orientar doadores com clareza.
+              </p>
+            </div>
+          </section>
+
+          <section className="site-footer__column" aria-label="Links rapidos">
+            <h3>Navegacao</h3>
+            <Link to="/donate">Ver necessidades</Link>
+            <Link to="/caps">Unidades CAPS</Link>
+            <Link to="/sobre-o-projeto">Sobre o projeto</Link>
+            <Link to="/suas-doacoes">Minhas doacoes</Link>
+          </section>
+
+          <section className="site-footer__column site-footer__contact" aria-label="Fale conosco">
+            <h3>Fale conosco</h3>
+            <p><FaMapMarkerAlt aria-hidden="true" /> Campo Grande/MS</p>
+            <p><FaPhoneAlt aria-hidden="true" /> Combine entregas diretamente com a unidade CAPS</p>
+            <p><FaEnvelope aria-hidden="true" /> Use a pagina da unidade para contato e orientacoes</p>
+          </section>
+        </div>
+
+        <div className="site-footer__bottom">
+          <span>Secretaria Municipal de Saude de Campo Grande/MS</span>
+          <span>Doacoes em itens. O site nao recebe dinheiro.</span>
+        </div>
+      </footer>
     </>
   )
 }

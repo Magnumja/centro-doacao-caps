@@ -974,3 +974,230 @@
     transform: none;
   }
 }
+
+/* ---- Refinamento visual: unidades CAPS ---- */
+.page-block.caps-page {
+  width: min(1180px, 94vw);
+  gap: 1.4rem;
+  padding-inline: 0;
+}
+
+.caps-page__intro {
+  max-width: 840px;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.caps-card-grid {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.card-grid.caps-card-grid {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.donation-unit-card {
+  grid-template-rows: auto auto auto auto 1fr auto;
+  padding: 0;
+}
+
+.caps-card__photo {
+  height: 180px;
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+}
+
+.caps-card__status-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0 0.95rem;
+}
+
+.caps-card__details {
+  padding: 0 0.95rem;
+}
+
+.caps-card__details p {
+  display: grid;
+  gap: 0.18rem;
+  margin-top: 0.42rem;
+}
+
+.caps-card__details strong {
+  color: var(--color-text);
+  font-size: 0.78rem;
+}
+
+.donation-unit-card > p {
+  padding-left: 0.95rem;
+  padding-right: 0.95rem;
+}
+
+.selected-unit-overview {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.9fr) repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.selected-unit-overview--no-photo {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.selected-unit-photo-card {
+  overflow: hidden;
+  min-height: 100%;
+}
+
+.selected-unit-photo-card .selected-unit-spotlight__photo {
+  width: 100%;
+  height: 100%;
+  min-height: 360px;
+  object-fit: cover;
+  display: block;
+}
+
+.selected-unit-info-card {
+  display: grid;
+  align-content: start;
+  gap: 0.7rem;
+  padding: 1rem;
+}
+
+.selected-unit-info-card--identity {
+  grid-column: span 2;
+}
+
+.selected-unit-info-card h3 {
+  margin: 0;
+  color: var(--color-text);
+  font-family: 'Lexend', sans-serif;
+  font-size: clamp(1.25rem, 2.3vw, 1.7rem);
+  line-height: 1.24;
+}
+
+.selected-unit-info-card p {
+  display: grid;
+  gap: 0.18rem;
+  margin: 0;
+}
+
+.selected-unit-info-card p strong,
+.info-card-label {
+  color: var(--color-text);
+  font-family: 'Lexend', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.info-card-label {
+  color: var(--color-primary-strong);
+  text-transform: uppercase;
+}
+
+.selected-unit-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.selected-unit-metrics span {
+  border-radius: var(--radius-card);
+  background: var(--color-surface-soft);
+  border: 1px solid rgba(15, 118, 104, 0.1);
+  padding: 0.7rem;
+  color: var(--color-muted);
+  font-weight: 700;
+}
+
+.selected-unit-metrics strong {
+  display: block;
+  color: var(--color-primary-strong);
+  font-family: 'Lexend', sans-serif;
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.selected-unit-actions-card .selected-unit-actions {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 0;
+}
+
+.selected-unit-actions-card .unit-donate-button,
+.selected-unit-actions-card .unit-secondary-button,
+.selected-unit-actions-card .unit-disabled-action {
+  width: 100%;
+}
+
+.unit-needs-section {
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+  padding: 1rem;
+}
+
+.unit-needs-grid {
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 1rem;
+}
+
+.donation-guidelines {
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+@media (max-width: 1040px) {
+  .selected-unit-overview,
+  .selected-unit-overview--no-photo {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .selected-unit-photo-card {
+    grid-row: span 2;
+  }
+
+  .selected-unit-info-card--identity {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 740px) {
+  .page-block.caps-page {
+    width: min(100%, calc(100vw - 1rem));
+  }
+
+  .caps-card-grid,
+  .card-grid.caps-card-grid,
+  .unit-needs-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .caps-page__intro h2 {
+    max-width: 13ch;
+    overflow-wrap: normal;
+  }
+
+  .caps-page__intro p {
+    max-width: 34ch;
+  }
+
+  .selected-unit-overview,
+  .selected-unit-overview--no-photo {
+    grid-template-columns: 1fr;
+  }
+
+  .selected-unit-photo-card {
+    grid-row: auto;
+  }
+
+  .selected-unit-photo-card .selected-unit-spotlight__photo {
+    min-height: 220px;
+  }
+
+  .selected-unit-metrics {
+    grid-template-columns: 1fr;
+  }
+}

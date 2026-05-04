@@ -23,6 +23,17 @@ body {
 	overflow-x: hidden;
 }
 
+#root,
+main {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
 body {
 	margin: 0;
 	font-family: 'Source Sans 3', sans-serif;
@@ -1026,4 +1037,820 @@ select:hover {
   :root[data-theme='dark'] .health-nav {
     background: rgba(7, 20, 17, 0.98);
   }
+}
+
+/* ---- Sistema visual 2026: base clean e institucional ---- */
+:root {
+  --color-page: #f6faf8;
+  --color-page-soft: #eef6f3;
+  --color-surface: #ffffff;
+  --color-surface-soft: #f9fcfb;
+  --color-primary: #0f7668;
+  --color-primary-strong: #0b5f55;
+  --color-primary-soft: #e3f3ef;
+  --color-secondary: #2d6f8f;
+  --color-text: #17333a;
+  --color-muted: #5f7378;
+  --color-border: #d9e8e4;
+  --shadow-card: 0 10px 26px rgba(23, 51, 58, 0.08);
+  --shadow-soft: 0 6px 18px rgba(23, 51, 58, 0.06);
+  --radius-card: 8px;
+  --radius-control: 8px;
+}
+
+body {
+  background: linear-gradient(180deg, var(--color-page) 0%, #ffffff 100%);
+  color: var(--color-text);
+}
+
+.site-banner {
+  background: rgba(255, 255, 255, 0.96);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: none;
+}
+
+.site-banner__content {
+  width: min(1180px, 94vw);
+  margin: 0 auto;
+  padding: 0.7rem 0;
+  gap: 0.85rem;
+}
+
+.site-banner__logo {
+  width: 82px;
+  height: 54px;
+  border-radius: var(--radius-card);
+  padding: 0.28rem;
+  box-shadow: none;
+}
+
+.site-banner__text {
+  gap: 0.08rem;
+}
+
+.site-banner__title {
+  font-size: clamp(1.08rem, 1.8vw, 1.38rem);
+  letter-spacing: 0;
+}
+
+.site-banner__desc {
+  font-size: 0.92rem;
+}
+
+.site-banner__kicker {
+  font-size: 0.7rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.health-header {
+  top: 0;
+  background: rgba(246, 250, 248, 0.92);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 8px 22px rgba(23, 51, 58, 0.06);
+}
+
+.health-header__inner {
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  padding: 0.58rem 0;
+}
+
+.health-nav {
+  gap: 0.35rem;
+}
+
+.health-nav__link {
+  min-height: 40px;
+  border-radius: var(--radius-control);
+  border-color: transparent;
+  background: transparent;
+  color: var(--color-muted);
+  padding: 0.48rem 0.7rem;
+  letter-spacing: 0;
+  box-shadow: none;
+}
+
+.health-nav__link::after {
+  display: none;
+}
+
+.health-nav__link:hover {
+  transform: none;
+  border-color: var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-soft);
+}
+
+.health-nav__link--active {
+  background: var(--color-primary-soft);
+  border-color: rgba(15, 118, 104, 0.18);
+  color: var(--color-primary-strong);
+  box-shadow: none;
+}
+
+.page-block {
+  width: min(1180px, 94vw);
+  margin: clamp(1.4rem, 3vw, 2.8rem) auto;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  gap: clamp(1rem, 2vw, 1.4rem);
+}
+
+.page-card,
+.how-it-works-card,
+.impact-card,
+.home-urgent-card,
+.home-need-feed-card,
+.donate-carousel-group,
+.news-carousel,
+.donation-unit-card,
+.selected-unit-info-card,
+.selected-unit-photo-card,
+.donation-request-card,
+.your-donation-card,
+.your-donations-empty,
+.donation-place-card,
+.urgent-need-mini-card,
+.admin-summary-grid article,
+.admin-summary-card,
+.dashboard-card,
+.analytics-card,
+.analytics-chart-card,
+.profile-card {
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+}
+
+.page-card:hover,
+.how-it-works-card:hover,
+.impact-card:hover,
+.home-urgent-card:hover,
+.home-need-feed-card:hover,
+.donate-carousel-group:hover,
+.news-carousel:hover,
+.donation-unit-card:hover,
+.donation-request-card:hover,
+.your-donation-card:hover,
+.donation-place-card:hover,
+.urgent-need-mini-card:hover,
+.admin-summary-grid article:hover,
+.admin-summary-card:hover,
+.dashboard-card:hover,
+.analytics-card:hover,
+.analytics-chart-card:hover,
+.profile-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(15, 118, 104, 0.26);
+  box-shadow: var(--shadow-card);
+}
+
+.page-kicker {
+  border-radius: 999px;
+  padding: 0.22rem 0.62rem;
+  background: var(--color-primary-soft);
+  color: var(--color-primary-strong);
+  letter-spacing: 0;
+}
+
+.section-heading {
+  gap: 0.5rem;
+}
+
+.page-block h2 {
+  color: var(--color-text);
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+.page-block p {
+  color: var(--color-muted);
+}
+
+.home-hero-button,
+.unit-donate-button,
+.home-urgent-link,
+.inline-link,
+.donation-success-link,
+.unit-secondary-button,
+.dashboard-action-btn,
+.btn-primary,
+.btn-secondary,
+.your-donations-primary,
+.your-donation-card__footer a,
+.donation-place-card a,
+.urgent-need-mini-card a {
+  min-height: 44px;
+  border-radius: var(--radius-control);
+  font-family: 'Lexend', sans-serif;
+  letter-spacing: 0;
+}
+
+.home-hero-button--primary,
+.unit-donate-button,
+.home-urgent-link,
+.dashboard-action-btn,
+.btn-primary,
+.your-donations-primary,
+.your-donation-card__footer a,
+.donation-place-card a,
+.urgent-need-mini-card a {
+  border: 1px solid var(--color-primary);
+  background: var(--color-primary);
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(15, 118, 104, 0.18);
+}
+
+.home-hero-button--secondary,
+.unit-secondary-button,
+.btn-secondary,
+.inline-link,
+.donation-success-link {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-primary-strong);
+  box-shadow: none;
+}
+
+.home-hero-button:hover,
+.unit-donate-button:hover,
+.home-urgent-link:hover,
+.inline-link:hover,
+.donation-success-link:hover,
+.unit-secondary-button:hover,
+.dashboard-action-btn:hover,
+.btn-primary:hover,
+.btn-secondary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-soft);
+}
+
+.home-hero-button::before,
+.unit-donate-button::before,
+.home-urgent-link::before,
+.dashboard-action-btn::before,
+.btn-primary::before {
+  display: none;
+}
+
+.category-filter {
+  gap: 0.45rem;
+}
+
+.category-filter__button {
+  min-height: 40px;
+  border-radius: 999px;
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-muted);
+  letter-spacing: 0;
+}
+
+.category-filter__button:hover {
+  transform: none;
+  border-color: rgba(15, 118, 104, 0.3);
+  box-shadow: var(--shadow-soft);
+}
+
+.category-filter__button--active {
+  background: var(--color-primary-soft);
+  border-color: rgba(15, 118, 104, 0.2);
+  color: var(--color-primary-strong);
+  box-shadow: none;
+}
+
+.urgency-badge,
+.status-request-badge,
+.donation-request-card__category,
+.unit-type-badge,
+.home-card-tag {
+  letter-spacing: 0;
+  border: 1px solid transparent;
+}
+
+.urgency-badge--high,
+.home-urgent-badge {
+  background: #fdeceb;
+  border-color: #f8cfcb;
+  color: #9a342b;
+}
+
+.urgency-badge--medium {
+  background: #fff5de;
+  border-color: #f4dda8;
+  color: #7a5a13;
+}
+
+.urgency-badge--low,
+.status-request-badge--pending {
+  background: #eaf3f8;
+  border-color: #cfe3ee;
+  color: #275d76;
+}
+
+.status-request-badge--partial,
+.donation-request-card__category,
+.unit-type-badge,
+.home-card-tag {
+  background: var(--color-primary-soft);
+  border-color: rgba(15, 118, 104, 0.14);
+  color: var(--color-primary-strong);
+}
+
+.status-request-badge--done {
+  background: #e9f6ec;
+  border-color: #cce8d3;
+  color: #315f3a;
+}
+
+.mobile-nav-toggle {
+  border-radius: var(--radius-control);
+  border-color: var(--color-border);
+  background: var(--color-surface);
+  box-shadow: none;
+}
+
+.theme-toggle {
+  border-radius: var(--radius-control);
+  box-shadow: var(--shadow-soft);
+}
+
+@media (max-width: 740px) {
+  .site-banner__content {
+    width: min(1180px, 94vw);
+    padding: 0.6rem 0;
+  }
+
+  .site-banner__logo {
+    width: 58px;
+    height: 42px;
+  }
+
+  .site-banner__title {
+    font-size: 1rem;
+  }
+
+  .site-banner__desc {
+    font-size: 0.8rem;
+  }
+
+  .health-nav {
+    background: var(--color-surface);
+  }
+
+  .page-block {
+    width: min(100%, calc(100vw - 1rem)) !important;
+    max-width: calc(100vw - 1rem) !important;
+    margin: 1.2rem auto;
+  }
+
+  .page-block > *,
+  .card-grid > *,
+  .home-carousel,
+  .home-carousel-viewport,
+  .home-carousel-track {
+    min-width: 0;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  .site-banner__content {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .site-banner__kicker {
+    display: none;
+  }
+}
+
+:root[data-theme='dark'] {
+  --color-page: #071411;
+  --color-page-soft: #0d211d;
+  --color-surface: #102722;
+  --color-surface-soft: #0c211d;
+  --color-primary: #2dc2a7;
+  --color-primary-strong: #96f3df;
+  --color-primary-soft: rgba(45, 194, 167, 0.14);
+  --color-secondary: #7bc6ff;
+  --color-text: #e5f4f1;
+  --color-muted: #b9cec9;
+  --color-border: rgba(123, 198, 255, 0.18);
+  --shadow-card: 0 14px 28px rgba(0, 0, 0, 0.34);
+  --shadow-soft: 0 8px 20px rgba(0, 0, 0, 0.24);
+}
+
+:root[data-theme='dark'] body {
+  background: linear-gradient(180deg, var(--color-page) 0%, #0b1d19 100%);
+}
+
+:root[data-theme='dark'] .site-banner,
+:root[data-theme='dark'] .health-header,
+:root[data-theme='dark'] .health-nav {
+  background: rgba(8, 20, 17, 0.94);
+}
+
+:root[data-theme='dark'] .page-card,
+:root[data-theme='dark'] .how-it-works-card,
+:root[data-theme='dark'] .impact-card,
+:root[data-theme='dark'] .home-urgent-card,
+:root[data-theme='dark'] .home-need-feed-card,
+:root[data-theme='dark'] .donate-carousel-group,
+:root[data-theme='dark'] .news-carousel,
+:root[data-theme='dark'] .donation-unit-card,
+:root[data-theme='dark'] .selected-unit-info-card,
+:root[data-theme='dark'] .selected-unit-photo-card,
+:root[data-theme='dark'] .donation-request-card,
+:root[data-theme='dark'] .your-donation-card,
+:root[data-theme='dark'] .your-donations-empty,
+:root[data-theme='dark'] .donation-place-card,
+:root[data-theme='dark'] .urgent-need-mini-card {
+  background: var(--color-surface);
+}
+
+.donation-request-card {
+  min-height: 100%;
+  padding: 1rem;
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+}
+
+.donation-request-card--compact {
+  padding: 0.92rem;
+}
+
+.donation-request-card__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.42rem;
+  align-items: center;
+}
+
+.donation-request-card h3 {
+  margin: 0;
+  color: var(--color-text);
+  font-family: 'Lexend', sans-serif;
+  font-size: 1.04rem;
+  line-height: 1.32;
+}
+
+.donation-request-card p {
+  margin: 0;
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+.donation-request-card__meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin: 0;
+}
+
+.donation-request-card__meta div {
+  min-width: 0;
+  border-radius: var(--radius-card);
+  background: var(--color-surface-soft);
+  border: 1px solid rgba(15, 118, 104, 0.09);
+  padding: 0.55rem;
+}
+
+.donation-request-card__meta div:last-child {
+  grid-column: 1 / -1;
+}
+
+.donation-request-card__meta dt {
+  color: var(--color-muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.donation-request-card__meta dd {
+  margin: 0.16rem 0 0;
+  color: var(--color-text);
+  font-family: 'Lexend', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.donation-request-card__progress {
+  height: 0.42rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e8f1ee;
+}
+
+.donation-request-card__progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-primary);
+}
+
+.donation-request-card .unit-donate-button {
+  width: 100%;
+  margin-top: auto;
+}
+
+@media (max-width: 520px) {
+  .donation-request-card__meta {
+    grid-template-columns: 1fr;
+  }
+}
+
+:root[data-theme='dark'] .donation-request-card__meta div {
+  background: rgba(123, 198, 255, 0.07);
+  border-color: rgba(123, 198, 255, 0.12);
+}
+
+:root[data-theme='dark'] .donation-request-card__progress {
+  background: rgba(123, 198, 255, 0.12);
+}
+
+/* ---- Topo e rodape sofisticados ---- */
+main {
+  min-height: 52vh;
+}
+
+.site-banner {
+  position: relative;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(243, 250, 248, 0.92));
+  border-bottom: 1px solid rgba(15, 118, 104, 0.12);
+}
+
+.site-banner::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(15, 118, 104, 0.28), transparent);
+}
+
+.site-banner__content {
+  min-height: 76px;
+  align-items: center;
+}
+
+.site-banner__logo {
+  width: 78px;
+  height: 52px;
+  border: 1px solid rgba(15, 118, 104, 0.18);
+  background: #ffffff;
+  box-shadow: 0 10px 26px rgba(23, 51, 58, 0.08);
+}
+
+.site-banner__title {
+  color: var(--color-primary-strong);
+  font-size: clamp(1.16rem, 1.7vw, 1.48rem);
+}
+
+.site-banner__desc {
+  color: var(--color-muted);
+  font-size: 0.93rem;
+}
+
+.site-banner__kicker {
+  color: var(--color-secondary);
+  font-weight: 700;
+}
+
+.site-banner__meta {
+  margin-left: auto;
+  display: grid;
+  justify-items: end;
+  gap: 0.16rem;
+  min-width: 220px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 118, 104, 0.14);
+  background: rgba(255, 255, 255, 0.7);
+  padding: 0.56rem 0.85rem;
+  box-shadow: 0 8px 20px rgba(23, 51, 58, 0.05);
+}
+
+.site-banner__meta span {
+  color: var(--color-primary-strong);
+  font-family: 'Lexend', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.site-banner__meta strong {
+  color: var(--color-muted);
+  font-size: 0.82rem;
+  line-height: 1.2;
+  text-align: right;
+}
+
+.health-header {
+  background: rgba(255, 255, 255, 0.76);
+  box-shadow: 0 14px 28px rgba(23, 51, 58, 0.08);
+  backdrop-filter: blur(16px) saturate(1.15);
+}
+
+.health-header__inner {
+  min-height: 62px;
+}
+
+.health-nav {
+  padding: 0.28rem;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 118, 104, 0.12);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 8px 22px rgba(23, 51, 58, 0.05);
+}
+
+.health-nav__link {
+  border-radius: 999px;
+  padding: 0.54rem 0.86rem;
+}
+
+.health-nav__link--active {
+  background: #ffffff;
+  color: var(--color-primary-strong);
+  box-shadow: 0 8px 18px rgba(15, 118, 104, 0.12);
+}
+
+.theme-toggle {
+  position: static;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 8px 18px rgba(23, 51, 58, 0.07);
+}
+
+.site-footer {
+  margin-top: clamp(2.5rem, 6vw, 5rem);
+  border-top: 1px solid rgba(15, 118, 104, 0.12);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(15, 118, 104, 0.1), transparent 34%),
+    linear-gradient(180deg, #f7fbfa, #edf6f3);
+  color: var(--color-text);
+}
+
+.site-footer__inner {
+  width: min(1180px, 94vw);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(180px, 0.45fr) minmax(280px, 0.7fr);
+  gap: clamp(1.2rem, 3vw, 2.2rem);
+  padding: clamp(2rem, 5vw, 3.2rem) 0;
+}
+
+.site-footer__brand {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.site-footer__logo {
+  width: 92px;
+  height: 64px;
+  object-fit: contain;
+  border-radius: var(--radius-card);
+  border: 1px solid rgba(15, 118, 104, 0.16);
+  background: #ffffff;
+  padding: 0.36rem;
+  box-shadow: 0 10px 24px rgba(23, 51, 58, 0.08);
+}
+
+.site-footer h2,
+.site-footer h3 {
+  margin: 0;
+  color: var(--color-text);
+  font-family: 'Lexend', sans-serif;
+  letter-spacing: 0;
+}
+
+.site-footer h2 {
+  max-width: 560px;
+  margin-top: 0.7rem;
+  font-size: clamp(1.25rem, 2.4vw, 1.9rem);
+  line-height: 1.18;
+}
+
+.site-footer p {
+  margin: 0.75rem 0 0;
+  max-width: 620px;
+  color: var(--color-muted);
+  line-height: 1.55;
+}
+
+.site-footer__column {
+  display: grid;
+  align-content: start;
+  gap: 0.62rem;
+}
+
+.site-footer__column h3 {
+  margin-bottom: 0.2rem;
+  font-size: 0.98rem;
+}
+
+.site-footer__column a,
+.site-footer__contact p {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-muted);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.site-footer__column a:hover {
+  color: var(--color-primary-strong);
+}
+
+.site-footer__contact p {
+  margin: 0;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.site-footer__contact svg {
+  flex: 0 0 auto;
+  color: var(--color-primary-strong);
+}
+
+.site-footer__bottom {
+  width: min(1180px, 94vw);
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 0 1.2rem;
+  border-top: 1px solid rgba(15, 118, 104, 0.12);
+  color: var(--color-muted);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .site-banner__meta {
+    display: none;
+  }
+
+  .site-footer__inner {
+    grid-template-columns: 1fr;
+  }
+
+  .site-footer__bottom {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 740px) {
+  .health-nav {
+    border-radius: 0;
+    border: 0;
+    box-shadow: 22px 0 36px rgba(23, 51, 58, 0.16);
+  }
+
+  .health-header__inner {
+    min-height: 58px;
+  }
+
+  .site-footer__brand {
+    grid-template-columns: 1fr;
+  }
+
+  .site-footer__logo {
+    width: 78px;
+    height: 54px;
+  }
+}
+
+:root[data-theme='dark'] .site-banner,
+:root[data-theme='dark'] .health-header,
+:root[data-theme='dark'] .site-footer {
+  border-color: rgba(123, 198, 255, 0.16);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(45, 194, 167, 0.11), transparent 34%),
+    linear-gradient(180deg, #081411, #0b1d19);
+}
+
+:root[data-theme='dark'] .site-banner__meta,
+:root[data-theme='dark'] .health-nav,
+:root[data-theme='dark'] .theme-toggle {
+  border-color: rgba(123, 198, 255, 0.16);
+  background: rgba(16, 39, 34, 0.78);
+}
+
+:root[data-theme='dark'] .health-nav__link--active {
+  background: rgba(45, 194, 167, 0.14);
+  color: var(--color-primary-strong);
+}
+
+:root[data-theme='dark'] .site-footer__bottom {
+  border-color: rgba(123, 198, 255, 0.14);
 }

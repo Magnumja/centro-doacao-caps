@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+import { IconType } from 'react-icons'
+import { FaChartLine, FaChartPie, FaGift, FaHospital, FaPlus, FaSignOutAlt, FaUser, FaUsers } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import AdminDashboardSummary from '../../components/AdminDashboard'
 import { Cap, Donation } from '../../types'
@@ -11,6 +13,14 @@ import '../../Styles/Dashboard.css'
 
 // Abas disponíveis na área administrativa.
 type TabType = 'overview' | 'donations' | 'analytics' | 'profile' | 'residents'
+
+const dashboardTabs: Array<{ key: TabType, label: string, icon: IconType }> = [
+  { key: 'overview', label: 'Visao geral', icon: FaChartLine },
+  { key: 'donations', label: 'Solicitacoes', icon: FaGift },
+  { key: 'analytics', label: 'Analytics', icon: FaChartPie },
+  { key: 'profile', label: 'Perfil', icon: FaUser },
+  { key: 'residents', label: 'Residentes', icon: FaUsers },
+]
 
 // Configuração de categorias usada no resumo e gráfico de analytics.
 const analyticsCategories: Array<{
@@ -168,43 +178,25 @@ export default function Dashboard(): React.ReactElement {
             <p className="dashboard-subtitle">{hostCaps?.title}</p>
           </div>
           <button className="dashboard-logout" onClick={handleLogout}>
+            <FaSignOutAlt aria-hidden="true" />
             Sair
           </button>
         </div>
       </header>
 
-      {/* Navegação por abas (sem trocar rota, apenas estado interno). */}
-      <nav className="dashboard-nav">
-        <button
-          className={`dashboard-nav__item ${activeTab === 'overview' ? 'active' : ''}`}
-          onClick={() => setActiveTab('overview')}
-        >
-          📊 Visão Geral
-        </button>
-        <button
-          className={`dashboard-nav__item ${activeTab === 'donations' ? 'active' : ''}`}
-          onClick={() => setActiveTab('donations')}
-        >
-          🎁 Solicitar Doações
-        </button>
-        <button
-          className={`dashboard-nav__item ${activeTab === 'analytics' ? 'active' : ''}`}
-          onClick={() => setActiveTab('analytics')}
-        >
-          📈 Analytics
-        </button>
-        <button
-          className={`dashboard-nav__item ${activeTab === 'profile' ? 'active' : ''}`}
-          onClick={() => setActiveTab('profile')}
-        >
-          👤 Perfil
-        </button>
-        <button
-          className={`dashboard-nav__item ${activeTab === 'residents' ? 'active' : ''}`}
-          onClick={() => setActiveTab('residents')}
-        >
-          👥 Residentes
-        </button>
+      {/* Navegacao por abas (sem trocar rota, apenas estado interno). */}
+      <nav className="dashboard-nav" aria-label="Navegacao do dashboard">
+        {dashboardTabs.map(({ key, label, icon: TabIcon }) => (
+          <button
+            key={key}
+            className={`dashboard-nav__item ${activeTab === key ? 'active' : ''}`}
+            onClick={() => setActiveTab(key)}
+            type="button"
+          >
+            <TabIcon aria-hidden="true" />
+            <span>{label}</span>
+          </button>
+        ))}
       </nav>
 
       <main className="dashboard-main">
@@ -246,10 +238,12 @@ export default function Dashboard(): React.ReactElement {
               <h3>Ações Rápidas</h3>
               <div className="dashboard-actions">
                 <button className="dashboard-action-btn" onClick={() => setActiveTab('donations')}>
-                  ➕ Nova Solicitação de Doação
+                  <FaPlus aria-hidden="true" />
+                  Nova solicitacao
                 </button>
                 <button className="dashboard-action-btn" onClick={() => navigate('/caps')}>
-                  🏥 Ir para Página de Doações
+                  <FaHospital aria-hidden="true" />
+                  Ver pagina publica
                 </button>
               </div>
             </div>
@@ -485,8 +479,8 @@ export default function Dashboard(): React.ReactElement {
             </div>
 
             <div className="profile-actions">
-              <button className="btn-secondary">✏️ Editar Perfil</button>
-              <button className="btn-secondary">🔐 Alterar Senha</button>
+              <button className="btn-secondary">Editar perfil</button>
+              <button className="btn-secondary">Alterar senha</button>
             </div>
           </section>
         )}
