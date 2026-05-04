@@ -9,8 +9,17 @@ const PORT = Number(process.env.PORT) || 3333
 
 // Conecta ao banco antes de subir o servidor.
 async function main(): Promise<void> {
-  await prisma.$connect()
-  console.log('✓ Banco de dados conectado.')
+  try {
+    await prisma.$connect()
+    console.log('✓ Banco de dados conectado.')
+  } catch (err) {
+    if (process.env.NODE_ENV === 'production') {
+      throw err
+    }
+
+    process.env.API_MOCK_MODE = 'true'
+    console.warn('Aviso: banco indisponivel. API local iniciada com dados publicos de fallback.')
+  }
 
   app.listen(PORT, () => {
     console.log(`✓ Servidor rodando em http://localhost:${PORT}`)

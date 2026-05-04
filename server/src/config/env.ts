@@ -35,9 +35,9 @@ function validateUrlList(name: string, value: string): void {
 }
 
 export function validateEnv(): void {
-  const jwtSecret = requireEnv('JWT_SECRET')
+  const jwtSecret = isProduction ? requireEnv('JWT_SECRET') : process.env.JWT_SECRET?.trim()
 
-  if (jwtSecret.length < 32) {
+  if (jwtSecret && jwtSecret.length < 32) {
     throw new Error('JWT_SECRET deve ter ao menos 32 caracteres.')
   }
 

@@ -42,6 +42,7 @@ Observacoes:
 - `VITE_API_URL` deve ser a URL publica da API, sem barra no final.
 - Use HTTPS em producao.
 - O app usa `HashRouter`, entao rotas como `/#/admin/login` funcionam em hospedagem estatica sem regra extra de rewrite.
+- Se precisar servir o build com Node em vez de site estatico, `npm start` usa `process.env.PORT` e executa `vite preview` em `0.0.0.0`.
 
 ## Backend
 
@@ -116,3 +117,22 @@ Fluxo admin:
 - `FRONTEND_URL` deve bater exatamente com o dominio publico do frontend.
 - `ENABLE_LOCAL_AUTH_BYPASS` deve ser sempre `false` em producao.
 - Em producao, a API valida variaveis obrigatorias ao iniciar e falha antes de abrir a porta quando algo critico estiver errado.
+
+## Hostinger
+
+### Cenario A: site estatico
+
+1. Rode `npm install` e `npm run build`.
+2. Envie o conteudo da pasta `dist` para `public_html`.
+3. Configure `VITE_API_URL` antes do build apontando para a API publicada em HTTPS.
+4. Use URLs com hash, por exemplo `https://seu-dominio/#/caps`, porque o frontend usa `HashRouter` e nao exige `.htaccess`.
+
+### Cenario B: aplicacao Node
+
+Use este cenario somente se o plano Hostinger suportar Node.js:
+
+- Entry point do frontend em modo preview: `scripts/preview.mjs`.
+- Start command do frontend: `npm start`.
+- Entry point da API: `server/dist/index.js`.
+- Start command da API: `npm --prefix server start`.
+- Configure `PORT`, `DATABASE_URL`, `JWT_SECRET`, `FRONTEND_URL`, `TRUST_PROXY` e demais variaveis no painel da hospedagem.

@@ -3,17 +3,13 @@ import { FaBoxes, FaFilter, FaHospital, FaRegClock } from 'react-icons/fa'
 
 import CategoryFilter from '../components/CategoryFilter'
 import DonationRequestCard from '../components/DonationRequestCard'
-import NewsCarousel from '../components/ui/NewsCarousel'
-import { HighlightItem } from '../data/highlights'
 import { donationCategories } from '../data/mockData'
 import { fetchPublicNeeds } from '../lib/needs'
-import { fetchHighlights } from '../services/highlights-service'
 import { DonationCategoryName, Need } from '../types'
 import '../Styles/Home.css'
 
 export default function Donate(): React.ReactElement {
   const [needs, setNeeds] = useState<Need[]>([])
-  const [highlights, setHighlights] = useState<HighlightItem[]>([])
   const [activeCategory, setActiveCategory] = useState<DonationCategoryName | 'Todas'>('Todas')
   const [isLoading, setIsLoading] = useState(true)
 
@@ -22,14 +18,10 @@ export default function Donate(): React.ReactElement {
 
     ;(async () => {
       setIsLoading(true)
-      const [loadedNeeds, loadedHighlights] = await Promise.all([
-        fetchPublicNeeds(),
-        fetchHighlights(),
-      ])
+      const loadedNeeds = await fetchPublicNeeds()
 
       if (mounted) {
         setNeeds(loadedNeeds)
-        setHighlights(loadedHighlights)
         setIsLoading(false)
       }
     })()
@@ -144,15 +136,6 @@ export default function Donate(): React.ReactElement {
         )}
       </section>
 
-      <section className="home-highlights-section donate-news-section" aria-label="Noticias da rede psicossocial">
-        <div className="home-urgent-header">
-          <div>
-            <span className="page-kicker">Campo Grande/MS</span>
-            <h2>Noticias da rede psicossocial</h2>
-          </div>
-        </div>
-        <NewsCarousel items={highlights} />
-      </section>
     </section>
   )
 }

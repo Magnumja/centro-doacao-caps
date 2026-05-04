@@ -5,6 +5,10 @@ import { z } from 'zod'
 import { AppError } from '../errors/app-error'
 import { highlights as seedHighlights, HighlightItem } from '../data/highlights'
 
+type NewsHighlightItem = HighlightItem & {
+  publishedAtMs: number
+}
+
 const highlightSchema = z.object({
   title: z.string().min(5).max(140),
   description: z.string().min(10).max(260),
@@ -24,23 +28,45 @@ export class HighlightsService {
 
   private newsCache: { expiresAt: number, items: HighlightItem[] } | null = null
 
-  private readonly newsFeeds = [
-    'https://www.campogrande.ms.gov.br/cgnoticias/?s=CAPS&feed=rss2',
-    'https://www.campogrande.ms.gov.br/cgnoticias/feed/?s=sa%C3%BAde%20mental',
-    'https://www.campogrande.ms.gov.br/cgnoticias/?s=psicologia&feed=rss2',
-    'https://www.campogrande.ms.gov.br/cgnoticias/?s=Resid%C3%AAncia%20Terap%C3%AAutica&feed=rss2',
+  private readonly searchTerms = [
+    'CAPS',
+    'Centro de Atenção Psicossocial',
+    'Atenção Psicossocial',
+    'saúde mental',
+    'psicossocial',
+    'psicosocial',
+    'psicologia',
+    'psiquiatria',
+    'Residência Terapêutica',
+    'RAPS',
+    'álcool e drogas',
+    'dependência química',
+    'Janeiro Branco',
+    'Setembro Amarelo',
   ]
 
-  private readonly newsTerms = [
+  private readonly primaryNewsTerms = [
     'caps',
+    'centro de atencao psicossocial',
+    'atencao psicossocial',
     'saúde mental',
     'saude mental',
-    'psicologia',
     'psicossocial',
+    'psicosocial',
     'residência terapêutica',
     'residencia terapeutica',
     'raps',
-    'sesau',
+    'alcool e drogas',
+    'álcool e drogas',
+    'dependencia quimica',
+    'dependência química',
+    'janeiro branco',
+    'setembro amarelo',
+  ]
+
+  private readonly secondaryNewsTerms = [
+    'psicologia',
+    'psiquiatria',
   ]
 
   private readonly fallbackImages = [
@@ -108,10 +134,15 @@ export class HighlightsService {
       return this.newsCache.items
     }
 
-    const results = await Promise.allSettled(this.newsFeeds.map((feed) => this.fetchNewsFeed(feed)))
+    const newsFeeds = this.searchTerms.map((term) => (
+      `https://www.campogrande.ms.gov.br/cgnoticias/?s=${encodeURIComponent(term)}&feed=rss2`
+    ))
+    const results = await Promise.allSettled(newsFeeds.map((feed) => this.fetchNewsFeed(feed)))
     const items = results
       .flatMap((result) => result.status === 'fulfilled' ? result.value : [])
       .filter((item, index, allItems) => allItems.findIndex((candidate) => candidate.ctaLink === item.ctaLink) === index)
+      .sort((a, b) => b.publishedAtMs - a.publishedAtMs)
+      .map(({ publishedAtMs: _publishedAtMs, ...item }) => item)
       .slice(0, 5)
 
     this.newsCache = {
@@ -122,7 +153,7 @@ export class HighlightsService {
     return items
   }
 
-  private async fetchNewsFeed(feedUrl: string): Promise<HighlightItem[]> {
+  private async fetchNewsFeed(feedUrl: string): Promise<NewsHighlightItem[]> {
     const xml = await this.fetchFeedXml(feedUrl)
     const parsed = this.parser.parse(xml) as any
     const rawItems = parsed?.rss?.channel?.item
@@ -130,7 +161,7 @@ export class HighlightsService {
 
     return feedItems
       .map((item, index) => this.mapRssItemToHighlight(item, index))
-      .filter((item): item is HighlightItem => item !== null)
+      .filter((item): item is NewsHighlightItem => item !== null)
   }
 
   private async fetchFeedXml(feedUrl: string): Promise<string> {
@@ -188,13 +219,13 @@ export class HighlightsService {
     })
   }
 
-  private mapRssItemToHighlight(item: any, index: number): HighlightItem | null {
+  private mapRssItemToHighlight(item: any, index: number): NewsHighlightItem | null {
     const title = this.toPlainText(item?.title)
     const description = this.toPlainText(item?.description ?? item?.['content:encoded']).slice(0, 210)
-    const link = this.toPlainText(item?.link)
-    const searchableText = `${title} ${description}`.toLowerCase()
+    const link = this.normalizeCgNoticiasLink(this.toPlainText(item?.link))
+    const searchableText = this.normalizeText(`${title} ${description}`)
 
-    if (!title || !link || !this.newsTerms.some((term) => searchableText.includes(term))) {
+    if (!title || !link || !this.isRelevantNews(searchableText)) {
       return null
     }
 
@@ -205,7 +236,40 @@ export class HighlightsService {
       image: this.extractImage(item) ?? this.fallbackImages[index % this.fallbackImages.length],
       ctaLabel: 'Ler notícia',
       ctaLink: link,
+      publishedAtMs: this.parsePublishedAt(item?.pubDate),
     }
+  }
+
+  private parsePublishedAt(value: unknown): number {
+    const timestamp = Date.parse(String(value ?? ''))
+    return Number.isNaN(timestamp) ? 0 : timestamp
+  }
+
+  private normalizeText(value: string): string {
+    return value
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+  }
+
+  private isRelevantNews(searchableText: string): boolean {
+    const hasPrimaryTerm = this.primaryNewsTerms.some((term) => (
+      searchableText.includes(this.normalizeText(term))
+    ))
+    if (hasPrimaryTerm) {
+      return true
+    }
+
+    const hasSecondaryTerm = this.secondaryNewsTerms.some((term) => (
+      searchableText.includes(this.normalizeText(term))
+    ))
+
+    return hasSecondaryTerm && (
+      searchableText.includes('saude')
+      || searchableText.includes('sus')
+      || searchableText.includes('acolhimento')
+      || searchableText.includes('cuidado')
+    )
   }
 
   private extractImage(item: any): string | undefined {
@@ -222,6 +286,29 @@ export class HighlightsService {
     const html = String(item?.['content:encoded']?.text ?? item?.['content:encoded'] ?? item?.description?.text ?? item?.description ?? '')
     const match = html.match(/<img[^>]+src=["']([^"']+)["']/i)
     return match?.[1]
+  }
+
+  private normalizeCgNoticiasLink(value: string): string {
+    if (!value) {
+      return ''
+    }
+
+    try {
+      const url = new URL(value, 'https://www.campogrande.ms.gov.br')
+
+      if (url.hostname !== 'www.campogrande.ms.gov.br') {
+        return ''
+      }
+
+      if (!url.pathname.startsWith('/cgnoticias/')) {
+        return ''
+      }
+
+      url.protocol = 'https:'
+      return url.toString()
+    } catch {
+      return ''
+    }
   }
 
   private toPlainText(value: unknown): string {

@@ -8,6 +8,13 @@ type Props = {
   autoPlayMs?: number
 }
 
+const carouselImageFallbacks = [
+  '/capsmargarida.jpg',
+  '/capsafrodite.jpeg',
+  '/capsaerorancho.jpeg',
+  '/capsvilaalmeida.jpeg',
+]
+
 export default function NewsCarousel({ items, autoPlayMs = 5500 }: Props): React.ReactElement {
   const [activeIndex, setActiveIndex] = useState(0)
   const [progress, setProgress] = useState(0)
@@ -130,7 +137,7 @@ export default function NewsCarousel({ items, autoPlayMs = 5500 }: Props): React
   const renderSlideLink = (className: string, children: React.ReactNode): React.ReactElement => {
     if (activeItemIsExternal) {
       return (
-        <a className={className} href={activeItem.ctaLink} target="_blank" rel="noreferrer">
+        <a className={className} href={activeItem.ctaLink} target="_blank" rel="noopener noreferrer">
           {children}
         </a>
       )
@@ -174,6 +181,11 @@ export default function NewsCarousel({ items, autoPlayMs = 5500 }: Props): React
             className="news-carousel__image"
             loading="lazy"
             decoding="async"
+            onError={(event) => {
+              if (event.currentTarget.dataset.fallbackApplied === 'true') return
+              event.currentTarget.dataset.fallbackApplied = 'true'
+              event.currentTarget.src = carouselImageFallbacks[activeIndex % carouselImageFallbacks.length]
+            }}
           />,
         )}
 
