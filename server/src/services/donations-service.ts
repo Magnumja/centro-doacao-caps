@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { AppError } from '../errors/app-error'
 import { ValidationError } from '../errors/validation-error'
 import { DonationsRepository } from '../repositories/donations-repository'
+import { resolvePagination } from '../utils/pagination'
 
 const createDonationSchema = z.object({
   unitSlug: z.string().min(1, 'Unidade obrigatória.'),
@@ -37,13 +38,11 @@ export class DonationsService {
   }
 
   async listByHost(unitId: string, page = '1', limit = '20') {
-    const pageNum = Math.max(1, parseInt(String(page), 10))
-    const limitNum = Math.min(100, Math.max(1, parseInt(String(limit), 10)))
-    const skip = (pageNum - 1) * limitNum
+    const pagination = resolvePagination(page, limit, { defaultLimit: 20, maxLimit: 100 })
 
-    const [donations, total] = await this.repository.listByUnit(unitId, skip, limitNum)
+    const [donations, total] = await this.repository.listByUnit(unitId, pagination.skip, pagination.limit)
 
-    return { data: donations, total, page: pageNum, limit: limitNum }
+    return { data: donations, total, page: pagination.page, limit: pagination.limit }
   }
 
   async delete(id: string, authHost: { unitId: string, role: 'host' | 'admin' }) {

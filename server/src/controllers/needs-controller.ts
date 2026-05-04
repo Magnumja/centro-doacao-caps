@@ -1,11 +1,23 @@
 import { Request, Response } from 'express'
+import { z } from 'zod'
 import { NeedsService } from '../services/needs-service'
+import { ValidationError } from '../errors/validation-error'
+
+const priorityQuerySchema = z.enum(['alta', 'media', 'baixa'])
 
 export class NeedsController {
   constructor(private readonly service = new NeedsService()) {}
 
   list = async (req: Request, res: Response): Promise<void> => {
-    const priority = req.query.priority as 'alta' | 'media' | undefined
+    let priority: 'alta' | 'media' | 'baixa' | undefined
+    if (req.query.priority !== undefined) {
+      const parsedPriority = priorityQuerySchema.safeParse(req.query.priority)
+      if (!parsedPriority.success) {
+        throw new ValidationError(parsedPriority.error)
+      }
+      priority = parsedPriority.data
+    }
+
     const unitId = req.query.unitId ? String(req.query.unitId) : undefined
     const paginate = req.query.paginate === 'true'
 

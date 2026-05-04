@@ -12,6 +12,7 @@ import residentsRouter from './routes/residents'
 import highlightsRouter from './routes/highlights'
 import telemetryRouter from './routes/telemetry'
 import { errorHandler, notFoundHandler } from './middleware/error-handler'
+import { AppError } from './errors/app-error'
 
 const app = express()
 const allowedOrigins = (process.env.FRONTEND_URL ?? 'http://localhost:5173,http://127.0.0.1:5173')
@@ -42,7 +43,7 @@ app.use(
         return
       }
 
-      callback(new Error('Origem nao permitida pelo CORS.'))
+      callback(new AppError('Origem nao permitida pelo CORS.', 403))
     },
     credentials: true, // necessário para cookies
   }),
@@ -77,7 +78,8 @@ app.use(cookieParser())
 
 // ─── Rotas ────────────────────────────────────────────────────────────────────
 
-app.use('/api/auth', loginLimiter, authRouter)
+app.use('/api/auth/login', loginLimiter)
+app.use('/api/auth', authRouter)
 app.use('/api/units', unitsRouter)
 app.use('/api/needs', needsRouter)
 app.use('/api/donations', donationsRouter)

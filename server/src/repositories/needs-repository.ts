@@ -1,6 +1,6 @@
 import prisma from '../lib/prisma'
 
-type Priority = 'alta' | 'media'
+type Priority = 'alta' | 'media' | 'baixa'
 
 export type NeedFilters = {
   priority?: Priority
