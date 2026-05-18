@@ -126,7 +126,9 @@ export default function Layout(): React.ReactElement {
       </header>
 
       <main id="main-content" tabIndex={-1}>
-        <Outlet />
+        <div key={location.key} className="page-transition">
+          <Outlet />
+        </div>
       </main>
 
       <footer className="site-footer" aria-labelledby="site-footer-title">

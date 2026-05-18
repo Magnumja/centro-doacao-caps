@@ -33,7 +33,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }): Reac
 
   const value = useMemo(() => ({
     theme,
-    toggleTheme: () => setTheme((current) => (current === 'light' ? 'dark' : 'light')),
+    toggleTheme: () => {
+      document.documentElement.classList.add('theme-transitioning')
+      setTheme((current) => (current === 'light' ? 'dark' : 'light'))
+      setTimeout(() => document.documentElement.classList.remove('theme-transitioning'), 360)
+    },
   }), [theme])
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
