@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import CapsMap from '../components/CapsMap'
@@ -8,7 +8,6 @@ import NewsCarousel from '../components/ui/NewsCarousel'
 import { UrgentCarouselSkeleton } from '../components/ui/Skeletons'
 import { HighlightItem } from '../data/highlights'
 import { fetchPublicNeeds } from '../lib/needs'
-import { getCardsPerView } from '../lib/ui-utils'
 import { fetchHighlights } from '../services/highlights-service'
 import { fetchNeedsPage, normalizeNeed } from '../services/needs-service'
 import { trackEvent } from '../services/telemetry-service'
@@ -19,16 +18,7 @@ export default function Home(): React.ReactElement {
   const [urgentNeeds, setUrgentNeeds] = useState<Need[]>([])
   const [highlights, setHighlights] = useState<HighlightItem[]>([])
   const [isLoadingUrgent, setIsLoadingUrgent] = useState(true)
-  const [cardsPerView, setCardsPerView] = useState<number>(() => getCardsPerView())
-  const [activeIndex, setActiveIndex] = useState(0)
   const milestonesRef = useRef(new Set<number>())
-
-  useEffect(() => {
-    const handleResize = (): void => setCardsPerView(getCardsPerView())
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
 
   useEffect(() => {
     let mounted = true
@@ -94,18 +84,6 @@ export default function Home(): React.ReactElement {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  useEffect(() => {
-    const nextMaxIndex = Math.max(0, urgentNeeds.length - cardsPerView)
-    setActiveIndex((currentIndex) => Math.min(currentIndex, nextMaxIndex))
-  }, [cardsPerView, urgentNeeds.length])
-
-  const maxIndex = Math.max(0, urgentNeeds.length - cardsPerView)
-
-  const carouselStyle = useMemo(() => ({
-    ['--cards-per-view' as string]: cardsPerView,
-    ['--active-index' as string]: activeIndex,
-  } as React.CSSProperties), [cardsPerView, activeIndex])
-
   return (
     <>
       <section className="page-block home-highlights-section home-highlights-section--featured">
@@ -144,46 +122,22 @@ export default function Home(): React.ReactElement {
             <p>Uma selecao curta dos itens com maior prioridade no momento.</p>
           </div>
 
-          {urgentNeeds.length > cardsPerView ? (
-            <div className="home-carousel-controls" aria-label="Navegacao do carrossel de urgencias">
-              <button
-                type="button"
-                onClick={() => setActiveIndex((currentIndex) => Math.max(0, currentIndex - 1))}
-                disabled={activeIndex === 0}
-                aria-label="Mostrar doacoes urgentes anteriores"
-              >
-                Anterior
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveIndex((currentIndex) => Math.min(maxIndex, currentIndex + 1))}
-                disabled={activeIndex >= maxIndex}
-                aria-label="Mostrar proximas doacoes urgentes"
-              >
-                Proximo
-              </button>
-            </div>
-          ) : null}
+          <Link className="home-urgent-link" to="/donate">Ver todos</Link>
         </div>
 
         {isLoadingUrgent ? (
           <UrgentCarouselSkeleton />
         ) : urgentNeeds.length > 0 ? (
-          <div className="home-carousel" style={carouselStyle}>
-            <div className="home-carousel-viewport">
-              <div className="home-carousel-track">
-                {urgentNeeds.map((need) => (
-                  <article key={need.id} className="home-carousel-slide">
-                    <DonationRequestCard
-                      need={need}
-                      compact
-                      actionTo={`/caps?unit=${need.unitId}`}
-                      actionLabel="Quero doar"
-                    />
-                  </article>
-                ))}
-              </div>
-            </div>
+          <div className="donate-requests-grid">
+            {urgentNeeds.slice(0, 6).map((need) => (
+              <DonationRequestCard
+                key={need.id}
+                need={need}
+                compact
+                actionTo={`/caps?unit=${need.unitId}`}
+                actionLabel="Quero doar"
+              />
+            ))}
           </div>
         ) : (
           <p className="home-urgent-empty">Nao ha pedidos urgentes registrados no momento.</p>

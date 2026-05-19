@@ -1,12 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { FaCalendarCheck, FaClock, FaGift, FaMapMarkerAlt, FaTrash } from 'react-icons/fa'
+import { FaCalendarCheck, FaClock, FaGift, FaTrash } from 'react-icons/fa'
 
-import { caps as mockCaps } from '../data/mock'
-import { fetchPublicNeeds } from '../lib/needs'
 import { listDonorIntentions, removeDonorIntention, DonorIntention } from '../services/donor-intentions-service'
-import { fetchUnits } from '../services/units-service'
-import { Cap, Need } from '../types'
 import '../Styles/YourDonations.css'
 
 function formatDate(date: string): string {
@@ -22,33 +18,6 @@ function formatDate(date: string): string {
 
 export default function YourDonations(): React.ReactElement {
   const [intentions, setIntentions] = useState<DonorIntention[]>(() => listDonorIntentions())
-  const [units, setUnits] = useState<Cap[]>([])
-  const [needs, setNeeds] = useState<Need[]>([])
-
-  useEffect(() => {
-    let mounted = true
-
-    ;(async () => {
-      const [loadedUnits, loadedNeeds] = await Promise.all([
-        fetchUnits().catch(() => mockCaps as Cap[]),
-        fetchPublicNeeds(),
-      ])
-
-      if (!mounted) return
-
-      setUnits(loadedUnits.length > 0 ? loadedUnits : mockCaps as Cap[])
-      setNeeds(loadedNeeds)
-    })()
-
-    return () => {
-      mounted = false
-    }
-  }, [])
-
-  const urgentNeeds = useMemo(
-    () => needs.filter((need) => need.priority === 'alta').slice(0, 6),
-    [needs],
-  )
 
   const handleRemove = (id: string) => {
     removeDonorIntention(id)
@@ -60,10 +29,9 @@ export default function YourDonations(): React.ReactElement {
       <div className="your-donations-header">
         <div>
           <span className="page-kicker">Suas doacoes</span>
-          <h2>Intencoes de doacao registradas neste aparelho</h2>
+          <h2>Registros salvos neste aparelho</h2>
           <p>
-            Acompanhe os registros que voce enviou por este navegador e encontre rapidamente
-            onde pode doar novamente.
+            Consulte ou remova as intencoes enviadas por este navegador.
           </p>
         </div>
         <Link className="your-donations-primary" to="/caps">
@@ -129,46 +97,9 @@ export default function YourDonations(): React.ReactElement {
         )}
       </section>
 
-      <section className="your-donations-section" aria-label="Onde doar">
-        <div className="your-donations-section__title">
-          <FaMapMarkerAlt aria-hidden="true" />
-          <h3>Onde voce pode doar</h3>
-        </div>
-
-        <div className="donation-places-grid">
-          {units.map((unit) => (
-            <article className="donation-place-card" key={unit.id}>
-              <span className="unit-type-badge">{unit.unitType}</span>
-              <h4>{unit.title}</h4>
-              <p>{unit.address}</p>
-              <p>{unit.contact ?? 'Contato nao informado'}</p>
-              <Link to={`/caps?unit=${unit.id}`}>Doar para esta unidade</Link>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="your-donations-section" aria-label="Necessidades urgentes">
-        <div className="your-donations-section__title">
-          <FaGift aria-hidden="true" />
-          <h3>Pedidos urgentes</h3>
-        </div>
-
-        {urgentNeeds.length > 0 ? (
-          <div className="urgent-needs-grid">
-            {urgentNeeds.map((need) => (
-              <article className="urgent-need-mini-card" key={need.id}>
-                <span>Urgente</span>
-                <h4>{need.title}</h4>
-                <p>{need.description}</p>
-                <strong>{need.amount} unidades</strong>
-                <Link to={`/caps?unit=${need.unitId}`}>Ajudar esta unidade</Link>
-              </article>
-            ))}
-          </div>
-        ) : (
-          <p className="your-donations-muted">Nao ha pedidos urgentes registrados no momento.</p>
-        )}
+      <section className="your-donations-next-steps" aria-label="Proximas acoes">
+        <Link to="/donate">Ver necessidades abertas</Link>
+        <Link to="/caps">Escolher outra unidade</Link>
       </section>
     </section>
   )

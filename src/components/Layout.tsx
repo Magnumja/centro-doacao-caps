@@ -61,10 +61,6 @@ export default function Layout(): React.ReactElement {
             <p className="site-banner__desc">Rede de Atenção Psicossocial - Campo Grande (MS)</p>
             <span className="site-banner__kicker">Secretaria Municipal de Saúde</span>
           </div>
-          <div className="site-banner__meta" aria-label="Resumo institucional">
-            <span>Campo Grande/MS</span>
-            <strong>Doacoes organizadas para a rede CAPS</strong>
-          </div>
         </div>
       </div>
 
@@ -137,10 +133,9 @@ export default function Layout(): React.ReactElement {
             <img className="site-footer__logo" src={logo} alt="Logo SESAU" />
             <div>
               <span className="page-kicker">Centro de Doacao CAPS</span>
-              <h2 id="site-footer-title">Conectando solidariedade e cuidado em saude mental.</h2>
+              <h2 id="site-footer-title">Doacoes em itens para a rede CAPS.</h2>
               <p>
-                Plataforma institucional para divulgar necessidades das unidades CAPS de Campo Grande/MS
-                e orientar doadores com clareza.
+                Consulte necessidades, escolha uma unidade e combine a entrega diretamente com o servico.
               </p>
             </div>
           </section>
