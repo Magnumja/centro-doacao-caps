@@ -31,6 +31,7 @@ Artifacts:
 - Use `.planning/codebase/` as baseline context before suggesting changes.
 - Prefer tests before refactors in security-sensitive code.
 - Keep Prisma migrations separate from non-schema refactors.
+- Apply `.planning/frontend/QUALITY_STANDARDS.md` for future frontend/UI work.
 
 ## Validation Signals
 
@@ -43,4 +44,4 @@ Artifacts:
 Run `$gsd-execute-phase 1` to execute the documentation-only plan.
 
 ---
-*Last updated: 2026-05-19 after Phase 1 planning*
+*Last updated: 2026-05-19 after frontend quality profile capture*

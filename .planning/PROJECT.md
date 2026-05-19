@@ -67,6 +67,7 @@ Important current findings:
 - **No code changes yet**: Implementation files must not be changed before the user approves a clear plan.
 - **Preserve behavior**: Refactors must keep current endpoints, response shapes, auth semantics and deployment expectations stable.
 - **Backend first**: Prioritize server routes, services, Prisma, middleware, env and deployment over frontend concerns.
+- **Frontend quality bar**: Future frontend work must follow `.planning/frontend/QUALITY_STANDARDS.md`.
 - **Production safety**: Security, cookies, CORS, CSRF, trusted proxy and env validation need regression tests before broad changes.
 - **Data privacy**: Donation and resident data include PII, so changes must avoid increasing browser or server retention risk.
 - **Current stack**: Express 4, Prisma 5, PostgreSQL, Node 20 and npm remain the working baseline.
@@ -79,6 +80,7 @@ Important current findings:
 | Use `.planning/codebase/` as required baseline | The repository has already been mapped and committed | Good |
 | Preserve existing behavior before refactoring | App appears functional and backend build/tests pass | Pending implementation |
 | Require explicit approval before edits to implementation files | User requested a clear plan with files before code changes | Pending approval |
+| Adopt senior frontend quality standards for future UI work | User provided explicit frontend engineering/review profile | Pending future frontend phases |
 
 ## Evolution
 
@@ -98,4 +100,4 @@ After each milestone:
 4. Update Context with current state.
 
 ---
-*Last updated: 2026-05-19 after backend-first project initialization*
+*Last updated: 2026-05-19 after frontend quality profile capture*
