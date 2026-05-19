@@ -1,5 +1,9 @@
 const rawBase = (import.meta as any).env?.VITE_API_URL ?? ''
 const BASE = String(rawBase).replace(/\/$/, '')
+const MUTATION_HEADERS = {
+  'Content-Type': 'application/json',
+  'X-CSRF-Protection': '1',
+}
 
 export class ApiError extends Error {
   constructor(
@@ -39,14 +43,18 @@ export async function post<T = any>(path: string, body: unknown): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
     method: 'POST',
     credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
+    headers: MUTATION_HEADERS,
     body: JSON.stringify(body),
   })
   return handleRes<T>(res)
 }
 
 export async function del<T = any>(path: string): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, { method: 'DELETE', credentials: 'include' })
+  const res = await fetch(`${BASE}${path}`, {
+    method: 'DELETE',
+    credentials: 'include',
+    headers: { 'X-CSRF-Protection': '1' },
+  })
   return handleRes<T>(res)
 }
 

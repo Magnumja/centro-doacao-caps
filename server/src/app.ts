@@ -12,15 +12,10 @@ import residentsRouter from './routes/residents'
 import highlightsRouter from './routes/highlights'
 import telemetryRouter from './routes/telemetry'
 import { errorHandler, notFoundHandler } from './middleware/error-handler'
-import { AppError } from './errors/app-error'
+import { corsOriginDelegate, requireJsonContentType, requireTrustedOrigin } from './config/security'
 
 const app = express()
-const allowedOrigins = (process.env.FRONTEND_URL ?? 'http://localhost:5173,http://127.0.0.1:5173')
-  .split(',')
-  .map((origin) => origin.trim())
-  .filter(Boolean)
 
-// Só habilita trust proxy quando configurado explicitamente no ambiente.
 const trustProxyValue = process.env.TRUST_PROXY
 if (trustProxyValue === '1' || trustProxyValue === 'true') {
   app.set('trust proxy', 1)
@@ -29,56 +24,62 @@ if (trustProxyValue === '1' || trustProxyValue === 'true') {
 }
 app.disable('x-powered-by')
 
-// ─── Segurança HTTP ───────────────────────────────────────────────────────────
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+}))
 
-// Helmet define Content-Security-Policy, X-Frame-Options, etc.
-app.use(helmet())
-
-// CORS — permite somente o front configurado em .env ; bloqueia outras origens.
 app.use(
   cors({
-    origin(origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true)
-        return
-      }
-
-      callback(new AppError('Origem nao permitida pelo CORS.', 403))
-    },
-    credentials: true, // necessário para cookies
+    origin: corsOriginDelegate,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'X-CSRF-Protection'],
   }),
 )
 
-// ─── Rate limiting ────────────────────────────────────────────────────────────
-
-// Limite global: 200 req / 15 min por IP.
 app.use(
   rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 200,
     standardHeaders: true,
     legacyHeaders: false,
-    message: { error: 'Muitas requisições. Tente novamente em alguns minutos.' },
+    message: { error: 'Muitas requisicoes. Tente novamente em alguns minutos.' },
   }),
 )
 
-// Limite rigoroso para login: 10 tentativas / 15 min — bloqueia brute force.
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
+  skipSuccessfulRequests: true,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: 'Muitas tentativas de login. Aguarde 15 minutos.' },
 })
 
-// ─── Parsing ──────────────────────────────────────────────────────────────────
+const donationLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Muitas tentativas de cadastro de doacao. Tente novamente mais tarde.' },
+})
 
-app.use(express.json({ limit: '64kb' })) // limita body para evitar DoS por payload grande
+const telemetryLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Muitos eventos de telemetria.' },
+})
+
 app.use(cookieParser())
-
-// ─── Rotas ────────────────────────────────────────────────────────────────────
+app.use(requireTrustedOrigin)
+app.use(requireJsonContentType)
+app.use(express.json({ limit: '64kb' }))
 
 app.use('/api/auth/login', loginLimiter)
+app.use('/api/donations', donationLimiter)
+app.use('/api/telemetry', telemetryLimiter)
 app.use('/api/auth', authRouter)
 app.use('/api/units', unitsRouter)
 app.use('/api/needs', needsRouter)
@@ -87,16 +88,9 @@ app.use('/api/residents', residentsRouter)
 app.use('/api/highlights', highlightsRouter)
 app.use('/api/telemetry', telemetryRouter)
 
-// ─── Healthcheck ──────────────────────────────────────────────────────────────
-
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
 })
-
-// Em produção (Render), frontend é servido separadamente como Static Site.
-// Em desenvolvimento local, use `npm run dev` na raiz para ambos (com proxy Vite).
-
-// ─── 404 handler ─────────────────────────────────────────────────────────────
 
 app.use(notFoundHandler)
 app.use(errorHandler)

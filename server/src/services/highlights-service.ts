@@ -1,5 +1,4 @@
 import { randomUUID } from 'crypto'
-import https from 'https'
 import { XMLParser } from 'fast-xml-parser'
 import { z } from 'zod'
 import { AppError } from '../errors/app-error'
@@ -20,6 +19,9 @@ const highlightSchema = z.object({
 export class HighlightsService {
   private readonly items = new Map<string, HighlightItem>()
   private readonly newsCacheTtlMs = 1000 * 60 * 15
+  private readonly maxFeedBytes = 256 * 1024
+  private readonly feedTimeoutMs = 8000
+  private readonly allowedNewsHost = 'www.campogrande.ms.gov.br'
   private readonly parser = new XMLParser({
     ignoreAttributes: false,
     attributeNamePrefix: '',
@@ -165,58 +167,68 @@ export class HighlightsService {
   }
 
   private async fetchFeedXml(feedUrl: string): Promise<string> {
+    if (!this.isAllowedFeedUrl(feedUrl)) {
+      return ''
+    }
+
     const headers = {
       Accept: 'application/rss+xml, application/xml;q=0.9, text/xml;q=0.8',
       'User-Agent': 'CentroDoacaoCAPS/1.0 (+https://www.campogrande.ms.gov.br)',
     }
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), this.feedTimeoutMs)
 
     try {
-      const response = await fetch(feedUrl, { headers })
-      if (!response.ok) {
+      const response = await fetch(feedUrl, { headers, signal: controller.signal })
+
+      const finalUrl = response.url || feedUrl
+      if (!response.ok || !this.isAllowedFeedUrl(finalUrl)) {
         return ''
       }
 
-      return response.text()
+      return this.readLimitedResponse(response)
     } catch {
-      return this.fetchFeedXmlWithLenientCertificate(feedUrl, headers)
+      return ''
+    } finally {
+      clearTimeout(timeout)
     }
   }
 
-  private fetchFeedXmlWithLenientCertificate(feedUrl: string, headers: Record<string, string>): Promise<string> {
-    return new Promise((resolve) => {
+  private isAllowedFeedUrl(feedUrl: string): boolean {
+    try {
       const url = new URL(feedUrl)
-      const request = https.get({
-        hostname: url.hostname,
-        path: `${url.pathname}${url.search}`,
-        headers,
-        rejectUnauthorized: false,
-      }, (response) => {
-        if ((response.statusCode ?? 500) >= 300 && (response.statusCode ?? 500) < 400 && response.headers.location) {
-          response.resume()
-          resolve(this.fetchFeedXmlWithLenientCertificate(response.headers.location, headers))
-          return
-        }
+      return url.protocol === 'https:' && url.hostname === this.allowedNewsHost && url.pathname.startsWith('/cgnoticias/')
+    } catch {
+      return false
+    }
+  }
 
-        if (response.statusCode !== 200) {
-          response.resume()
-          resolve('')
-          return
-        }
+  private async readLimitedResponse(response: Response): Promise<string> {
+    const body = response.body
+    if (!body) {
+      return ''
+    }
 
-        response.setEncoding('utf8')
-        let body = ''
-        response.on('data', (chunk) => {
-          body += chunk
-        })
-        response.on('end', () => resolve(body))
-      })
+    const reader = body.getReader()
+    const chunks: Uint8Array[] = []
+    let total = 0
 
-      request.setTimeout(8000, () => {
-        request.destroy()
-        resolve('')
-      })
-      request.on('error', () => resolve(''))
-    })
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) {
+        break
+      }
+
+      total += value.length
+      if (total > this.maxFeedBytes) {
+        await reader.cancel()
+        return ''
+      }
+
+      chunks.push(value)
+    }
+
+    return Buffer.concat(chunks).toString('utf8')
   }
 
   private mapRssItemToHighlight(item: any, index: number): NewsHighlightItem | null {

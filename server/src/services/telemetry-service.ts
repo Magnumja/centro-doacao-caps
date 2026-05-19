@@ -2,10 +2,15 @@ import { z } from 'zod'
 import { AppError } from '../errors/app-error'
 
 const telemetrySchema = z.object({
-  eventName: z.string().min(2).max(80),
+  eventName: z.string().trim().min(2).max(80).regex(/^[\w:.-]+$/),
   category: z.enum(['carousel', 'scroll', 'navigation', 'theme', 'interaction', 'performance']),
   value: z.number().min(0).max(60000).optional(),
-  metadata: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+  metadata: z.record(
+    z.string().max(40),
+    z.union([z.string().max(200), z.number().finite(), z.boolean()]),
+  ).refine((metadata) => Object.keys(metadata).length <= 20, {
+    message: 'Metadados excedem o limite permitido.',
+  }).optional(),
   at: z.string().datetime().optional(),
 })
 

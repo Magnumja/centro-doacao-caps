@@ -1,8 +1,10 @@
 import { Router, Request, Response } from 'express'
 import bcrypt from 'bcryptjs'
+import { timingSafeEqual } from 'crypto'
 import { z } from 'zod'
 import prisma from '../lib/prisma'
 import { signToken } from '../lib/jwt'
+import { sessionCookieOptions } from '../lib/session-cookie'
 import { requireAuth } from '../middleware/auth'
 import { asyncHandler } from '../utils/async-handler'
 
@@ -10,9 +12,41 @@ const router = Router()
 const ENV_ADMIN_TOKEN_PREFIX = 'env-admin:'
 
 const loginSchema = z.object({
-  email: z.string().email('E-mail inválido.'),
-  password: z.string().min(1, 'Senha obrigatória.'),
+  email: z.string().email('E-mail invalido.'),
+  password: z.string().min(1, 'Senha obrigatoria.'),
 })
+
+function safeTextEqual(left: string, right: string): boolean {
+  const leftBuffer = Buffer.from(left)
+  const rightBuffer = Buffer.from(right)
+
+  if (leftBuffer.length !== rightBuffer.length) {
+    return false
+  }
+
+  return timingSafeEqual(leftBuffer, rightBuffer)
+}
+
+async function isEnvAdminLoginValid(email: string, password: string): Promise<boolean> {
+  if (process.env.ENABLE_ENV_ADMIN_LOGIN !== 'true') {
+    return false
+  }
+
+  const envAdminEmail = process.env.SEED_ADMIN_EMAIL
+  if (!envAdminEmail || !safeTextEqual(email, envAdminEmail)) {
+    return false
+  }
+
+  const envAdminPasswordHash = process.env.SEED_ADMIN_PASSWORD_HASH
+  if (envAdminPasswordHash) {
+    return bcrypt.compare(password, envAdminPasswordHash)
+  }
+
+  const envAdminPassword = process.env.SEED_ADMIN_PASSWORD
+  return process.env.NODE_ENV !== 'production'
+    && !!envAdminPassword
+    && safeTextEqual(password, envAdminPassword)
+}
 
 router.post('/login', asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const parsed = loginSchema.safeParse(req.body)
@@ -23,33 +57,25 @@ router.post('/login', asyncHandler(async (req: Request, res: Response): Promise<
   }
 
   const { email, password } = parsed.data
-
-  const envAdminEmail = process.env.SEED_ADMIN_EMAIL
-  const envAdminPassword = process.env.SEED_ADMIN_PASSWORD
   const envAdminCapSlug = process.env.SEED_ADMIN_CAP_SLUG ?? 'c1'
   const envAdminName = process.env.SEED_ADMIN_NAME ?? 'Administrador'
 
-  if (envAdminEmail && envAdminPassword && email === envAdminEmail && password === envAdminPassword) {
+  if (await isEnvAdminLoginValid(email, password)) {
     const envAdminUnit = await prisma.unit.findUnique({ where: { slug: envAdminCapSlug } })
 
     if (!envAdminUnit) {
-      res.status(500).json({ error: 'Unidade administrativa do ambiente não encontrada.' })
+      res.status(500).json({ error: 'Unidade administrativa do ambiente nao encontrada.' })
       return
     }
 
     const token = signToken({
-      hostId: `${ENV_ADMIN_TOKEN_PREFIX}${envAdminEmail}`,
+      hostId: `${ENV_ADMIN_TOKEN_PREFIX}${email}`,
       unitId: envAdminUnit.id,
       role: 'admin',
     })
 
     res
-      .cookie('token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-        maxAge: 8 * 60 * 60 * 1000,
-      })
+      .cookie('token', token, sessionCookieOptions(8 * 60 * 60 * 1000))
       .json({
         message: 'Login realizado com sucesso.',
         role: 'admin',
@@ -72,22 +98,13 @@ router.post('/login', asyncHandler(async (req: Request, res: Response): Promise<
   const token = signToken({ hostId: host.id, unitId: host.unitId, role: host.role as 'host' | 'admin' })
 
   res
-    .cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-      maxAge: 8 * 60 * 60 * 1000,
-    })
+    .cookie('token', token, sessionCookieOptions(8 * 60 * 60 * 1000))
     .json({ message: 'Login realizado com sucesso.', role: host.role, unitId: host.unitId })
 }))
 
 router.post('/logout', (_req: Request, res: Response): void => {
   res
-    .clearCookie('token', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-    })
+    .clearCookie('token', sessionCookieOptions())
     .json({ message: 'Logout realizado.' })
 })
 
@@ -97,7 +114,7 @@ router.get('/me', requireAuth, asyncHandler(async (req: Request, res: Response):
     const localUnit = await prisma.unit.findUnique({ where: { slug: localUnitSlug } })
 
     if (!localUnit) {
-      res.status(500).json({ error: 'Unidade configurada para bypass local não encontrada.' })
+      res.status(500).json({ error: 'Unidade configurada para bypass local nao encontrada.' })
       return
     }
 
@@ -138,7 +155,7 @@ router.get('/me', requireAuth, asyncHandler(async (req: Request, res: Response):
   })
 
   if (!found) {
-    res.status(404).json({ error: 'Host não encontrado.' })
+    res.status(404).json({ error: 'Host nao encontrado.' })
     return
   }
 
