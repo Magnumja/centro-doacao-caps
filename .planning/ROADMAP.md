@@ -33,6 +33,11 @@
 - `.planning/STATE.md`
 - `.planning/backend/ANALYSIS.md`
 - `.planning/backend/IMPROVEMENT_PLAN.md`
+- `.planning/phases/01-backend-diagnostic/01-CONTEXT.md`
+- `.planning/phases/01-backend-diagnostic/01-01-PLAN.md`
+
+**Plans:**
+- Wave 1: `01-01` - Finalize backend diagnostic package.
 
 ### Phase 2: API Organization Plan
 

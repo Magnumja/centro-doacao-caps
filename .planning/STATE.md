@@ -2,7 +2,7 @@
 
 **Initialized:** 2026-05-19
 **Current focus:** Backend Diagnostic
-**Status:** Phase 1 context gathered. No implementation approved.
+**Status:** Phase 1 planned. Ready for documentation-only execution.
 
 ## Project Reference
 
@@ -22,6 +22,7 @@ Artifacts:
 - `.planning/backend/IMPROVEMENT_PLAN.md`
 - `.planning/phases/01-backend-diagnostic/01-CONTEXT.md`
 - `.planning/phases/01-backend-diagnostic/01-DISCUSSION-LOG.md`
+- `.planning/phases/01-backend-diagnostic/01-01-PLAN.md`
 
 ## Guardrails
 
@@ -39,7 +40,7 @@ Artifacts:
 
 ## Next Step
 
-Run `$gsd-plan-phase 1` to create an executable plan from `.planning/phases/01-backend-diagnostic/01-CONTEXT.md`.
+Run `$gsd-execute-phase 1` to execute the documentation-only plan.
 
 ---
-*Last updated: 2026-05-19 after Phase 1 context gathering*
+*Last updated: 2026-05-19 after Phase 1 planning*
