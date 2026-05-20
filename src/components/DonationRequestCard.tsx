@@ -35,11 +35,11 @@ export default function DonationRequestCard({
       <div className="donation-request-card__badges">
         <span className="donation-request-card__category">{need.category}</span>
         <UrgencyBadge urgency={urgency} />
-        <StatusBadge status={need.status} />
+        {!compact ? <StatusBadge status={need.status} /> : null}
       </div>
 
       <h3>{need.title}</h3>
-      <p>{need.description}</p>
+      {!compact ? <p>{need.description}</p> : null}
 
       <dl className="donation-request-card__meta">
         <div>

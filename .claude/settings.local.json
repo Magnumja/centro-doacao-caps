@@ -8,7 +8,8 @@
       "Bash(Remove-Item \"c:\\\\Users\\\\magnu\\\\OneDrive\\\\Documentos\\\\GitHub\\\\centro-doacao-caps\\\\server\\\\.env\")",
       "Bash(git add *)",
       "Bash(git commit -m 'fix: remove sendBeacon da telemetria — nao suporta X-CSRF-Protection header *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(node -e \"require\\('bcryptjs'\\).hash\\('tafuncionando4231', 12\\).then\\(h => console.log\\(h\\)\\)\")"
     ]
   }
 }

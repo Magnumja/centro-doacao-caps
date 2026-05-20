@@ -44,7 +44,7 @@ body {
   margin: 0;
   overscroll-behavior-y: contain;
   color: var(--color-text);
-  background: linear-gradient(180deg, var(--color-page) 0%, #ffffff 100%);
+  background: var(--color-page);
   font-family: 'Source Sans 3', sans-serif;
 }
 
@@ -111,7 +111,7 @@ textarea {
 /* Header */
 .site-banner {
   border-bottom: 1px solid var(--color-border);
-  background: rgba(255, 255, 255, 0.96);
+  background: var(--color-surface);
 }
 
 .site-banner__content {
@@ -120,12 +120,12 @@ textarea {
   display: flex;
   align-items: center;
   gap: 0.85rem;
-  padding: 0.6rem 0;
+  padding: 0.55rem 0;
 }
 
 .site-banner__logo {
-  width: 78px;
-  height: 50px;
+  width: 66px;
+  height: 44px;
   flex: 0 0 auto;
   object-fit: contain;
   border: 1px solid var(--color-border);
@@ -144,14 +144,14 @@ textarea {
   margin: 0;
   color: var(--color-primary-strong);
   font-family: 'Lexend', sans-serif;
-  font-size: clamp(1.08rem, 2vw, 1.55rem);
+  font-size: clamp(1rem, 1.7vw, 1.32rem);
   line-height: 1.15;
 }
 
 .site-banner__desc {
   margin: 0;
   color: var(--color-muted);
-  font-size: 0.92rem;
+  font-size: 0.88rem;
 }
 
 .site-banner__kicker {
@@ -167,17 +167,17 @@ textarea {
   top: 0;
   z-index: 30;
   border-bottom: 1px solid var(--color-border);
-  background: rgba(246, 250, 248, 0.88);
-  backdrop-filter: blur(12px);
+  background: rgba(246, 250, 248, 0.94);
+  backdrop-filter: blur(10px);
 }
 
 .health-header__inner {
   width: min(1180px, 94vw);
-  min-height: 56px;
+  min-height: 52px;
   margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 0.7rem;
 }
 
@@ -187,20 +187,21 @@ textarea {
   justify-content: center;
   gap: 0.35rem;
   flex-wrap: wrap;
+  margin-inline: auto;
 }
 
 .health-nav__link,
 .mobile-nav-toggle,
 .health-nav__mobile-header button,
 .theme-toggle {
-  min-height: 40px;
+  min-height: 38px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  border: 1px solid var(--color-border);
+  border: 1px solid transparent;
   border-radius: var(--radius-control);
-  background: var(--color-surface);
+  background: transparent;
   color: var(--color-text);
   font-family: 'Lexend', sans-serif;
   font-size: 0.84rem;
@@ -210,7 +211,7 @@ textarea {
 }
 
 .health-nav__link {
-  padding: 0.45rem 0.7rem;
+  padding: 0.42rem 0.64rem;
 }
 
 .health-nav__link:hover,
@@ -227,13 +228,10 @@ textarea {
 }
 
 .theme-toggle {
-  position: fixed;
-  top: max(0.75rem, env(safe-area-inset-top));
-  right: max(0.75rem, env(safe-area-inset-right));
-  z-index: 100;
-  border-radius: 999px;
+  flex: 0 0 auto;
+  border-color: var(--color-border);
+  background: var(--color-surface);
   padding: 0.48rem 0.68rem;
-  box-shadow: var(--shadow-soft);
 }
 
 /* Page shell */
@@ -256,17 +254,17 @@ textarea {
 .page-block {
   width: min(1180px, 94vw);
   margin: 0 auto;
-  padding: clamp(1rem, 3vw, 1.6rem) 0;
+  padding: clamp(1rem, 3vw, 1.8rem) 0;
   display: grid;
-  gap: 1rem;
+  gap: clamp(0.85rem, 2vw, 1.2rem);
 }
 
 .page-block h2 {
   margin: 0;
   color: var(--color-text);
   font-family: 'Lexend', sans-serif;
-  font-size: clamp(1.55rem, 3vw, 2.35rem);
-  line-height: 1.12;
+  font-size: clamp(1.42rem, 2.6vw, 2.05rem);
+  line-height: 1.16;
 }
 
 .page-block p {
@@ -288,7 +286,6 @@ textarea {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
   background: var(--color-surface);
-  box-shadow: var(--shadow-soft);
   padding: 1rem;
 }
 
@@ -326,7 +323,6 @@ textarea {
 .btn-primary:hover,
 .btn-secondary:hover {
   transform: translateY(-1px);
-  box-shadow: var(--shadow-soft);
 }
 
 .form-feedback {
@@ -463,7 +459,7 @@ textarea {
 }
 
 :root[data-theme='dark'] body {
-  background: linear-gradient(180deg, #071411 0%, #0a1a17 100%);
+  background: #071411;
 }
 
 :root[data-theme='dark'] .site-banner,
@@ -471,8 +467,6 @@ textarea {
 :root[data-theme='dark'] .site-footer,
 :root[data-theme='dark'] .site-footer__logo,
 :root[data-theme='dark'] .site-banner__logo,
-:root[data-theme='dark'] .health-nav,
-:root[data-theme='dark'] .health-nav__link,
 :root[data-theme='dark'] .mobile-nav-toggle,
 :root[data-theme='dark'] .health-nav__mobile-header button,
 :root[data-theme='dark'] .theme-toggle,
@@ -483,6 +477,11 @@ textarea {
   border-color: var(--color-border);
   background: var(--color-surface);
   color: var(--color-text);
+}
+
+:root[data-theme='dark'] .health-nav__link {
+  background: transparent;
+  color: var(--health-text);
 }
 
 :root[data-theme='dark'] .health-nav__link--active,
@@ -498,6 +497,7 @@ textarea {
 
   .mobile-nav-toggle {
     display: inline-flex;
+    border-color: var(--color-border);
     padding: 0.45rem 0.68rem;
   }
 
@@ -586,7 +586,7 @@ textarea {
   .page-block,
   .site-footer__inner,
   .site-footer__bottom {
-    width: min(100%, calc(100vw - 1rem));
+    width: min(100%, calc(100vw - 1.25rem));
   }
 
   .site-banner__logo {

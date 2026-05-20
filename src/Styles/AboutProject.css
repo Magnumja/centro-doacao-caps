@@ -37,6 +37,7 @@
 .about-workflow-section,
 .about-impact-section,
 .about-creator-section,
+.about-cocreators-section,
 .about-final-cta {
   width: min(1360px, 97vw);
 }
@@ -585,7 +586,8 @@
 :root[data-theme='dark'] .about-info-card,
 :root[data-theme='dark'] .about-step-card,
 :root[data-theme='dark'] .about-impact-card,
-:root[data-theme='dark'] .about-creator-card {
+:root[data-theme='dark'] .about-creator-card,
+:root[data-theme='dark'] .about-cocreators-card {
   border-color: rgba(123, 198, 255, 0.18);
   background: rgba(14, 35, 30, 0.78);
 }
@@ -598,6 +600,7 @@
 :root[data-theme='dark'] .about-info-card h3,
 :root[data-theme='dark'] .about-impact-card strong,
 :root[data-theme='dark'] .about-creator-card h3,
+:root[data-theme='dark'] .about-cocreators-card h3,
 :root[data-theme='dark'] .about-step-card p {
   color: var(--health-text);
 }
@@ -644,5 +647,276 @@
   .about-info-card:hover .about-info-card__icon,
   .about-impact-card:hover > span {
     transform: none;
+  }
+}
+
+/* Calmer editorial layout for less visual noise. */
+.about-project-page .page-block,
+.about-hero__content .page-kicker,
+.about-hero__content h2,
+.about-hero__content p,
+.about-hero__card,
+.about-step-card,
+.about-impact-card,
+.about-step-card__number,
+.about-creator-card__avatar,
+.about-final-cta::after,
+.about-final-cta__actions .home-hero-button--primary {
+  animation: none;
+}
+
+.about-hero,
+.about-story-grid,
+.about-purpose-section,
+.about-workflow-section,
+.about-impact-section,
+.about-creator-section,
+.about-cocreators-section,
+.about-final-cta {
+  width: min(1180px, 94vw);
+}
+
+.about-hero {
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.42fr);
+  padding-block: clamp(1.25rem, 3vw, 2.1rem);
+}
+
+.about-hero__content h2 {
+  font-size: clamp(1.9rem, 4vw, 3.2rem);
+}
+
+.about-hero__card,
+.about-info-card,
+.about-step-card,
+.about-impact-card,
+.about-creator-card,
+.about-cocreators-card {
+  border-radius: var(--radius-card);
+  border-color: var(--color-border);
+  background: var(--color-surface);
+  box-shadow: none;
+}
+
+.about-info-card:hover,
+.about-impact-card:hover,
+.about-creator-card:hover,
+.about-cocreators-card:hover,
+.about-step-card:hover {
+  transform: translateY(-1px);
+  box-shadow: none;
+}
+
+.about-step-card::after {
+  display: none;
+}
+
+.about-step-card__number,
+.about-creator-card__avatar {
+  border-radius: var(--radius-control);
+  background: var(--color-primary);
+  box-shadow: none;
+}
+
+.about-final-cta {
+  border-top: 1px solid var(--color-border);
+  background: transparent;
+  padding-top: 1rem;
+}
+
+.about-final-cta::after {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .about-hero,
+  .about-story-grid,
+  .about-purpose-section,
+  .about-workflow-section,
+  .about-impact-section,
+  .about-creator-section,
+  .about-cocreators-section,
+  .about-final-cta {
+    width: min(100%, calc(100vw - 1.25rem));
+  }
+}
+
+.about-project-page--compact {
+  gap: 0;
+}
+
+.about-project-page--compact .about-hero {
+  grid-template-columns: 1fr;
+}
+
+.about-project-page--compact .about-hero__content {
+  max-width: 820px;
+}
+
+.about-project-page--compact .about-story-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.about-project-page--compact .about-creator-section {
+  gap: 0.85rem;
+}
+
+.about-project-page--compact .about-cocreators-section {
+  gap: 0.85rem;
+}
+
+.about-creator-card--with-photo {
+  grid-template-columns: minmax(220px, 0.42fr) minmax(0, 1fr);
+  align-items: center;
+  overflow: hidden;
+  padding: 0;
+}
+
+.about-creator-card__photo {
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+  max-height: 420px;
+  object-fit: cover;
+  object-position: center 34%;
+  display: block;
+}
+
+.about-creator-card--with-photo > div {
+  display: grid;
+  gap: 0.55rem;
+  padding: 1.2rem;
+}
+
+.about-creator-card--with-photo p {
+  margin: 0;
+}
+
+.about-cocreators-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.85fr);
+  align-items: stretch;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+.about-cocreators-card__photo {
+  width: 100%;
+  height: 100%;
+  min-height: 340px;
+  object-fit: cover;
+  object-position: center 42%;
+  display: block;
+}
+
+.about-cocreators-card > div {
+  display: grid;
+  align-content: center;
+  gap: 0.55rem;
+  padding: 1.2rem;
+}
+
+.about-cocreators-card h3,
+.about-cocreators-card p {
+  margin: 0;
+}
+
+@media (max-width: 980px) {
+  .about-project-page--compact .about-story-grid,
+  .about-creator-card--with-photo,
+  .about-cocreators-card {
+    grid-template-columns: 1fr;
+  }
+
+  .about-creator-card__photo {
+    aspect-ratio: 16 / 10;
+    min-height: 0;
+    max-height: 360px;
+  }
+
+  .about-cocreators-card__photo {
+    aspect-ratio: 16 / 11;
+    min-height: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .about-creator-card__photo {
+    aspect-ratio: 4 / 3;
+    max-height: 300px;
+  }
+
+  .about-creator-card--with-photo > div {
+    padding: 0.95rem;
+  }
+
+  .about-cocreators-card > div {
+    padding: 0.95rem;
+  }
+}
+
+/* Compact photo treatment */
+.about-creator-card--with-photo {
+  grid-template-columns: 150px minmax(0, 1fr);
+}
+
+.about-creator-card__photo {
+  min-height: 0;
+  height: 180px;
+  max-height: 180px;
+}
+
+.about-cocreators-card {
+  grid-template-columns: minmax(220px, 0.42fr) minmax(0, 1fr);
+}
+
+.about-cocreators-card__photo {
+  min-height: 0;
+  height: 230px;
+  max-height: 230px;
+}
+
+.about-cocreators-card > div,
+.about-creator-card--with-photo > div {
+  padding: 1rem;
+}
+
+@media (max-width: 980px) {
+  .about-creator-card--with-photo {
+    grid-template-columns: 120px minmax(0, 1fr);
+  }
+
+  .about-creator-card__photo {
+    aspect-ratio: auto;
+    height: 150px;
+    max-height: 150px;
+  }
+
+  .about-cocreators-card {
+    grid-template-columns: 1fr;
+  }
+
+  .about-cocreators-card__photo {
+    aspect-ratio: 16 / 7;
+    height: auto;
+    max-height: 220px;
+  }
+}
+
+@media (max-width: 640px) {
+  .about-creator-card--with-photo {
+    grid-template-columns: 92px minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .about-creator-card__photo {
+    height: 112px;
+    max-height: 112px;
+  }
+
+  .about-cocreators-card__photo {
+    aspect-ratio: 16 / 9;
+    max-height: 180px;
   }
 }

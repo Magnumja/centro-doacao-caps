@@ -71,21 +71,11 @@ function CapsCard({
 
       <span className="unit-type-badge">{cap.unitType}</span>
       <h3>{cap.title}</h3>
-      <div className="caps-card__status-row">
-        <span className="status-request-badge status-request-badge--partial">Recebendo doacoes</span>
-        {cap.needsSummary ? <span className="status-request-badge status-request-badge--pending">Pedidos abertos</span> : null}
-      </div>
-
       <div className="caps-card__details">
         <p><strong>Endereco:</strong> {cap.address}</p>
         <p><strong>Contato:</strong> {cap.contact ?? 'Contato nao informado'}</p>
-        {cap.operatingHours ? <p><strong>Horario:</strong> {cap.operatingHours}</p> : null}
         {cap.needsSummary ? <p><strong>Necessidades:</strong> {cap.needsSummary}</p> : null}
       </div>
-
-      {cap.description ? <p>{cap.description}</p> : null}
-      {cap.capacity ? <p>{cap.capacity}</p> : null}
-      {cap.privacyNote ? <p>{cap.privacyNote}</p> : null}
 
       <div className="caps-card__actions">
         <Link
