@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"require\\('bcryptjs'\\).hash\\('5d6df99172a4e6972d740b3db28c4ec2', 12\\).then\\(h => console.log\\(h\\)\\)\")",
+      "Bash(node_modules/.bin/prisma migrate *)",
+      "Bash(node_modules/.bin/tsx src/prisma/seed.ts)",
+      "Bash(node_modules/.bin/tsx --require dotenv/config src/prisma/seed.ts)",
+      "Bash(Remove-Item \"c:\\\\Users\\\\magnu\\\\OneDrive\\\\Documentos\\\\GitHub\\\\centro-doacao-caps\\\\server\\\\.env\")"
+    ]
+  }
+}
