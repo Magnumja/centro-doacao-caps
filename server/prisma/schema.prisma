@@ -55,6 +55,9 @@ model Need {
 
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+
+  @@index([unitId])
+  @@index([priority])
 }
 
 enum NeedPriority {
@@ -78,6 +81,8 @@ model Host {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([unitId])
 }
 
 enum HostRole {
@@ -103,6 +108,8 @@ model Donation {
 
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
+
+  @@index([unitId, registeredAt(sort: Desc)])
 }
 
 enum DonationCategory {
@@ -125,6 +132,8 @@ model Resident {
 
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
+
+  @@index([unitId])
 }
 
 enum ResidentStatus {

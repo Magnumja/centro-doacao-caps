@@ -60,7 +60,8 @@ export function requireTrustedOrigin(req: Request, res: Response, next: NextFunc
   const candidateOrigin = origin || refererOrigin
   const hasTrustedOrigin = candidateOrigin ? isAllowedOrigin(candidateOrigin, req) : false
 
-  if (!hasTrustedOrigin && !(!candidateOrigin && process.env.NODE_ENV !== 'production')) {
+  const isDevWithNoOrigin = !candidateOrigin && process.env.NODE_ENV !== 'production'
+  if (!hasTrustedOrigin && !isDevWithNoOrigin) {
     res.status(403).json({ error: 'Origem da requisicao nao confiavel.' })
     return
   }
