@@ -5,7 +5,10 @@
       "Bash(node_modules/.bin/prisma migrate *)",
       "Bash(node_modules/.bin/tsx src/prisma/seed.ts)",
       "Bash(node_modules/.bin/tsx --require dotenv/config src/prisma/seed.ts)",
-      "Bash(Remove-Item \"c:\\\\Users\\\\magnu\\\\OneDrive\\\\Documentos\\\\GitHub\\\\centro-doacao-caps\\\\server\\\\.env\")"
+      "Bash(Remove-Item \"c:\\\\Users\\\\magnu\\\\OneDrive\\\\Documentos\\\\GitHub\\\\centro-doacao-caps\\\\server\\\\.env\")",
+      "Bash(git add *)",
+      "Bash(git commit -m 'fix: remove sendBeacon da telemetria — nao suporta X-CSRF-Protection header *)",
+      "Bash(git push *)"
     ]
   }
 }
