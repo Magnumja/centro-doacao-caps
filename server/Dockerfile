@@ -41,6 +41,9 @@ RUN npm ci --omit=dev --ignore-scripts
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/dist ./dist
 
+RUN chown -R appuser:nodejs /app/node_modules/.prisma \
+  && chown -R appuser:nodejs /app/node_modules/@prisma
+
 USER appuser
 
 EXPOSE 3333
