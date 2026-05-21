@@ -78,3 +78,7 @@ export async function fetchNeedsPage(params: { page?: number, limit?: number, pr
 export async function createNeed(payload: CreateNeedPayload): Promise<ApiNeed> {
   return api.post<ApiNeed>('/api/needs', payload)
 }
+
+export async function deleteNeed(id: string): Promise<void> {
+  await api.del(`/api/needs/${encodeURIComponent(id)}`)
+}

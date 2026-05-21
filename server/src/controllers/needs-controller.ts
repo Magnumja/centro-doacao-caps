@@ -65,4 +65,9 @@ export class NeedsController {
     const need = await this.service.create(req.body, req.authHost!.unitId)
     res.status(201).json(need)
   }
+
+  remove = async (req: Request, res: Response): Promise<void> => {
+    await this.service.delete(req.params.id, req.authHost!)
+    res.status(204).send()
+  }
 }

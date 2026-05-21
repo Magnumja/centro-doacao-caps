@@ -54,4 +54,15 @@ export class NeedsRepository {
   }) {
     return prisma.need.create({ data })
   }
+
+  findById(id: string) {
+    return prisma.need.findUnique({
+      where: { id },
+      select: { id: true, unitId: true },
+    })
+  }
+
+  delete(id: string) {
+    return prisma.need.delete({ where: { id } })
+  }
 }

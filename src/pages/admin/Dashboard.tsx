@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import { IconType } from 'react-icons'
-import { FaChartLine, FaChartPie, FaGift, FaHospital, FaPlus, FaSignOutAlt, FaUser, FaUsers } from 'react-icons/fa'
+import { FaChartLine, FaChartPie, FaGift, FaHospital, FaPlus, FaSignOutAlt, FaTrash, FaUser, FaUsers } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import AdminDashboardSummary from '../../components/AdminDashboard'
 import { Cap, Donation } from '../../types'
 import { caps, needs as mockNeeds, projectStats } from '../../data/mock'
 import { useDashboardData } from '../../hooks/useDashboardData'
 import { logoutHost } from '../../services/auth-service'
-import { createNeed } from '../../services/needs-service'
+import { createNeed, deleteNeed } from '../../services/needs-service'
 
 import '../../Styles/Dashboard.css'
 
@@ -43,6 +43,7 @@ export default function Dashboard(): React.ReactElement {
   const [requestPriority, setRequestPriority] = useState<'media' | 'alta'>('media')
   const [requestFeedback, setRequestFeedback] = useState('')
   const [isPublishingRequest, setIsPublishingRequest] = useState(false)
+  const [deletingNeedIds, setDeletingNeedIds] = useState<Set<string>>(new Set())
   const [residentSearch, setResidentSearch] = useState('')
 
   const { loggedHost, publishedNeeds, hostDonations, residents, setPublishedNeeds } = useDashboardData()
@@ -100,6 +101,30 @@ export default function Dashboard(): React.ReactElement {
       setRequestFeedback(error?.message || 'Nao foi possivel publicar a solicitacao.')
     } finally {
       setIsPublishingRequest(false)
+    }
+  }
+
+  const handleNeedDelete = async (needId: string) => {
+    const shouldDelete = window.confirm('Apagar esta solicitacao ativa? Esta acao remove o pedido da pagina publica.')
+    if (!shouldDelete) {
+      return
+    }
+
+    setRequestFeedback('')
+    setDeletingNeedIds((current) => new Set(current).add(needId))
+
+    try {
+      await deleteNeed(needId)
+      setPublishedNeeds((current) => current.filter((need) => need.id !== needId))
+      setRequestFeedback('Solicitacao apagada com sucesso.')
+    } catch (error: any) {
+      setRequestFeedback(error?.message || 'Nao foi possivel apagar a solicitacao.')
+    } finally {
+      setDeletingNeedIds((current) => {
+        const next = new Set(current)
+        next.delete(needId)
+        return next
+      })
     }
   }
 
@@ -332,6 +357,15 @@ export default function Dashboard(): React.ReactElement {
                       <p className="dashboard-card__value">{need.amount}</p>
                       <p className="dashboard-card__label">{need.priority === 'alta' ? 'Urgente' : 'Não urgente'}</p>
                       <p style={{ marginTop: '0.6rem', color: '#666' }}>{need.description}</p>
+                      <button
+                        type="button"
+                        className="dashboard-card__delete"
+                        onClick={() => handleNeedDelete(need.id)}
+                        disabled={deletingNeedIds.has(need.id)}
+                      >
+                        <FaTrash aria-hidden="true" />
+                        {deletingNeedIds.has(need.id) ? 'Apagando...' : 'Apagar pedido'}
+                      </button>
                     </article>
                   ))}
                 </div>

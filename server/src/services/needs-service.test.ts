@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { NeedsService } from './needs-service'
+import { AppError } from '../errors/app-error'
 import { ValidationError } from '../errors/validation-error'
 
 test('NeedsService.listPaginated returns pagination contract', async () => {
@@ -65,5 +66,51 @@ test('NeedsService.create throws ValidationError when payload is invalid', async
   await assert.rejects(
     () => service.create({ title: 'x' }, 'unit-1'),
     (error: unknown) => error instanceof ValidationError,
+  )
+})
+
+test('NeedsService.delete removes need from the authenticated host unit', async () => {
+  let deletedId: string | undefined
+  const mockRepository = {
+    findById: async () => ({ id: 'n1', unitId: 'unit-1' }),
+    delete: async (id: string) => {
+      deletedId = id
+    },
+  }
+
+  const service = new NeedsService(mockRepository as any)
+  await service.delete('n1', { unitId: 'unit-1', role: 'host' })
+
+  assert.equal(deletedId, 'n1')
+})
+
+test('NeedsService.delete allows admins to remove needs from other units', async () => {
+  let deletedId: string | undefined
+  const mockRepository = {
+    findById: async () => ({ id: 'n1', unitId: 'unit-2' }),
+    delete: async (id: string) => {
+      deletedId = id
+    },
+  }
+
+  const service = new NeedsService(mockRepository as any)
+  await service.delete('n1', { unitId: 'unit-1', role: 'admin' })
+
+  assert.equal(deletedId, 'n1')
+})
+
+test('NeedsService.delete rejects hosts from other units', async () => {
+  const mockRepository = {
+    findById: async () => ({ id: 'n1', unitId: 'unit-2' }),
+    delete: async () => {
+      throw new Error('delete should not be called')
+    },
+  }
+
+  const service = new NeedsService(mockRepository as any)
+
+  await assert.rejects(
+    () => service.delete('n1', { unitId: 'unit-1', role: 'host' }),
+    (error: unknown) => error instanceof AppError && error.statusCode === 403,
   )
 })

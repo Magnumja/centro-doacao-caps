@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { AppError } from '../errors/app-error'
 import { ValidationError } from '../errors/validation-error'
 import { NeedFilters, NeedsRepository } from '../repositories/needs-repository'
 import { resolvePagination } from '../utils/pagination'
@@ -39,5 +40,19 @@ export class NeedsService {
     }
 
     return this.repository.create({ ...parsed.data, unitId })
+  }
+
+  async delete(id: string, authHost: { unitId: string, role: 'host' | 'admin' }) {
+    const need = await this.repository.findById(id)
+
+    if (!need) {
+      throw new AppError('Solicitacao nao encontrada.', 404)
+    }
+
+    if (need.unitId !== authHost.unitId && authHost.role !== 'admin') {
+      throw new AppError('Sem permissao para remover esta solicitacao.', 403)
+    }
+
+    await this.repository.delete(id)
   }
 }

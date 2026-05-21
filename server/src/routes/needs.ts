@@ -8,5 +8,6 @@ const controller = new NeedsController()
 
 router.get('/', asyncHandler(controller.list))
 router.post('/', requireAuth, asyncHandler(controller.create))
+router.delete('/:id', requireAuth, asyncHandler(controller.remove))
 
 export default router
