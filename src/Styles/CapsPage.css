@@ -1393,3 +1393,23 @@
     min-height: 210px;
   }
 }
+
+/* Correcao mobile: botoes de icone (WhatsApp, Mapa) nos cards de unidade nao devem
+   virar linhas full-width. Apenas os botoes textuais devem ocupar a linha inteira. */
+@media (max-width: 740px) {
+  .caps-card__actions {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .caps-card__actions .unit-secondary-button,
+  .caps-card__actions .unit-donate-button {
+    flex: 1 1 100%;
+  }
+
+  .caps-card__actions .unit-icon-link {
+    flex: 0 0 44px;
+    width: 44px;
+  }
+}

@@ -12,7 +12,9 @@
       "Bash(node -e \"require\\('bcryptjs'\\).hash\\('tafuncionando4231', 12\\).then\\(h => console.log\\(h\\)\\)\")",
       "Bash(curl -s -o /dev/null -w \"HTTP %{http_code} | Final URL: %{url_effective} | Content-Type: %{content_type}\" -L --max-time 10 \"https://www.campogrande.ms.gov.br/cgnoticias/?s=CAPS&feed=rss2\")",
       "Bash(curl -s -o /dev/null -w \"HTTP %{http_code} | Final URL: %{url_effective}\" -L --max-time 10 \"https://www.campogrande.ms.gov.br/cgnoticias/?s=psicologia&feed=rss2\")",
-      "Bash(curl -s -L --max-time 10 -H \"Accept: application/rss+xml\" \"https://www.campogrande.ms.gov.br/cgnoticias/?s=CAPS&feed=rss2\")"
+      "Bash(curl -s -L --max-time 10 -H \"Accept: application/rss+xml\" \"https://www.campogrande.ms.gov.br/cgnoticias/?s=CAPS&feed=rss2\")",
+      "Bash(Get-ChildItem -Recurse -Force)",
+      "Bash(Select-Object -ExpandProperty FullName)"
     ]
   }
 }

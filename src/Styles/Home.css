@@ -713,6 +713,11 @@
     width: min(100%, calc(100vw - 1.25rem));
   }
 
+  /* Empilha texto e botoes verticalmente em telas pequenas */
+  .home-final-cta {
+    grid-template-columns: 1fr;
+  }
+
   .donate-summary-strip {
     grid-template-columns: 1fr;
   }
