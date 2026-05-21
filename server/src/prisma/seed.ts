@@ -89,12 +89,13 @@ async function main(): Promise<void> {
   )
 
   const needsData = [
-    { title: 'Cobertores', amount: 50, description: 'Reposição imediata para acolhimentos noturnos e salas de repouso.', unitSlug: 'c1', category: 'Acolhimento', priority: 'alta' as const },
-    { title: 'Alimentos não perecíveis', amount: 120, description: 'Mantém lanches e refeições de usuários em atividades continuadas.', unitSlug: 'c3', category: 'Segurança alimentar', priority: 'alta' as const },
-    { title: 'Kits de higiene', amount: 80, description: 'Atende acolhimentos prolongados e situações de maior vulnerabilidade.', unitSlug: 'c4', category: 'Cuidado diário', priority: 'alta' as const },
-    { title: 'Materiais para oficinas', amount: 35, description: 'Suporta atividades terapêuticas em grupos e oficinas de reinserção social.', unitSlug: 'c2', category: 'Oficinas terapêuticas', priority: 'media' as const },
-    { title: 'Produtos de limpeza', amount: 60, description: 'Reforça a manutenção dos espaços coletivos e das residências de apoio.', unitSlug: 'r1', category: 'Ambiente e cuidado', priority: 'alta' as const },
-    { title: 'Toalhas de banho', amount: 24, description: 'Apoia acolhimentos em rotinas de higiene e permanência mais extensa.', unitSlug: 'c5', category: 'Apoio cotidiano', priority: 'media' as const },
+    { title: 'Roupas (exemplo)', amount: 1, description: 'Exemplo de pedido de roupas. Pedidos reais são cadastrados pelos gestores de cada unidade.', unitSlug: 'c1', category: 'Roupas', priority: 'media' as const },
+    { title: 'Alimentos (exemplo)', amount: 1, description: 'Exemplo de pedido de alimentos. Pedidos reais são cadastrados pelos gestores de cada unidade.', unitSlug: 'c3', category: 'Alimentos', priority: 'media' as const },
+    { title: 'Higiene pessoal (exemplo)', amount: 1, description: 'Exemplo de pedido de higiene. Pedidos reais são cadastrados pelos gestores de cada unidade.', unitSlug: 'c4', category: 'Higiene pessoal', priority: 'media' as const },
+    { title: 'Material de limpeza (exemplo)', amount: 1, description: 'Exemplo de pedido de limpeza. Pedidos reais são cadastrados pelos gestores de cada unidade.', unitSlug: 'r1', category: 'Material de limpeza', priority: 'media' as const },
+    { title: 'Utensílios (exemplo)', amount: 1, description: 'Exemplo de pedido de utensílios. Pedidos reais são cadastrados pelos gestores de cada unidade.', unitSlug: 'c2', category: 'Utensilios', priority: 'media' as const },
+    { title: 'Brinquedos (exemplo)', amount: 1, description: 'Exemplo de pedido de brinquedos. Pedidos reais são cadastrados pelos gestores de cada unidade.', unitSlug: 'c6', category: 'Brinquedos', priority: 'baixa' as const },
+    { title: 'Outros (exemplo)', amount: 1, description: 'Exemplo de pedido de outros itens. Pedidos reais são cadastrados pelos gestores de cada unidade.', unitSlug: 'c2', category: 'Outros', priority: 'baixa' as const },
   ]
 
   for (const { unitSlug, ...need } of needsData) {

@@ -31,7 +31,7 @@ export default function DonationRequestCard({
       : 'Moderado')
 
   return (
-    <article className={`donation-request-card${compact ? ' donation-request-card--compact' : ''}`}>
+    <article className={`donation-request-card donation-request-card--priority-${need.priority ?? 'media'}${compact ? ' donation-request-card--compact' : ''}`}>
       <div className="donation-request-card__badges">
         <span className="donation-request-card__category">{need.category}</span>
         <UrgencyBadge urgency={urgency} />
