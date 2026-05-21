@@ -233,9 +233,11 @@ export class HighlightsService {
 
   private mapRssItemToHighlight(item: any, index: number): NewsHighlightItem | null {
     const title = this.toPlainText(item?.title)
-    const description = this.toPlainText(item?.description ?? item?.['content:encoded']).slice(0, 210)
+    const rawDescription = this.toPlainText(item?.description ?? item?.['content:encoded'])
+    const rawContent = this.toPlainText(item?.['content:encoded'] ?? '')
+    const description = rawDescription.slice(0, 210)
     const link = this.normalizeCgNoticiasLink(this.toPlainText(item?.link))
-    const searchableText = this.normalizeText(`${title} ${description}`)
+    const searchableText = this.normalizeText(`${title} ${rawDescription} ${rawContent}`)
 
     if (!title || !link || !this.isRelevantNews(searchableText)) {
       return null
