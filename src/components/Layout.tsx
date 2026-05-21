@@ -137,33 +137,33 @@ export default function Layout(): React.ReactElement {
           <section className="site-footer__brand">
             <img className="site-footer__logo" src={logo} alt="Logo SESAU" />
             <div>
-              <span className="page-kicker">Centro de Doacao CAPS</span>
-              <h2 id="site-footer-title">Doacoes em itens para a rede CAPS.</h2>
+              <span className="page-kicker">Centro de Doação CAPS</span>
+              <h2 id="site-footer-title">Doações em itens para a rede CAPS.</h2>
               <p>
-                Consulte necessidades, escolha uma unidade e combine a entrega diretamente com o servico.
+                Consulte necessidades, escolha uma unidade e combine a entrega diretamente com o serviço.
               </p>
             </div>
           </section>
 
-          <section className="site-footer__column" aria-label="Links rapidos">
-            <h3>Navegacao</h3>
+          <section className="site-footer__column" aria-label="Links rápidos">
+            <h3>Navegação</h3>
             <Link to="/donate">Ver necessidades</Link>
             <Link to="/caps">Unidades CAPS</Link>
             <Link to="/sobre-o-projeto">Sobre o projeto</Link>
-            <Link to="/suas-doacoes">Minhas doacoes</Link>
+            <Link to="/suas-doacoes">Minhas doações</Link>
           </section>
 
           <section className="site-footer__column site-footer__contact" aria-label="Fale conosco">
             <h3>Fale conosco</h3>
             <p><FaMapMarkerAlt aria-hidden="true" /> Campo Grande/MS</p>
             <p><FaPhoneAlt aria-hidden="true" /> Combine entregas diretamente com a unidade CAPS</p>
-            <p><FaEnvelope aria-hidden="true" /> Use a pagina da unidade para contato e orientacoes</p>
+            <p><FaEnvelope aria-hidden="true" /> Use a página da unidade para contato e orientações</p>
           </section>
         </div>
 
         <div className="site-footer__bottom">
-          <span>Secretaria Municipal de Saude de Campo Grande/MS</span>
-          <span>Doacoes em itens. O site nao recebe dinheiro.</span>
+          <span>Secretaria Municipal de Saúde de Campo Grande/MS</span>
+          <span>Doações em itens. O site não recebe dinheiro.</span>
         </div>
       </footer>
     </>

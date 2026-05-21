@@ -50,7 +50,7 @@
 
 .dashboard-logout:hover {
   background: white;
-  color: #0f8f79;
+  color: #071b34;
 }
 
 .admin-summary-panel {
@@ -1036,10 +1036,12 @@
 }
 
 .dashboard-header {
-  background: var(--color-surface);
-  color: var(--color-text);
-  border-bottom: 1px solid var(--color-border);
-  box-shadow: var(--shadow-soft);
+  background:
+    linear-gradient(90deg, rgba(5, 22, 44, 0.96) 0%, rgba(9, 48, 84, 0.9) 50%, rgba(5, 22, 44, 0.76) 100%),
+    linear-gradient(180deg, #0a3562 0%, #071b34 100%);
+  color: #ffffff;
+  border-bottom: 4px solid rgba(10, 53, 98, 0.5);
+  box-shadow: 0 8px 22px rgba(5, 22, 44, 0.18);
 }
 
 .dashboard-header__content,
@@ -1049,12 +1051,12 @@
 }
 
 .dashboard-header .page-kicker {
-  background: var(--color-primary-soft);
-  color: var(--color-primary-strong);
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .dashboard-subtitle {
-  color: var(--color-muted);
+  color: rgba(255, 255, 255, 0.8);
   opacity: 1;
 }
 

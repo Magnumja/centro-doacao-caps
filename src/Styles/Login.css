@@ -17,7 +17,9 @@
 
 /* Hero Section */
 .login-hero {
-  background: linear-gradient(135deg, #0f8f79 0%, #0b6d5d 100%);
+  background:
+    linear-gradient(90deg, rgba(5, 22, 44, 0.96) 0%, rgba(9, 48, 84, 0.9) 50%, rgba(5, 22, 44, 0.76) 100%),
+    linear-gradient(180deg, #0a3562 0%, #071b34 100%);
   color: white;
   display: flex;
   align-items: center;
@@ -56,6 +58,7 @@
   opacity: 0.9;
   margin-bottom: 1rem;
   font-weight: 600;
+  color: white;
 }
 
 .login-hero h1 {
@@ -145,6 +148,36 @@
   opacity: 0.7;
 }
 
+/* Password toggle */
+.password-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-field input {
+  flex: 1;
+  padding-right: 2.8rem;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #888;
+  display: flex;
+  align-items: center;
+  padding: 0.25rem;
+  transition: color 160ms ease;
+  line-height: 1;
+}
+
+.password-toggle:hover {
+  color: #0a3562;
+}
+
 /* Error Message */
 .login-error {
   background: #fee;
@@ -203,7 +236,7 @@
   width: 100%;
   min-height: 48px;
   padding: 0.95rem;
-  background: linear-gradient(135deg, #0f8f79 0%, #0b6d5d 100%);
+  background: linear-gradient(135deg, #0a3562 0%, #071b34 100%);
   color: white;
   border: none;
   border-radius: 8px;
@@ -215,7 +248,7 @@
 
 .login-submit:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(15, 143, 121, 0.24);
+  box-shadow: 0 8px 16px rgba(5, 22, 44, 0.35);
 }
 
 .login-submit:active:not(:disabled) {

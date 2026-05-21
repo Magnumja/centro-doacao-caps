@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { FaEye, FaEyeSlash } from 'react-icons/fa'
 import { useAdminLogin } from '../../hooks/useAdminLogin'
 
 import '../../Styles/Login.css'
@@ -6,6 +7,7 @@ import '../../Styles/Login.css'
 export default function Login(): React.ReactElement {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [showPassword, setShowPassword] = useState(false)
     const {
         errorMessage,
         isLoading,
@@ -51,15 +53,26 @@ export default function Login(): React.ReactElement {
 
                     <fieldset className="form-group">
                         <label htmlFor="password">Senha</label>
-                        <input
-                            id="password"
-                            type="password"
-                            placeholder="••••••••"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            disabled={isLoading}
-                        />
+                        <div className="password-field">
+                            <input
+                                id="password"
+                                type={showPassword ? 'text' : 'password'}
+                                placeholder="••••••••"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                                disabled={isLoading}
+                            />
+                            <button
+                                type="button"
+                                className="password-toggle"
+                                onClick={() => setShowPassword(v => !v)}
+                                aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                                tabIndex={-1}
+                            >
+                                {showPassword ? <FaEyeSlash /> : <FaEye />}
+                            </button>
+                        </div>
                     </fieldset>
 
                     {errorMessage && (
