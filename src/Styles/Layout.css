@@ -1,8 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap');
 
 :root {
-  --health-accent: #0f7668;
-  --health-accent-strong: #0b5f55;
+  --health-accent: #0a3562;
+  --health-accent-strong: #071b34;
   --health-secondary: #2d6f8f;
   --health-text: #17333a;
   --health-soft-text: #5f7378;
@@ -13,13 +13,13 @@
   --color-surface-soft: #f9fcfb;
   --color-primary: var(--health-accent);
   --color-primary-strong: var(--health-accent-strong);
-  --color-primary-soft: #e3f3ef;
+  --color-primary-soft: #e6eef8;
   --color-secondary: var(--health-secondary);
   --color-text: var(--health-text);
   --color-muted: var(--health-soft-text);
   --color-border: var(--health-border);
-  --shadow-card: 0 10px 26px rgba(23, 51, 58, 0.08);
-  --shadow-soft: 0 6px 18px rgba(23, 51, 58, 0.06);
+  --shadow-card: 0 10px 26px rgba(5, 22, 44, 0.08);
+  --shadow-soft: 0 6px 18px rgba(5, 22, 44, 0.06);
   --radius-card: 8px;
   --radius-control: 8px;
 }

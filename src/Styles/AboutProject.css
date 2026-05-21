@@ -85,9 +85,9 @@
 .about-impact-card,
 .about-creator-card {
   border-radius: 18px;
-  border: 1px solid rgba(15, 143, 121, 0.18);
+  border: 1px solid rgba(10, 53, 98, 0.12);
   background: rgba(255, 255, 255, 0.84);
-  box-shadow: 0 16px 30px rgba(14, 66, 57, 0.08);
+  box-shadow: 0 16px 30px rgba(5, 22, 44, 0.06);
 }
 
 .about-hero__card {
@@ -106,8 +106,8 @@
   border-radius: 12px;
   display: grid;
   place-items: center;
-  background: rgba(15, 143, 121, 0.12);
-  color: #0b6d5d;
+  background: rgba(10, 53, 98, 0.09);
+  color: #071b34;
   transition: transform 180ms ease, background-color 180ms ease, color 180ms ease;
 }
 
@@ -134,14 +134,14 @@
 .about-impact-card:hover,
 .about-creator-card:hover {
   transform: translateY(-4px);
-  border-color: rgba(15, 143, 121, 0.34);
-  box-shadow: 0 18px 36px rgba(14, 66, 57, 0.14);
+  border-color: rgba(10, 53, 98, 0.25);
+  box-shadow: 0 18px 36px rgba(5, 22, 44, 0.12);
 }
 
 .about-info-card:hover .about-info-card__icon,
 .about-impact-card:hover > span {
   transform: translateY(-2px) scale(1.08);
-  background: rgba(15, 143, 121, 0.18);
+  background: rgba(10, 53, 98, 0.12);
 }
 
 .about-info-card h3 {
@@ -192,7 +192,7 @@
   position: absolute;
   inset: auto 0 0;
   height: 4px;
-  background: linear-gradient(90deg, #0f8f79, #2f7c9d);
+  background: linear-gradient(90deg, #0a3562, #2f7c9d);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 260ms ease;
@@ -200,8 +200,8 @@
 
 .about-step-card:hover {
   transform: translateY(-4px);
-  border-color: rgba(15, 143, 121, 0.34);
-  box-shadow: 0 16px 32px rgba(14, 66, 57, 0.12);
+  border-color: rgba(10, 53, 98, 0.25);
+  box-shadow: 0 16px 32px rgba(5, 22, 44, 0.10);
 }
 
 .about-step-card:hover::after {
@@ -217,11 +217,11 @@
   border-radius: 999px;
   display: grid;
   place-items: center;
-  background: linear-gradient(125deg, #0f8f79, #2f7c9d);
+  background: linear-gradient(125deg, #0a3562, #2f7c9d);
   color: #ffffff;
   font-family: 'Lexend', sans-serif;
   font-weight: 700;
-  box-shadow: 0 8px 18px rgba(15, 143, 121, 0.22);
+  box-shadow: 0 8px 18px rgba(10, 53, 98, 0.15);
   animation: aboutNumberPulse 3.6s ease-in-out infinite;
 }
 
@@ -297,7 +297,7 @@
   border-radius: 18px;
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, #0f8f79, #2f7c9d);
+  background: linear-gradient(135deg, #0a3562, #2f7c9d);
   color: #ffffff;
   font-family: 'Lexend', sans-serif;
   font-size: 1.25rem;
@@ -312,7 +312,7 @@
 
 .about-creator-card strong {
   display: block;
-  color: #0b6d5d;
+  color: #071b34;
   font-size: 0.94rem;
 }
 
@@ -324,7 +324,7 @@
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 1rem;
-  background: linear-gradient(145deg, rgba(15, 143, 121, 0.14), rgba(255, 255, 255, 0.92));
+  background: linear-gradient(145deg, rgba(10, 53, 98, 0.10), rgba(255, 255, 255, 0.92));
   position: relative;
   overflow: hidden;
 }
@@ -428,11 +428,11 @@
 @keyframes aboutAvatarGlow {
   0%,
   100% {
-    box-shadow: 0 0 0 rgba(15, 143, 121, 0);
+    box-shadow: 0 0 0 rgba(10, 53, 98, 0);
   }
 
   50% {
-    box-shadow: 0 0 0 8px rgba(15, 143, 121, 0.12);
+    box-shadow: 0 0 0 8px rgba(10, 53, 98, 0.09);
   }
 }
 
@@ -451,11 +451,11 @@
 @keyframes aboutButtonBreathe {
   0%,
   100% {
-    box-shadow: 0 12px 24px rgba(15, 143, 121, 0.22);
+    box-shadow: 0 12px 24px rgba(10, 53, 98, 0.15);
   }
 
   50% {
-    box-shadow: 0 16px 30px rgba(15, 143, 121, 0.34);
+    box-shadow: 0 16px 30px rgba(10, 53, 98, 0.25);
   }
 }
 
