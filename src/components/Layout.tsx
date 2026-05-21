@@ -5,7 +5,8 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { isLocalAuthBypassEnabled } from '../lib/auth'
 import '../Styles/Layout.css'
 import logo from '../public/logosesau.png'
-import navbarLogo from '../../public/sesau-navbar-white.png'
+import navbarLogoColor from '../../public/sesau-prefeitura-navbar-crop.png'
+import navbarLogoWhite from '../../public/sesau-navbar-white.png'
 import ThemeToggle from './ui/ThemeToggle'
 
 export default function Layout(): React.ReactElement {
@@ -84,6 +85,10 @@ export default function Layout(): React.ReactElement {
             <span>Menu</span>
           </button>
 
+          <Link className="mobile-header-brand" to="/" aria-label="Pagina inicial - SESAU">
+            <img src={navbarLogoWhite} alt="SESAU Secretaria Municipal de Saude" />
+          </Link>
+
           <button
             type="button"
             className={`mobile-nav-backdrop${isMobileMenuOpen ? ' mobile-nav-backdrop--visible' : ''}`}
@@ -114,7 +119,7 @@ export default function Layout(): React.ReactElement {
             </div>
 
             <Link className="health-brand" to="/" onClick={() => setIsMobileMenuOpen(false)}>
-              <img src={navbarLogo} alt="SESAU Secretaria Municipal de Saude" />
+              <img src={navbarLogoColor} alt="SESAU Secretaria Municipal de Saude" />
             </Link>
 
             <div className="health-nav__group">
