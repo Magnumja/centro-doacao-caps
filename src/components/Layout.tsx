@@ -4,8 +4,9 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 
 import { isLocalAuthBypassEnabled } from '../lib/auth'
 import '../Styles/Layout.css'
-import ThemeToggle from './ui/ThemeToggle'
 import logo from '../public/logosesau.png'
+import navbarLogo from '../../public/sesau-navbar-white.png'
+import ThemeToggle from './ui/ThemeToggle'
 
 export default function Layout(): React.ReactElement {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -21,6 +22,8 @@ export default function Layout(): React.ReactElement {
     { to: '/suas-doacoes', label: 'Minhas doacoes' },
     { to: canOpenAdminDirectly ? '/admin/dashboard' : '/admin/login', label: 'Dashboard' },
   ]
+  const leftNavigationItems = navigationItems.slice(0, 3)
+  const rightNavigationItems = navigationItems.slice(3)
 
   useEffect(() => {
     setIsMobileMenuOpen(false)
@@ -48,21 +51,24 @@ export default function Layout(): React.ReactElement {
     }
   }, [isMobileMenuOpen])
 
+  const renderNavLink = (item: { to: string; label: string }): React.ReactElement => (
+    <NavLink
+      key={item.to}
+      to={item.to}
+      end={item.to === '/'}
+      onClick={() => setIsMobileMenuOpen(false)}
+      className={({ isActive }) =>
+        `health-nav__link${isActive ? ' health-nav__link--active' : ''}`
+      }
+    >
+      {item.label}
+    </NavLink>
+  )
+
   return (
     <>
-      <a className="skip-link" href="#main-content">Pular para o conteúdo principal</a>
-      <a className="skip-link" href="#primary-navigation">Pular para navegação</a>
-
-      <div className="site-banner">
-        <div className="site-banner__content">
-          <img className="site-banner__logo" src={logo} alt="Logo SESAU" />
-          <div className="site-banner__text">
-            <h1 className="site-banner__title">Centro de Doação CAPS</h1>
-            <p className="site-banner__desc">Rede de Atenção Psicossocial - Campo Grande (MS)</p>
-            <span className="site-banner__kicker">Secretaria Municipal de Saúde</span>
-          </div>
-        </div>
-      </div>
+      <a className="skip-link" href="#main-content">Pular para o conteudo principal</a>
+      <a className="skip-link" href="#primary-navigation">Pular para navegacao</a>
 
       <header className="health-header">
         <div className="health-header__inner">
@@ -103,20 +109,19 @@ export default function Layout(): React.ReactElement {
               </button>
             </div>
 
-            {navigationItems.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                end={item.to === '/'}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={({ isActive }) =>
-                  `health-nav__link${isActive ? ' health-nav__link--active' : ''}`
-                }
-              >
-                {item.label}
-              </NavLink>
-            ))}
+            <div className="health-nav__group">
+              {leftNavigationItems.map(renderNavLink)}
+            </div>
+
+            <Link className="health-brand" to="/" onClick={() => setIsMobileMenuOpen(false)}>
+              <img src={navbarLogo} alt="SESAU Secretaria Municipal de Saude" />
+            </Link>
+
+            <div className="health-nav__group">
+              {rightNavigationItems.map(renderNavLink)}
+            </div>
           </nav>
+
           <ThemeToggle />
         </div>
       </header>
