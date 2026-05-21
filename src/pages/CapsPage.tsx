@@ -20,13 +20,6 @@ const selectionAnimationDurationMs = 260
 
 function resolveUnitPhotoPath(photo?: string): string | undefined {
   if (!photo) return undefined
-  if (photo.startsWith('/')) {
-    try {
-      return new URL(`../public${photo}`, import.meta.url).href
-    } catch {
-      return photo
-    }
-  }
   return photo
 }
 

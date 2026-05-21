@@ -25,24 +25,8 @@ function CapsCard({
     }
   }
 
-  const resolvedPhoto = (() => {
-    if (typeof cap.photo !== 'string' || cap.photo.length === 0) return undefined
-    if (cap.photo.startsWith('/')) return cap.photo
-    try {
-      return new URL(cap.photo, import.meta.url).href
-    } catch {
-      return cap.photo
-    }
-  })()
-
-  const bundledFallback = (typeof cap.photo === 'string' && cap.photo.startsWith('/'))
-    ? (() => {
-      try {
-        return new URL(`../public${cap.photo}`, import.meta.url).href
-      } catch {
-        return undefined
-      }
-    })()
+  const resolvedPhoto = (typeof cap.photo === 'string' && cap.photo.length > 0)
+    ? cap.photo
     : undefined
 
   const whatsappUrl = getWhatsAppUrl(cap)
@@ -61,11 +45,7 @@ function CapsCard({
           className="caps-card__photo"
           src={resolvedPhoto}
           alt={`Foto da unidade ${cap.title}`}
-          onError={(event) => {
-            if (bundledFallback && event.currentTarget.src !== bundledFallback) {
-              event.currentTarget.src = bundledFallback
-            }
-          }}
+          onError={(event) => { event.currentTarget.style.display = 'none' }}
         />
       )}
 
