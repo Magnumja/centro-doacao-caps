@@ -37,6 +37,7 @@ export default function CapsPage(): React.ReactElement {
   const [activeCategory, setActiveCategory] = useState<DonationCategoryName | 'Todas'>('Todas')
   const [selectionPreviewId, setSelectionPreviewId] = useState<string | null>(null)
   const [showUnitChooser, setShowUnitChooser] = useState(true)
+  const [isEnteringUnit, setIsEnteringUnit] = useState(false)
 
   const [selectedItems, setSelectedItems] = useState<string[]>([])
   const [itemQuantities, setItemQuantities] = useState<Record<string, string>>({})
@@ -118,6 +119,7 @@ export default function CapsPage(): React.ReactElement {
 
     setSelectedUnitId(matchedUnit.id)
     setSelectionPreviewId(null)
+    setIsEnteringUnit(true)
     resetDonationForm()
     setShowUnitChooser(false)
     setActiveCategory('Todas')
@@ -163,6 +165,7 @@ export default function CapsPage(): React.ReactElement {
 
     selectionTimeoutRef.current = setTimeout(() => {
       setSelectedUnitId(unit.id)
+      setIsEnteringUnit(true)
       resetDonationForm()
       setSelectionPreviewId(null)
       setShowUnitChooser(false)
@@ -337,7 +340,10 @@ export default function CapsPage(): React.ReactElement {
 
       {selectedUnit && !showUnitChooser ? (
         <>
-          <section className={`selected-unit-overview selected-unit-spotlight--enter${selectedUnit.photo ? '' : ' selected-unit-overview--no-photo'}`}>
+          <section
+            className={`selected-unit-overview${isEnteringUnit ? ' selected-unit-spotlight--enter' : ''}${selectedUnit.photo ? '' : ' selected-unit-overview--no-photo'}`}
+            onAnimationEnd={() => setIsEnteringUnit(false)}
+          >
             {selectedUnit.photo ? (
               <article className="selected-unit-photo-card">
                 <img
@@ -345,10 +351,7 @@ export default function CapsPage(): React.ReactElement {
                   src={selectedUnit.photo}
                   alt={`Foto da unidade ${selectedUnit.title}`}
                   onError={(event) => {
-                    if (event.currentTarget.dataset.errorHandled === 'true') return
-                    event.currentTarget.dataset.errorHandled = 'true'
-                    const fallback = selectedUnit.photo?.startsWith('/') ? resolveUnitPhotoPath(selectedUnit.photo) : undefined
-                    if (fallback && event.currentTarget.src !== fallback) event.currentTarget.src = fallback
+                    event.currentTarget.style.display = 'none'
                   }}
                 />
               </article>
