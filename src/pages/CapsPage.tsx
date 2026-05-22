@@ -475,6 +475,8 @@ export default function CapsPage(): React.ReactElement {
                       {item}
                       <input
                         type="text"
+                        inputMode="text"
+                        autoComplete="off"
                         placeholder={`Quantidade de ${item.toLowerCase()}`}
                         value={itemQuantities[item] ?? ''}
                         onChange={(event) => handleQuantityChange(item, event.target.value)}
@@ -524,6 +526,7 @@ export default function CapsPage(): React.ReactElement {
                     Seu nome
                     <input
                       type="text"
+                      autoComplete="name"
                       placeholder="Nome completo"
                       value={donorName}
                       onChange={(event) => setDonorName(event.target.value)}
@@ -533,6 +536,8 @@ export default function CapsPage(): React.ReactElement {
                     Seu e-mail
                     <input
                       type="email"
+                      inputMode="email"
+                      autoComplete="email"
                       placeholder="email@exemplo.com"
                       value={donorEmail}
                       onChange={(event) => setDonorEmail(event.target.value)}
