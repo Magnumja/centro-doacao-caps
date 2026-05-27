@@ -11,17 +11,17 @@ type Step = {
 const steps: Step[] = [
   {
     title: 'Escolha um CAPS',
-    description: 'Veja as unidades da rede, seus contatos e a localizacao mais conveniente para sua doacao.',
+    description: 'Veja as unidades da rede, seus contatos e a localização mais conveniente para sua doação.',
     icon: FaHospital,
   },
   {
-    title: 'Veja os itens necessarios',
-    description: 'Filtre pedidos por categoria, urgencia e status para entender onde sua ajuda faz diferenca agora.',
+    title: 'Veja os itens necessários',
+    description: 'Filtre pedidos por categoria, urgência e status para entender onde sua ajuda faz diferença agora.',
     icon: FaClipboardList,
   },
   {
-    title: 'Combine ou registre sua doacao',
-    description: 'Fale com a unidade, confirme os detalhes e registre sua intencao para facilitar o acompanhamento.',
+    title: 'Combine ou registre sua doação',
+    description: 'Fale com a unidade, confirme os detalhes e registre sua intenção para facilitar o acompanhamento.',
     icon: FaHandHoldingHeart,
   },
 ]

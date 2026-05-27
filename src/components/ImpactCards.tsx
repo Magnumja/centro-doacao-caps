@@ -19,17 +19,17 @@ export default function ImpactCards({ stats }: ImpactCardsProps): React.ReactEle
     {
       label: 'Pedidos ativos',
       value: stats.activeRequests,
-      helper: `${stats.urgentRequests} com urgencia alta`,
+      helper: `${stats.urgentRequests} com urgência alta`,
       icon: FaBoxes,
     },
     {
-      label: 'Doacoes registradas',
+      label: 'Doações registradas',
       value: stats.registeredDonations,
-      helper: 'historico inicial para acompanhamento',
+      helper: 'histórico inicial para acompanhamento',
       icon: FaCheckCircle,
     },
     {
-      label: 'Itens mais necessarios',
+      label: 'Itens mais necessários',
       value: stats.topCategories[0]?.total ?? 0,
       helper: stats.topCategories[0]?.category ?? 'Sem categoria dominante',
       icon: FaChartLine,

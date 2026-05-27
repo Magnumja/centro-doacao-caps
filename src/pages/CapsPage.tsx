@@ -283,14 +283,14 @@ export default function CapsPage(): React.ReactElement {
         })
 
         const itensList = selectedItems.map((it) => `${it}: ${itemQuantities[it]}`).join(', ')
-        const identidade = anonymousDonation === 'sim' ? 'Doador anonimo' : `Doador: ${donorName} (${donorEmail})`
-        const successMsg = `Registro salvo para ${unit.title}. Dia: ${donationDate}, horario: ${donationTime}. Itens: ${itensList}. ${identidade}.`
+        const identidade = anonymousDonation === 'sim' ? 'Doador anônimo' : `Doador: ${donorName} (${donorEmail})`
+        const successMsg = `Registro salvo para ${unit.title}. Dia: ${donationDate}, horário: ${donationTime}. Itens: ${itensList}. ${identidade}.`
 
         setSuccessMessage(successMsg)
         setShowSuccessOverlay(true)
         setFormMessage('')
       } catch (err: any) {
-        setFormMessage(err?.message || 'Nao foi possivel registrar a doacao agora. Tente novamente em instantes.')
+        setFormMessage(err?.message || 'Não foi possível registrar a doação agora. Tente novamente em instantes.')
       } finally {
         setIsSubmittingDonation(false)
       }
@@ -309,20 +309,20 @@ export default function CapsPage(): React.ReactElement {
       {showSuccessOverlay ? (
         <div className="donation-success-overlay">
           <article className="donation-success-card">
-            <span className="page-kicker">Contribuicao registrada</span>
-            <h2>Obrigado por apoiar o cuidado em saude mental.</h2>
-            <p>Sua doacao foi registrada e ajudara a rede CAPS a acompanhar os apoios recebidos.</p>
+            <span className="page-kicker">Contribuição registrada</span>
+            <h2>Obrigado por apoiar o cuidado em saúde mental.</h2>
+            <p>Sua doação foi registrada e ajudará a rede CAPS a acompanhar os apoios recebidos.</p>
             <p className="donation-success-details">{successMessage}</p>
 
             <div className="donation-success-actions">
               <button type="button" className="unit-donate-button" onClick={() => setShowSuccessOverlay(false)}>
-                Fazer nova doacao
+                Fazer nova doação
               </button>
               <button type="button" className="donation-success-close" onClick={handleCloseDonationSuccess}>
-                Voltar a selecao de unidades
+                Voltar à seleção de unidades
               </button>
               <Link className="donation-success-link" to="/suas-doacoes">
-                Ver suas doacoes
+                Ver suas doações
               </Link>
             </div>
           </article>
@@ -330,11 +330,11 @@ export default function CapsPage(): React.ReactElement {
       ) : null}
 
       <div className="caps-page__intro">
-        <span className="page-kicker">Rede de saude mental</span>
+        <span className="page-kicker">Rede de saúde mental</span>
         <h2>{selectedUnit && !showUnitChooser ? selectedUnit.title : 'Unidades CAPS de Campo Grande'}</h2>
         <p>
           Consulte dados de contato, pedidos abertos e prioridades de cada unidade. Ao encontrar um item que
-          voce pode doar, combine a entrega com o CAPS e registre sua intencao para facilitar o acompanhamento.
+          você pode doar, combine a entrega com o CAPS e registre sua intenção para facilitar o acompanhamento.
         </p>
       </div>
 
@@ -360,16 +360,16 @@ export default function CapsPage(): React.ReactElement {
             <article className="selected-unit-info-card selected-unit-info-card--identity">
               <span className="unit-type-badge">Unidade selecionada</span>
               <h3>{selectedUnit.title}</h3>
-              <p>{selectedUnit.description ?? 'Unidade da Rede de Atencao Psicossocial de Campo Grande/MS.'}</p>
+              <p>{selectedUnit.description ?? 'Unidade da Rede de Atenção Psicossocial de Campo Grande/MS.'}</p>
               {selectedUnit.capacity ? <p>{selectedUnit.capacity}</p> : null}
               {selectedUnit.privacyNote ? <p>{selectedUnit.privacyNote}</p> : null}
             </article>
 
             <article className="selected-unit-info-card">
-              <span className="info-card-label">Endereco e contato</span>
-              <p><strong>Endereco</strong>{selectedUnit.address}</p>
-              <p><strong>Contato</strong>{selectedUnit.contact ?? 'Contato nao informado'}</p>
-              {selectedUnit.operatingHours ? <p><strong>Horario</strong>{selectedUnit.operatingHours}</p> : null}
+              <span className="info-card-label">Endereço e contato</span>
+              <p><strong>Endereço</strong>{selectedUnit.address}</p>
+              <p><strong>Contato</strong>{selectedUnit.contact ?? 'Contato não informado'}</p>
+              {selectedUnit.operatingHours ? <p><strong>Horário</strong>{selectedUnit.operatingHours}</p> : null}
             </article>
 
             <article className="selected-unit-info-card selected-unit-info-card--needs">
@@ -382,7 +382,7 @@ export default function CapsPage(): React.ReactElement {
             </article>
 
             <article className="selected-unit-info-card selected-unit-actions-card">
-              <span className="info-card-label">Acoes</span>
+              <span className="info-card-label">Ações</span>
               <div className="selected-unit-actions">
                 {whatsappUrl ? (
                   <a className="unit-donate-button" href={whatsappUrl} target="_blank" rel="noreferrer">
@@ -390,7 +390,7 @@ export default function CapsPage(): React.ReactElement {
                     Falar pelo WhatsApp
                   </a>
                 ) : (
-                  <span className="unit-disabled-action">WhatsApp nao informado</span>
+                  <span className="unit-disabled-action">WhatsApp não informado</span>
                 )}
                 {mapsUrl ? (
                   <a className="unit-secondary-button" href={mapsUrl} target="_blank" rel="noreferrer">
@@ -424,7 +424,7 @@ export default function CapsPage(): React.ReactElement {
                 ))}
               </div>
             ) : (
-              <p className="home-urgent-empty">Nao ha pedidos nesta categoria para a unidade selecionada.</p>
+              <p className="home-urgent-empty">Não há pedidos nesta categoria para a unidade selecionada.</p>
             )}
           </section>
         </>
@@ -448,9 +448,9 @@ export default function CapsPage(): React.ReactElement {
             <h3>Registrar interesse em doar</h3>
             <p className="donation-guidelines__unit"><strong>Unidade:</strong> {selectedUnit.title}</p>
             <p>Selecione uma ou mais categorias, informe quantidade e combine a entrega com a unidade.</p>
-            <p className="guideline-warning">Nao aceitamos dinheiro pelo site.</p>
+            <p className="guideline-warning">Não aceitamos dinheiro pelo site.</p>
 
-            <div className="donation-actions" role="group" aria-label="Categorias de doacao">
+            <div className="donation-actions" role="group" aria-label="Categorias de doação">
               {donationOptions.map((item) => {
                 const active = selectedItems.includes(item)
                 return (
@@ -492,12 +492,12 @@ export default function CapsPage(): React.ReactElement {
               </label>
 
               <label>
-                Horario da entrega
+                Horário da entrega
                 <input type="time" value={donationTime} onChange={(event) => setDonationTime(event.target.value)} />
               </label>
 
               <fieldset className="donation-form__anonymity">
-                <legend>Doador anonimo?</legend>
+                <legend>Doador anônimo?</legend>
                 <label>
                   <input
                     type="radio"
@@ -516,7 +516,7 @@ export default function CapsPage(): React.ReactElement {
                     checked={anonymousDonation === 'nao'}
                     onChange={() => setAnonymousDonation('nao')}
                   />
-                  Nao
+                  Não
                 </label>
               </fieldset>
 
@@ -547,7 +547,7 @@ export default function CapsPage(): React.ReactElement {
               ) : null}
 
               <button type="submit" className="unit-donate-button" disabled={isSubmittingDonation}>
-                {isSubmittingDonation ? 'Registrando...' : 'Registrar intencao de doacao'}
+                {isSubmittingDonation ? 'Registrando...' : 'Registrar intenção de doação'}
               </button>
 
               {formMessage ? <p className="form-feedback" role="status" aria-live="polite">{formMessage}</p> : null}

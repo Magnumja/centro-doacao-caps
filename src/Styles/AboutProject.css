@@ -582,40 +582,6 @@
   }
 }
 
-:root[data-theme='dark'] .about-hero__card,
-:root[data-theme='dark'] .about-info-card,
-:root[data-theme='dark'] .about-step-card,
-:root[data-theme='dark'] .about-impact-card,
-:root[data-theme='dark'] .about-creator-card,
-:root[data-theme='dark'] .about-cocreators-card {
-  border-color: rgba(123, 198, 255, 0.18);
-  background: rgba(14, 35, 30, 0.78);
-}
-
-:root[data-theme='dark'] .about-final-cta {
-  background: linear-gradient(145deg, rgba(14, 35, 30, 0.94), rgba(9, 24, 21, 0.92));
-}
-
-:root[data-theme='dark'] .about-hero__card strong,
-:root[data-theme='dark'] .about-info-card h3,
-:root[data-theme='dark'] .about-impact-card strong,
-:root[data-theme='dark'] .about-creator-card h3,
-:root[data-theme='dark'] .about-cocreators-card h3,
-:root[data-theme='dark'] .about-step-card p {
-  color: var(--health-text);
-}
-
-:root[data-theme='dark'] .about-hero__card > span,
-:root[data-theme='dark'] .about-info-card__icon,
-:root[data-theme='dark'] .about-impact-card > span {
-  background: rgba(45, 194, 167, 0.14);
-  color: var(--health-accent-strong);
-}
-
-:root[data-theme='dark'] .about-creator-card strong {
-  color: var(--health-accent-strong);
-}
-
 @media (prefers-reduced-motion: reduce) {
   .about-project-page .page-block,
   .about-hero__content .page-kicker,

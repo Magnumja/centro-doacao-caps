@@ -15,7 +15,7 @@ export default function NeededItemsRanking({ items }: NeededItemsRankingProps): 
   return (
     <section className="page-block needed-ranking-section">
       <div className="section-heading">
-        <span className="page-kicker">Itens mais necessarios</span>
+        <span className="page-kicker">Itens mais necessários</span>
         <h2>Ranking simples dos pedidos com maior volume no momento.</h2>
       </div>
 

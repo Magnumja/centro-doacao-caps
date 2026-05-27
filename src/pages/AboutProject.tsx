@@ -6,18 +6,18 @@ import '../Styles/AboutProject.css'
 
 const projectPoints = [
   {
-    title: 'O que e',
-    description: 'Uma plataforma para reunir pedidos reais das unidades CAPS de Campo Grande/MS e facilitar doacoes em itens.',
+    title: 'O que é',
+    description: 'Uma plataforma para reunir pedidos reais das unidades CAPS de Campo Grande/MS e facilitar doações em itens.',
     icon: FaHospital,
   },
   {
     title: 'Por que existe',
-    description: 'Para dar mais clareza ao que cada unidade precisa e aproximar a comunidade da rede de cuidado em saude mental.',
+    description: 'Para dar mais clareza ao que cada unidade precisa e aproximar a comunidade da rede de cuidado em saúde mental.',
     icon: FaHandsHelping,
   },
   {
     title: 'Como funciona',
-    description: 'A pessoa escolhe uma unidade, confere os pedidos ativos e combina ou registra a intencao de doacao.',
+    description: 'A pessoa escolhe uma unidade, confere os pedidos ativos e combina ou registra a intenção de doação.',
     icon: FaLightbulb,
   },
 ]
@@ -27,11 +27,11 @@ export default function AboutProject(): React.ReactElement {
     <section className="about-project-page about-project-page--compact">
       <header className="page-block about-hero">
         <div className="about-hero__content">
-          <span className="page-kicker">Centro de Doacao CAPS</span>
+          <span className="page-kicker">Centro de Doação CAPS</span>
           <h2>Sobre o projeto</h2>
           <p>
-            O Centro de Doacao CAPS organiza necessidades das unidades CAPS e ajuda doadores
-            a encontrarem onde sua contribuicao pode fazer diferenca.
+            O Centro de Doação CAPS organiza necessidades das unidades CAPS e ajuda doadores
+            a encontrarem onde sua contribuição pode fazer diferença.
           </p>
         </div>
 
@@ -62,8 +62,8 @@ export default function AboutProject(): React.ReactElement {
           />
           <div>
             <h3>Magnum Johanson de Abreu</h3>
-            <strong>Criador e idealizador do Centro de Doacao CAPS</strong>
-            <p>Desenvolveu o site a partir das demandas e aprendizados do PET-Saude Digital.</p>
+            <strong>Criador e idealizador do Centro de Doação CAPS</strong>
+            <p>Desenvolveu o site a partir das demandas e aprendizados do PET-Saúde Digital.</p>
           </div>
         </article>
       </section>
@@ -71,21 +71,21 @@ export default function AboutProject(): React.ReactElement {
       <section className="page-block about-cocreators-section">
         <div className="section-heading">
           <span className="page-kicker">Co-criadores e apoio</span>
-          <h2>Grupo PET-Saude Digital</h2>
+          <h2>Grupo PET-Saúde Digital</h2>
         </div>
 
         <article className="about-cocreators-card">
           <img
             className="about-cocreators-card__photo"
             src="/pet-saude-digital-grupo.jpeg"
-            alt="Grupo PET-Saude Digital que apoia o Centro de Doacao CAPS"
+            alt="Grupo PET-Saúde Digital que apoia o Centro de Doação CAPS"
             loading="lazy"
           />
           <div>
-            <h3>Apoio coletivo do PET-Saude Digital</h3>
+            <h3>Apoio coletivo do PET-Saúde Digital</h3>
             <p>
-              O grupo contribui com informacoes, vivencias e orientacoes sobre a rede CAPS,
-              ajudando o site a refletir necessidades reais do servico.
+              O grupo contribui com informações, vivências e orientações sobre a rede CAPS,
+              ajudando o site a refletir necessidades reais do serviço.
             </p>
           </div>
         </article>

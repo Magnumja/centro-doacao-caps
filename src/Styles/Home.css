@@ -630,53 +630,6 @@
 .w-80 { width: 80%; }
 .w-100 { width: 100%; }
 
-/* Dark theme */
-:root[data-theme='dark'] .home-location-map,
-:root[data-theme='dark'] .news-carousel,
-:root[data-theme='dark'] .donate-filter-panel,
-:root[data-theme='dark'] .donate-summary-strip article,
-:root[data-theme='dark'] .donation-request-card,
-:root[data-theme='dark'] .how-it-works-card,
-:root[data-theme='dark'] .home-urgent-card,
-:root[data-theme='dark'] .home-need-feed-card {
-  border-color: rgba(123, 198, 255, 0.18);
-  background: rgba(14, 35, 30, 0.84);
-}
-
-:root[data-theme='dark'] .donation-request-card__meta div,
-:root[data-theme='dark'] .home-urgent-empty,
-:root[data-theme='dark'] .skeleton-line {
-  background: transparent;
-}
-
-:root[data-theme='dark'] .home-card-tag,
-:root[data-theme='dark'] .donation-request-card__category,
-:root[data-theme='dark'] .category-filter__button--active,
-:root[data-theme='dark'] .how-it-works-card__icon {
-  background: rgba(45, 194, 167, 0.14);
-  color: var(--health-accent-strong);
-}
-
-:root[data-theme='dark'] .home-hero-button--secondary,
-:root[data-theme='dark'] .news-carousel__controls button,
-:root[data-theme='dark'] .category-filter__button {
-  border-color: rgba(123, 198, 255, 0.22);
-  background: rgba(16, 39, 34, 0.92);
-  color: var(--health-text);
-}
-
-:root[data-theme='dark'] .leaflet-tile {
-  filter: brightness(0.68) invert(1) contrast(0.9) hue-rotate(180deg) saturate(0.8);
-}
-
-:root[data-theme='dark'] .leaflet-container,
-:root[data-theme='dark'] .leaflet-control-zoom a,
-:root[data-theme='dark'] .leaflet-popup-content-wrapper,
-:root[data-theme='dark'] .leaflet-popup-tip {
-  background: #102722;
-  color: var(--health-text);
-}
-
 @media (max-width: 900px) {
   .section-heading,
   .home-urgent-header,

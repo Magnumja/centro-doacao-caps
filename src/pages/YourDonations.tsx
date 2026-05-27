@@ -6,7 +6,7 @@ import { listDonorIntentions, removeDonorIntention, DonorIntention } from '../se
 import '../Styles/YourDonations.css'
 
 function formatDate(date: string): string {
-  if (!date) return 'Data nao informada'
+  if (!date) return 'Data não informada'
 
   const parsed = new Date(`${date}T00:00:00`)
   if (Number.isNaN(parsed.getTime())) {
@@ -28,21 +28,21 @@ export default function YourDonations(): React.ReactElement {
     <section className="page-block your-donations-page">
       <div className="your-donations-header">
         <div>
-          <span className="page-kicker">Suas doacoes</span>
+          <span className="page-kicker">Suas doações</span>
           <h2>Registros salvos neste aparelho</h2>
           <p>
-            Consulte ou remova as intencoes enviadas por este navegador.
+            Consulte ou remova as intenções enviadas por este navegador.
           </p>
         </div>
         <Link className="your-donations-primary" to="/caps">
-          Fazer nova doacao
+          Fazer nova doação
         </Link>
       </div>
 
-      <section className="your-donations-section" aria-label="Intencoes registradas">
+      <section className="your-donations-section" aria-label="Intenções registradas">
         <div className="your-donations-section__title">
           <FaGift aria-hidden="true" />
-          <h3>Minhas intencoes</h3>
+          <h3>Minhas intenções</h3>
         </div>
 
         {intentions.length > 0 ? (
@@ -58,7 +58,7 @@ export default function YourDonations(): React.ReactElement {
                     type="button"
                     className="your-donation-remove"
                     onClick={() => handleRemove(intention.id)}
-                    aria-label={`Remover intencao para ${intention.unitName}`}
+                    aria-label={`Remover intenção para ${intention.unitName}`}
                     title="Remover registro deste navegador"
                   >
                     <FaTrash aria-hidden="true" />
@@ -80,7 +80,7 @@ export default function YourDonations(): React.ReactElement {
                 </ul>
 
                 <div className="your-donation-card__footer">
-                  <span>{intention.isAnonymous ? 'Doacao anonima' : intention.donorName}</span>
+                  <span>{intention.isAnonymous ? 'Doação anônima' : intention.donorName}</span>
                   <Link to={`/caps?unit=${intention.unitSlug}`}>Doar novamente nesta unidade</Link>
                 </div>
               </article>
@@ -88,16 +88,16 @@ export default function YourDonations(): React.ReactElement {
           </div>
         ) : (
           <article className="your-donations-empty">
-            <h4>Nenhuma intencao registrada ainda</h4>
+            <h4>Nenhuma intenção registrada ainda</h4>
             <p>
-              Quando voce preencher o formulario de doacao, seus registros aparecerao aqui neste aparelho.
+              Quando você preencher o formulário de doação, seus registros aparecerão aqui neste aparelho.
             </p>
             <Link className="your-donations-primary" to="/caps">Escolher uma unidade para doar</Link>
           </article>
         )}
       </section>
 
-      <section className="your-donations-next-steps" aria-label="Proximas acoes">
+      <section className="your-donations-next-steps" aria-label="Próximas ações">
         <Link to="/donate">Ver necessidades abertas</Link>
         <Link to="/caps">Escolher outra unidade</Link>
       </section>

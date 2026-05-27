@@ -52,8 +52,8 @@ function CapsCard({
       <span className="unit-type-badge">{cap.unitType}</span>
       <h3>{cap.title}</h3>
       <div className="caps-card__details">
-        <p><strong>Endereco:</strong> {cap.address}</p>
-        <p><strong>Contato:</strong> {cap.contact ?? 'Contato nao informado'}</p>
+        <p><strong>Endereço:</strong> {cap.address}</p>
+        <p><strong>Contato:</strong> {cap.contact ?? 'Contato não informado'}</p>
         {cap.needsSummary ? <p><strong>Necessidades:</strong> {cap.needsSummary}</p> : null}
       </div>
 
@@ -73,7 +73,7 @@ function CapsCard({
             onSelectDonation(cap)
           }}
         >
-          {isSelected ? 'Alterar doacao' : 'Quero doar'}
+          {isSelected ? 'Alterar doação' : 'Quero doar'}
         </button>
         {whatsappUrl ? (
           <a

@@ -47,7 +47,7 @@ export default function Donate(): React.ReactElement {
       <header className="donate-page__header">
         <div>
           <span className="page-kicker">Necessidades da rede</span>
-          <h2>Pedidos abertos para doacao</h2>
+          <h2>Pedidos abertos para doação</h2>
           <p>
             Filtre por categoria, confira prioridade e status, e escolha a unidade para combinar a entrega.
           </p>
@@ -106,7 +106,7 @@ export default function Donate(): React.ReactElement {
             ))}
           </div>
         ) : (
-          <p className="home-urgent-empty">Nao ha pedidos urgentes nesta categoria.</p>
+          <p className="home-urgent-empty">Não há pedidos urgentes nesta categoria.</p>
         )}
       </section>
 
@@ -132,7 +132,7 @@ export default function Donate(): React.ReactElement {
             ))}
           </div>
         ) : (
-          <p className="home-urgent-empty">Nao ha pedidos adicionais nesta categoria.</p>
+          <p className="home-urgent-empty">Não há pedidos adicionais nesta categoria.</p>
         )}
       </section>
 

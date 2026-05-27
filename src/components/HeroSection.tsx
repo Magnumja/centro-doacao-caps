@@ -13,11 +13,11 @@ export default function HeroSection({ stats }: HeroSectionProps): React.ReactEle
   return (
     <section className="page-block home-institutional-hero" aria-labelledby="home-hero-title">
       <div className="home-institutional-hero__content">
-        <span className="page-kicker">Rede solidaria de cuidado</span>
-        <h2 id="home-hero-title">Conecte sua doacao a uma necessidade real dos CAPS.</h2>
+        <span className="page-kicker">Rede solidária de cuidado</span>
+        <h2 id="home-hero-title">Conecte sua doação a uma necessidade real dos CAPS.</h2>
         <p>
           Veja pedidos atualizados das unidades de Campo Grande/MS, escolha onde contribuir
-          e combine a entrega com clareza, seguranca e responsabilidade.
+          e combine a entrega com clareza, segurança e responsabilidade.
         </p>
 
         <div className="home-hero-actions">
@@ -41,7 +41,7 @@ export default function HeroSection({ stats }: HeroSectionProps): React.ReactEle
           <span><strong><CountUpStat value={stats.activeRequests} /></strong><small>pedidos ativos</small></span>
           <span><strong><CountUpStat value={stats.urgentRequests} /></strong><small>urgentes</small></span>
         </div>
-        <p>Informacoes separadas por unidade, prioridade e status para facilitar uma decisao rapida.</p>
+        <p>Informações separadas por unidade, prioridade e status para facilitar uma decisão rápida.</p>
       </aside>
     </section>
   )

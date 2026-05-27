@@ -5,9 +5,7 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { isLocalAuthBypassEnabled } from '../lib/auth'
 import '../Styles/Layout.css'
 import logo from '../public/logosesau.png'
-import navbarLogoColor from '../../public/sesau-prefeitura-navbar-crop.png'
 import navbarLogoWhite from '../../public/sesau-navbar-white.png'
-import ThemeToggle from './ui/ThemeToggle'
 
 export default function Layout(): React.ReactElement {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -20,7 +18,7 @@ export default function Layout(): React.ReactElement {
     { to: '/caps', label: 'CAPS' },
     { to: '/donate', label: 'Necessidades' },
     { to: '/sobre-o-projeto', label: 'Sobre' },
-    { to: '/suas-doacoes', label: 'Minhas doacoes' },
+    { to: '/suas-doacoes', label: 'Minhas doações' },
     { to: canOpenAdminDirectly ? '/admin/dashboard' : '/admin/login', label: 'Dashboard' },
   ]
   const leftNavigationItems = navigationItems.slice(0, 3)
@@ -68,8 +66,8 @@ export default function Layout(): React.ReactElement {
 
   return (
     <>
-      <a className="skip-link" href="#main-content">Pular para o conteudo principal</a>
-      <a className="skip-link" href="#primary-navigation">Pular para navegacao</a>
+      <a className="skip-link" href="#main-content">Pular para o conteúdo principal</a>
+      <a className="skip-link" href="#primary-navigation">Pular para navegação</a>
 
       <header className="health-header">
         <div className="health-header__inner">
@@ -86,7 +84,7 @@ export default function Layout(): React.ReactElement {
           </button>
 
           <Link className="mobile-header-brand" to="/" aria-label="Pagina inicial - SESAU">
-            <img src={navbarLogoWhite} alt="SESAU Secretaria Municipal de Saude" />
+            <img src={navbarLogoWhite} alt="SESAU Secretaria Municipal de Saúde" />
           </Link>
 
           <button
@@ -119,7 +117,7 @@ export default function Layout(): React.ReactElement {
             </div>
 
             <Link className="health-brand" to="/" onClick={() => setIsMobileMenuOpen(false)}>
-              <img src={navbarLogoColor} alt="SESAU Secretaria Municipal de Saude" />
+              <img src={navbarLogoWhite} alt="SESAU Secretaria Municipal de Saúde" />
             </Link>
 
             <div className="health-nav__group">
@@ -127,7 +125,6 @@ export default function Layout(): React.ReactElement {
             </div>
           </nav>
 
-          <ThemeToggle />
         </div>
       </header>
 

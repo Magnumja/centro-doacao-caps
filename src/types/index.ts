@@ -1,16 +1,13 @@
-// Representa uma unidade da rede (CAPS ou Residencia Terapeutica).
 export type Cap = {
   id: string
   title: string
-  unitType: 'CAPS' | 'Residencia Terapeutica' | 'Residência Terapêutica'
+  unitType: 'CAPS'
   address: string
   contact?: string
   whatsapp?: string
   operatingHours?: string
   needsSummary?: string
   description?: string
-  capacity?: string
-  privacyNote?: string
   lat?: number
   lng?: number
   photo?: string
@@ -21,7 +18,7 @@ export type DonationCategoryName =
   | 'Roupas'
   | 'Higiene pessoal'
   | 'Material de limpeza'
-  | 'Utensilios'
+  | 'Utensílios'
   | 'Brinquedos'
   | 'Outros'
 

@@ -89,9 +89,9 @@ export default function Home(): React.ReactElement {
       <section className="page-block home-highlights-section home-highlights-section--featured">
         <div className="home-urgent-header">
           <div>
-            <span className="page-kicker">Noticias e destaques</span>
-            <h2>Campanhas e informacoes da rede CAPS</h2>
-            <p>Atualizacoes importantes aparecem primeiro para orientar quem deseja participar.</p>
+            <span className="page-kicker">Notícias e destaques</span>
+            <h2>Campanhas e informações da rede CAPS</h2>
+            <p>Atualizações importantes aparecem primeiro para orientar quem deseja participar.</p>
           </div>
         </div>
         <NewsCarousel items={highlights} />
@@ -104,7 +104,7 @@ export default function Home(): React.ReactElement {
           <div>
             <span className="page-kicker">Mapa das unidades</span>
             <h2>Encontre uma unidade CAPS em Campo Grande</h2>
-            <p>Use o mapa para conhecer a localizacao das unidades antes de escolher onde doar.</p>
+            <p>Use o mapa para conhecer a localização das unidades antes de escolher onde doar.</p>
           </div>
           <Link className="home-urgent-link" to="/caps">Ver unidades</Link>
         </div>
@@ -119,7 +119,7 @@ export default function Home(): React.ReactElement {
           <div>
             <span className="page-kicker">Prioridades da rede</span>
             <h2>Pedidos urgentes em destaque</h2>
-            <p>Uma selecao curta dos itens com maior prioridade no momento.</p>
+            <p>Uma seleção curta dos itens com maior prioridade no momento.</p>
           </div>
 
           <Link className="home-urgent-link" to="/donate">Ver todos</Link>
@@ -140,7 +140,7 @@ export default function Home(): React.ReactElement {
             ))}
           </div>
         ) : (
-          <p className="home-urgent-empty">Nao ha pedidos urgentes registrados no momento.</p>
+          <p className="home-urgent-empty">Não há pedidos urgentes registrados no momento.</p>
         )}
       </section>
 
@@ -148,7 +148,7 @@ export default function Home(): React.ReactElement {
         <div>
           <span className="page-kicker">Escolha seu caminho</span>
           <h2>Veja todos os pedidos ou escolha uma unidade CAPS.</h2>
-          <p>A home mostra o essencial. As paginas internas trazem os detalhes para doar com seguranca.</p>
+          <p>A home mostra o essencial. As páginas internas trazem os detalhes para doar com segurança.</p>
         </div>
         <div className="home-final-cta__actions">
           <Link className="home-hero-button home-hero-button--primary" to="/donate">Ver necessidades</Link>

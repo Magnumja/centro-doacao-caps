@@ -165,30 +165,6 @@
   flex-wrap: wrap;
 }
 
-:root[data-theme='dark'] .your-donations-section,
-:root[data-theme='dark'] .your-donations-next-steps,
-:root[data-theme='dark'] .your-donation-card,
-:root[data-theme='dark'] .your-donations-empty {
-  border-color: rgba(123, 198, 255, 0.18);
-  background: rgba(14, 35, 30, 0.84);
-}
-
-:root[data-theme='dark'] .your-donation-meta span,
-:root[data-theme='dark'] .your-donation-items li {
-  background: rgba(123, 198, 255, 0.1);
-}
-
-:root[data-theme='dark'] .your-donation-status {
-  background: rgba(45, 194, 167, 0.13);
-  color: var(--health-accent-strong);
-}
-
-:root[data-theme='dark'] .your-donation-remove {
-  border-color: rgba(255, 139, 130, 0.24);
-  background: rgba(255, 139, 130, 0.12);
-  color: #ffb2aa;
-}
-
 @media (max-width: 700px) {
   .your-donations-page {
     width: min(100%, calc(100vw - 1rem));

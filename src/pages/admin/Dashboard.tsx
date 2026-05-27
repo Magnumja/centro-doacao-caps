@@ -15,8 +15,8 @@ import '../../Styles/Dashboard.css'
 type TabType = 'overview' | 'donations' | 'analytics' | 'profile' | 'residents'
 
 const dashboardTabs: Array<{ key: TabType, label: string, icon: IconType }> = [
-  { key: 'overview', label: 'Visao geral', icon: FaChartLine },
-  { key: 'donations', label: 'Solicitacoes', icon: FaGift },
+  { key: 'overview', label: 'Visão geral', icon: FaChartLine },
+  { key: 'donations', label: 'Solicitações', icon: FaGift },
   { key: 'analytics', label: 'Analytics', icon: FaChartPie },
   { key: 'profile', label: 'Perfil', icon: FaUser },
   { key: 'residents', label: 'Residentes', icon: FaUsers },
@@ -66,7 +66,7 @@ export default function Dashboard(): React.ReactElement {
 
     const amount = Number(requestAmount)
     if (!Number.isInteger(amount) || amount <= 0) {
-      setRequestFeedback('Informe uma quantidade valida para publicar a solicitacao.')
+      setRequestFeedback('Informe uma quantidade válida para publicar a solicitação.')
       return
     }
 
@@ -96,16 +96,16 @@ export default function Dashboard(): React.ReactElement {
       setRequestDescription('')
       setRequestAmount('')
       setRequestPriority('media')
-      setRequestFeedback('Solicitacao publicada com sucesso.')
+      setRequestFeedback('Solicitação publicada com sucesso.')
     } catch (error: any) {
-      setRequestFeedback(error?.message || 'Nao foi possivel publicar a solicitacao.')
+      setRequestFeedback(error?.message || 'Não foi possível publicar a solicitação.')
     } finally {
       setIsPublishingRequest(false)
     }
   }
 
   const handleNeedDelete = async (needId: string) => {
-    const shouldDelete = window.confirm('Apagar esta solicitacao ativa? Esta acao remove o pedido da pagina publica.')
+    const shouldDelete = window.confirm('Apagar esta solicitação ativa? Esta ação remove o pedido da página pública.')
     if (!shouldDelete) {
       return
     }
@@ -116,9 +116,9 @@ export default function Dashboard(): React.ReactElement {
     try {
       await deleteNeed(needId)
       setPublishedNeeds((current) => current.filter((need) => need.id !== needId))
-      setRequestFeedback('Solicitacao apagada com sucesso.')
+      setRequestFeedback('Solicitação apagada com sucesso.')
     } catch (error: any) {
-      setRequestFeedback(error?.message || 'Nao foi possivel apagar a solicitacao.')
+      setRequestFeedback(error?.message || 'Não foi possível apagar a solicitação.')
     } finally {
       setDeletingNeedIds((current) => {
         const next = new Set(current)
@@ -210,7 +210,7 @@ export default function Dashboard(): React.ReactElement {
       </header>
 
       {/* Navegacao por abas (sem trocar rota, apenas estado interno). */}
-      <nav className="dashboard-nav" aria-label="Navegacao do dashboard">
+      <nav className="dashboard-nav" aria-label="Navegação do dashboard">
         {dashboardTabs.map(({ key, label, icon: TabIcon }) => (
           <button
             key={key}
@@ -264,11 +264,11 @@ export default function Dashboard(): React.ReactElement {
               <div className="dashboard-actions">
                 <button className="dashboard-action-btn" onClick={() => setActiveTab('donations')}>
                   <FaPlus aria-hidden="true" />
-                  Nova solicitacao
+                  Nova solicitação
                 </button>
                 <button className="dashboard-action-btn" onClick={() => navigate('/caps')}>
                   <FaHospital aria-hidden="true" />
-                  Ver pagina publica
+                  Ver página pública
                 </button>
               </div>
             </div>
@@ -291,7 +291,7 @@ export default function Dashboard(): React.ReactElement {
                 >
                   <option value="Roupas">Roupas</option>
                   <option value="Alimentos">Alimentos</option>
-                  <option value="Utensilios">Utensilios</option>
+                  <option value="Utensílios">Utensílios</option>
                 </select>
               </div>
 
@@ -549,7 +549,7 @@ export default function Dashboard(): React.ReactElement {
                   {filteredResidents.map(resident => (
                       <tr key={resident.id}>
                         <td>{resident.name}</td>
-                        <td>{resident.emergencyContact || 'Nao informado'}</td>
+                        <td>{resident.emergencyContact || 'Não informado'}</td>
                         <td>{new Date(resident.entryDate).toLocaleDateString('pt-BR')}</td>
                         <td>
                           <span className={`status-badge status-${resident.status}`}>
