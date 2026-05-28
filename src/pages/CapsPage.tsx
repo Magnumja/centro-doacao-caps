@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import {
   FaCalendarCheck,
-  FaCheck,
   FaClock,
   FaEnvelope,
   FaGift,
@@ -14,11 +13,9 @@ import {
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 import CapsCard from '../components/CapsCard'
-import CategoryFilter from '../components/CategoryFilter'
-import DonationRequestCard from '../components/DonationRequestCard'
 import { getMapsUrl, getWhatsAppUrl } from '../lib/contact'
 import { fetchPublicNeeds } from '../lib/needs'
-import { Cap, DonationCategoryName, Need } from '../types'
+import { Cap, Need } from '../types'
 import { registerDonations, validateDonationInput } from '../services/donations-service'
 import { saveDonorIntention } from '../services/donor-intentions-service'
 import { fetchUnits } from '../services/units-service'
@@ -64,7 +61,6 @@ export default function CapsPage(): React.ReactElement {
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null)
   const [caps, setCaps] = useState<Cap[]>([])
   const [allNeeds, setAllNeeds] = useState<Need[]>(mockNeeds)
-  const [activeCategory, setActiveCategory] = useState<DonationCategoryName | 'Todas'>('Todas')
   const [selectionPreviewId, setSelectionPreviewId] = useState<string | null>(null)
   const [showUnitChooser, setShowUnitChooser] = useState(true)
   const [isEnteringUnit, setIsEnteringUnit] = useState(false)
@@ -124,13 +120,6 @@ export default function CapsPage(): React.ReactElement {
     [allNeeds, selectedUnit?.id],
   )
 
-  const filteredUnitNeeds = useMemo(
-    () => activeCategory === 'Todas'
-      ? selectedUnitNeeds
-      : selectedUnitNeeds.filter((need) => need.category === activeCategory),
-    [activeCategory, selectedUnitNeeds],
-  )
-
   useEffect(() => {
     return () => {
       if (selectionTimeoutRef.current) clearTimeout(selectionTimeoutRef.current)
@@ -152,7 +141,6 @@ export default function CapsPage(): React.ReactElement {
     setIsEnteringUnit(true)
     resetDonationForm()
     setShowUnitChooser(false)
-    setActiveCategory('Todas')
   }, [selectedUnitParam, caps])
 
   useEffect(() => {
@@ -199,7 +187,6 @@ export default function CapsPage(): React.ReactElement {
       resetDonationForm()
       setSelectionPreviewId(null)
       setShowUnitChooser(false)
-      setActiveCategory('Todas')
       navigate(`/caps/${unit.id}`)
       selectionTimeoutRef.current = null
     }, selectionAnimationDurationMs)
@@ -353,6 +340,7 @@ export default function CapsPage(): React.ReactElement {
     name: item,
     quantity: itemQuantities[item]?.trim() || 'Quantidade pendente',
   }))
+  const availableDonationOptions = donationOptions.filter((item) => !selectedItems.includes(item))
   const minDonationDate = new Date().toISOString().slice(0, 10)
   const donorIdentityLabel = anonymousDonation === 'sim'
     ? 'Doação anônima'
@@ -387,8 +375,9 @@ export default function CapsPage(): React.ReactElement {
         <span className="page-kicker">Rede de saúde mental</span>
         <h2>{selectedUnit && !showUnitChooser ? selectedUnit.title : 'Unidades CAPS de Campo Grande'}</h2>
         <p>
-          Consulte dados de contato, pedidos abertos e prioridades de cada unidade. Ao encontrar um item que
-          você pode doar, combine a entrega com o CAPS e registre sua intenção para facilitar o acompanhamento.
+          {selectedUnit && !showUnitChooser
+            ? 'Contato, pedidos e registro de doação em uma visão compacta.'
+            : 'Consulte dados de contato, pedidos abertos e prioridades de cada unidade. Ao encontrar um item que você pode doar, combine a entrega com o CAPS e registre sua intenção para facilitar o acompanhamento.'}
         </p>
       </div>
 
@@ -419,24 +408,12 @@ export default function CapsPage(): React.ReactElement {
               {selectedUnit.privacyNote ? <p>{selectedUnit.privacyNote}</p> : null}
             </article>
 
-            <article className="selected-unit-info-card">
+            <article className="selected-unit-info-card selected-unit-contact-card">
               <span className="info-card-label">Endereço e contato</span>
               <p><strong>Endereço</strong>{selectedUnit.address}</p>
               <p><strong>Contato</strong>{selectedUnit.contact ?? 'Contato não informado'}</p>
               {selectedUnit.operatingHours ? <p><strong>Horário</strong>{selectedUnit.operatingHours}</p> : null}
-            </article>
 
-            <article className="selected-unit-info-card selected-unit-info-card--needs">
-              <span className="info-card-label">Resumo dos pedidos</span>
-              <div className="selected-unit-metrics">
-                <span><strong>{selectedUnitOpenNeeds}</strong> abertos</span>
-                <span><strong>{selectedUnitUrgentNeeds}</strong> urgentes</span>
-              </div>
-              <p>{selectedUnit.needsSummary ?? 'Confira os pedidos cadastrados abaixo e filtre por categoria.'}</p>
-            </article>
-
-            <article className="selected-unit-info-card selected-unit-actions-card">
-              <span className="info-card-label">Ações</span>
               <div className="selected-unit-actions">
                 {whatsappUrl ? (
                   <a className="unit-donate-button" href={whatsappUrl} target="_blank" rel="noreferrer">
@@ -457,30 +434,47 @@ export default function CapsPage(): React.ReactElement {
                 </button>
               </div>
             </article>
-          </section>
 
-          <section className="unit-needs-section unit-needs-section--compact">
-            <div className="section-heading unit-needs-section__heading">
-              <span className="page-kicker">Necessidades da unidade</span>
-              <h2>Pedidos abertos</h2>
-            </div>
-
-            <CategoryFilter
-              categories={donationCategories}
-              activeCategory={activeCategory}
-              onChange={setActiveCategory}
-            />
-
-            {filteredUnitNeeds.length > 0 ? (
-              <div className="unit-needs-grid">
-                {filteredUnitNeeds.map((need) => (
-                  <DonationRequestCard key={need.id} need={need} onDonate={handleDonateFromRequest} compact />
-                ))}
+            <article className="selected-unit-info-card selected-unit-info-card--needs">
+              <span className="info-card-label">Resumo dos pedidos</span>
+              <div className="selected-unit-metrics">
+                <span><strong>{selectedUnitOpenNeeds}</strong> abertos</span>
+                <span><strong>{selectedUnitUrgentNeeds}</strong> urgentes</span>
               </div>
-            ) : (
-              <p className="home-urgent-empty">Não há pedidos nesta categoria para a unidade selecionada.</p>
-            )}
+              <p>{selectedUnit.needsSummary ?? 'Confira os pedidos prioritários da unidade e escolha um item para doar.'}</p>
+
+              {selectedUnitNeeds.length > 0 ? (
+                <div className="selected-unit-compact-needs" aria-label="Pedidos resumidos da unidade">
+                  {selectedUnitNeeds.slice(0, 3).map((need) => {
+                    const donatedAmount = need.donatedAmount ?? 0
+                    const remaining = Math.max(need.amount - donatedAmount, 0)
+
+                    return (
+                      <button
+                        key={need.id}
+                        type="button"
+                        className={`selected-unit-compact-need selected-unit-compact-need--${need.priority ?? 'media'}`}
+                        onClick={() => handleDonateFromRequest(need)}
+                      >
+                        <span>
+                          <strong>{need.title}</strong>
+                          <small>{need.category} - restante {remaining}</small>
+                        </span>
+                        <b>Doar</b>
+                      </button>
+                    )
+                  })}
+
+                  {selectedUnitNeeds.length > 3 ? (
+                    <span className="selected-unit-compact-needs__more">
+                      +{selectedUnitNeeds.length - 3} pedidos adicionais
+                    </span>
+                  ) : null}
+                </div>
+              ) : null}
+            </article>
           </section>
+
         </>
       ) : (
         <div className="card-grid caps-card-grid">
@@ -498,7 +492,7 @@ export default function CapsPage(): React.ReactElement {
 
       {selectedUnit && !showUnitChooser ? (
         <div ref={donationFlowRef} className="donation-flow-grid">
-          <article className="page-card donation-panel donation-guidelines">
+          <article className={`page-card donation-panel donation-guidelines${availableDonationOptions.length === 0 ? ' donation-guidelines--full-form' : ''}`}>
             <h3>Registrar interesse em doar</h3>
             <p className="donation-guidelines__unit"><strong>Unidade:</strong> {selectedUnit.title}</p>
             <div className="donation-flow-steps" aria-label="Etapas do registro">
@@ -506,26 +500,22 @@ export default function CapsPage(): React.ReactElement {
               <span className={donationDate && donationTime ? 'is-complete' : ''}><FaCalendarCheck aria-hidden="true" /> Entrega</span>
               <span className={anonymousDonation === 'sim' || (donorName && donorEmail) ? 'is-complete' : ''}><FaUser aria-hidden="true" /> Dados</span>
             </div>
-            <p>Escolha os itens, agende a entrega e registre seus dados.</p>
             <p className="guideline-warning">Não aceitamos dinheiro pelo site.</p>
 
-            <div className="donation-actions" role="group" aria-label="Categorias de doação">
-              {donationOptions.map((item) => {
-                const active = selectedItems.includes(item)
-                return (
+            {availableDonationOptions.length > 0 ? (
+              <div className="donation-actions" role="group" aria-label="Categorias de doação">
+                {availableDonationOptions.map((item) => (
                   <button
                     key={item}
                     type="button"
-                    aria-pressed={active}
-                    className={`donation-action-button${active ? ' donation-action-button--active' : ''}`}
+                    className="donation-action-button"
                     onClick={() => toggleItem(item)}
                   >
-                    {active ? <FaCheck aria-hidden="true" /> : null}
                     {item}
                   </button>
-                )
-              })}
-            </div>
+                ))}
+              </div>
+            ) : null}
 
             <form className="donation-form" onSubmit={handleRegisterDonation}>
               {selectedItems.length > 0 ? (
