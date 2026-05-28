@@ -459,10 +459,10 @@ export default function CapsPage(): React.ReactElement {
             </article>
           </section>
 
-          <section className="unit-needs-section">
-            <div className="section-heading">
+          <section className="unit-needs-section unit-needs-section--compact">
+            <div className="section-heading unit-needs-section__heading">
               <span className="page-kicker">Necessidades da unidade</span>
-              <h2>Pedidos cadastrados para {selectedUnit.title}</h2>
+              <h2>Pedidos abertos</h2>
             </div>
 
             <CategoryFilter
@@ -474,7 +474,7 @@ export default function CapsPage(): React.ReactElement {
             {filteredUnitNeeds.length > 0 ? (
               <div className="unit-needs-grid">
                 {filteredUnitNeeds.map((need) => (
-                  <DonationRequestCard key={need.id} need={need} onDonate={handleDonateFromRequest} />
+                  <DonationRequestCard key={need.id} need={need} onDonate={handleDonateFromRequest} compact />
                 ))}
               </div>
             ) : (

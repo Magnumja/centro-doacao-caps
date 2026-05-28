@@ -1254,15 +1254,107 @@
   padding: 0.9rem;
 }
 
+.unit-needs-section--compact {
+  gap: 0.55rem;
+  padding: 0.7rem;
+}
+
+.unit-needs-section__heading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.unit-needs-section__heading .page-kicker {
+  margin: 0;
+}
+
+.unit-needs-section__heading h2 {
+  margin: 0;
+  font-size: 1.18rem;
+  line-height: 1.2;
+}
+
+.unit-needs-section--compact .category-filter {
+  gap: 0.35rem;
+}
+
+.unit-needs-section--compact .category-filter__button {
+  min-height: 34px;
+  padding: 0.36rem 0.56rem;
+  font-size: 0.76rem;
+}
+
 .unit-needs-grid {
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 0.75rem;
+}
+
+.unit-needs-section--compact .unit-needs-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.5rem;
 }
 
 .donation-request-card {
   gap: 0.62rem;
   padding: 0.9rem;
   border-left-width: 3px;
+}
+
+.unit-needs-section--compact .donation-request-card {
+  gap: 0.42rem;
+  padding: 0.68rem;
+}
+
+.unit-needs-section--compact .donation-request-card h3 {
+  font-size: 0.92rem;
+  line-height: 1.22;
+}
+
+.unit-needs-section--compact .donation-request-card__badges {
+  gap: 0.28rem;
+}
+
+.unit-needs-section--compact .donation-request-card__category,
+.unit-needs-section--compact .urgency-badge,
+.unit-needs-section--compact .status-request-badge {
+  padding: 0.12rem 0.42rem;
+  font-size: 0.66rem;
+}
+
+.unit-needs-section--compact .donation-request-card__meta {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.38rem;
+}
+
+.unit-needs-section--compact .donation-request-card__meta div {
+  padding: 0.42rem;
+}
+
+.unit-needs-section--compact .donation-request-card__meta div:last-child {
+  display: none;
+}
+
+.unit-needs-section--compact .donation-request-card__meta dt {
+  font-size: 0.7rem;
+}
+
+.unit-needs-section--compact .donation-request-card__meta dd {
+  font-size: 0.88rem;
+}
+
+.unit-needs-section--compact .donation-request-card__progress {
+  height: 0.28rem;
+}
+
+.unit-needs-section--compact .donation-request-card__progress-label {
+  display: none;
+}
+
+.unit-needs-section--compact .unit-donate-button {
+  min-height: 36px;
+  padding: 0.42rem 0.58rem;
+  font-size: 0.78rem;
 }
 
 .donation-request-card__category {
@@ -1497,6 +1589,15 @@
 
   .donation-summary-panel {
     position: static;
+  }
+
+  .unit-needs-section__heading {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .unit-needs-section--compact .unit-needs-grid {
+    grid-template-columns: 1fr;
   }
 
   .donation-time-chips button,
