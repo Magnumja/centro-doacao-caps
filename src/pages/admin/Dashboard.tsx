@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { IconType } from 'react-icons'
-import { FaChartLine, FaChartPie, FaGift, FaHospital, FaPlus, FaSignOutAlt, FaTrash, FaUser, FaUsers } from 'react-icons/fa'
+import { FaBoxOpen, FaChartLine, FaChartPie, FaGift, FaHospital, FaPlus, FaSignOutAlt, FaTrash, FaUser, FaUsers } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import AdminDashboardSummary from '../../components/AdminDashboard'
 import { Cap, Donation } from '../../types'
-import { caps, needs as mockNeeds, projectStats } from '../../data/mock'
+import { caps, donationCategories, needs as mockNeeds, projectStats } from '../../data/mock'
 import { useDashboardData } from '../../hooks/useDashboardData'
 import { logoutHost } from '../../services/auth-service'
 import { createNeed, deleteNeed } from '../../services/needs-service'
@@ -31,6 +31,15 @@ const analyticsCategories: Array<{
   { key: 'roupa', label: 'Roupa', color: '#884d99' },
   { key: 'comida', label: 'Comida', color: '#cc9900' },
   { key: 'utensilios', label: 'Utensílios', color: '#2c6a8f' },
+]
+
+const requestPriorityOptions: Array<{
+  value: 'media' | 'alta'
+  label: string
+  description: string
+}> = [
+  { value: 'media', label: 'Não urgente', description: 'Pedido importante, sem necessidade imediata.' },
+  { value: 'alta', label: 'Urgente', description: 'Prioridade alta para exibição pública.' },
 ]
 
 export default function Dashboard(): React.ReactElement {
@@ -192,6 +201,9 @@ export default function Dashboard(): React.ReactElement {
           .map(category => `${category.label} ${category.value} doações (${category.percentage}%)`)
           .join(', ')}.`
       : 'Nenhuma doação registrada para exibir no gráfico de pizza.'
+  const selectedPriorityOption = requestPriorityOptions.find((option) => option.value === requestPriority)
+  const requestFeedbackType = requestFeedback.includes('sucesso') ? 'success' : 'error'
+  const requestDescriptionLength = requestDescription.trim().length
 
   return (
     <section className="dashboard-container">
@@ -278,85 +290,142 @@ export default function Dashboard(): React.ReactElement {
         {/* TAB: DONATIONS - formulário de solicitação de necessidades */}
         {activeTab === 'donations' && (
           <section className="dashboard-tab">
-            <h2>Solicitar Doações</h2>
-            <p>Crie uma solicitação de doação que será exibida para a comunidade.</p>
+            <div className="dashboard-tab__intro">
+              <div>
+                <span className="page-kicker">Solicitações públicas</span>
+                <h2>Solicitar doações</h2>
+                <p>Monte um pedido claro para a comunidade, com categoria, quantidade, prioridade e contexto.</p>
+              </div>
+              <span className="dashboard-tab__unit">{hostCaps?.title ?? 'Unidade CAPS'}</span>
+            </div>
 
             <form className="donation-request-form" onSubmit={handleNeedPublish}>
-              <div className="form-group">
-                <label>Categoria de Doação</label>
-                <select
-                  value={requestCategory}
-                  onChange={(e) => setRequestCategory(e.target.value)}
-                  disabled={isPublishingRequest}
-                >
-                  <option value="Roupas">Roupas</option>
-                  <option value="Alimentos">Alimentos</option>
-                  <option value="Utensílios">Utensílios</option>
-                </select>
+              <div className="donation-request-form__main">
+                <fieldset className="donation-request-block donation-request-block--category">
+                  <legend>
+                    <span>1</span>
+                    Categoria
+                  </legend>
+                  <div className="request-category-grid" role="group" aria-label="Categoria da solicitação">
+                    {donationCategories.map((category) => (
+                      <button
+                        key={category}
+                        type="button"
+                        className={`request-category-chip${requestCategory === category ? ' is-selected' : ''}`}
+                        onClick={() => setRequestCategory(category)}
+                        disabled={isPublishingRequest}
+                        aria-pressed={requestCategory === category}
+                      >
+                        <FaBoxOpen aria-hidden="true" />
+                        {category}
+                      </button>
+                    ))}
+                  </div>
+                </fieldset>
+
+                <fieldset className="donation-request-block donation-request-block--details">
+                  <legend>
+                    <span>2</span>
+                    Detalhes do pedido
+                  </legend>
+
+                  <div className="request-field-grid">
+                    <div className="form-group">
+                      <label htmlFor="request-amount">Quantidade necessária</label>
+                      <input
+                        id="request-amount"
+                        type="number"
+                        min={1}
+                        placeholder="Ex.: 50"
+                        value={requestAmount}
+                        onChange={(e) => setRequestAmount(e.target.value)}
+                        required
+                        disabled={isPublishingRequest}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <span className="request-field-label">Prioridade</span>
+                      <div className="request-priority-grid" role="group" aria-label="Prioridade da solicitação">
+                        {requestPriorityOptions.map((option) => (
+                          <button
+                            key={option.value}
+                            type="button"
+                            className={`request-priority-card${requestPriority === option.value ? ' is-selected' : ''}`}
+                            onClick={() => setRequestPriority(option.value)}
+                            disabled={isPublishingRequest}
+                            aria-pressed={requestPriority === option.value}
+                          >
+                            <strong>{option.label}</strong>
+                            <small>{option.description}</small>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="form-group form-group--full">
+                    <label htmlFor="request-description">Descrição da necessidade</label>
+                    <textarea
+                      id="request-description"
+                      placeholder="Ex.: Precisamos de kits de higiene para acolhimentos desta semana."
+                      rows={5}
+                      value={requestDescription}
+                      onChange={(e) => setRequestDescription(e.target.value)}
+                      required
+                      disabled={isPublishingRequest}
+                    ></textarea>
+                    <span className="request-field-hint">
+                      Seja específico sobre o item, perfil de uso e urgência. {requestDescriptionLength} caracteres.
+                    </span>
+                  </div>
+                </fieldset>
               </div>
 
-              <div className="form-group">
-                <label>Descrição da Necessidade</label>
-                <textarea
-                  placeholder="Descreva o que seu CAPS precisa..."
-                  rows={4}
-                  value={requestDescription}
-                  onChange={(e) => setRequestDescription(e.target.value)}
-                  required
-                  disabled={isPublishingRequest}
-                ></textarea>
-              </div>
+              <aside className="donation-request-preview" aria-label="Resumo da solicitação">
+                <span className="page-kicker">Prévia</span>
+                <h3>{requestCategory}</h3>
+                <div className="request-preview-stats">
+                  <span>
+                    <strong>{requestAmount || '0'}</strong>
+                    quantidade
+                  </span>
+                  <span className={`request-preview-priority request-preview-priority--${requestPriority}`}>
+                    {selectedPriorityOption?.label}
+                  </span>
+                </div>
+                <p>{requestDescription.trim() || 'A descrição aparecerá aqui conforme você preencher o pedido.'}</p>
 
-              <div className="form-group">
-                <label>Quantidade Necessária</label>
-                <input
-                  type="number"
-                  min={1}
-                  placeholder="Ex: 50"
-                  value={requestAmount}
-                  onChange={(e) => setRequestAmount(e.target.value)}
-                  required
-                  disabled={isPublishingRequest}
-                />
-              </div>
+                {requestFeedback && (
+                  <p className={`request-feedback request-feedback--${requestFeedbackType}`} role="status">
+                    {requestFeedback}
+                  </p>
+                )}
 
-              <div className="form-group">
-                <label>Prioridade</label>
-                <select
-                  value={requestPriority}
-                  onChange={(e) => setRequestPriority(e.target.value as 'media' | 'alta')}
-                  disabled={isPublishingRequest}
-                >
-                  <option value="media">Não urgente</option>
-                  <option value="alta">Urgente</option>
-                </select>
-              </div>
-
-              {requestFeedback && (
-                <p style={{ color: requestFeedback.includes('sucesso') ? '#0f7a63' : '#d14343' }}>
-                  {requestFeedback}
-                </p>
-              )}
-
-              <button type="submit" className="btn-primary" disabled={isPublishingRequest}>
-                {isPublishingRequest ? 'Publicando...' : 'Publicar Solicitação'}
-              </button>
+                <button type="submit" className="btn-primary" disabled={isPublishingRequest}>
+                  {isPublishingRequest ? 'Publicando...' : 'Publicar solicitação'}
+                </button>
+              </aside>
             </form>
 
             <div className="dashboard-section">
-              <h3>Solicitações Ativas para {hostCaps?.title}</h3>
+              <div className="dashboard-section__heading">
+                <div>
+                  <h3>Solicitações ativas</h3>
+                  <p>{hostCaps?.title}</p>
+                </div>
+                <span>{publishedNeeds.length} em aberto</span>
+              </div>
               {publishedNeeds.length === 0 ? (
-                <p style={{ color: '#666', fontSize: '0.9rem' }}>
-                  Neste momento, não há solicitações de doação. Crie uma acima!
-                </p>
+                <p className="dashboard-empty-state">Neste momento, não há solicitações de doação. Crie uma acima.</p>
               ) : (
                 <div className="dashboard-cards">
                   {publishedNeeds.map((need) => (
-                    <article className="dashboard-card" key={need.id}>
+                    <article className="dashboard-card dashboard-card--request" key={need.id}>
                       <h3>{need.title}</h3>
                       <p className="dashboard-card__value">{need.amount}</p>
                       <p className="dashboard-card__label">{need.priority === 'alta' ? 'Urgente' : 'Não urgente'}</p>
-                      <p style={{ marginTop: '0.6rem', color: '#666' }}>{need.description}</p>
+                      <p className="dashboard-card__description">{need.description}</p>
                       <button
                         type="button"
                         className="dashboard-card__delete"
