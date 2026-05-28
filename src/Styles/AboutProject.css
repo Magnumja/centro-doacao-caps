@@ -886,3 +886,108 @@
     max-height: 180px;
   }
 }
+
+/* Premium editorial polish */
+.about-project-page {
+  gap: 0.25rem;
+}
+
+.about-hero {
+  position: relative;
+  border: 1px solid rgba(16, 42, 54, 0.10);
+  border-radius: var(--radius-card);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(229, 241, 245, 0.7));
+  padding: clamp(1.25rem, 3vw, 2rem);
+  box-shadow: var(--shadow-soft);
+}
+
+.about-project-page--compact .about-hero {
+  justify-items: center;
+  text-align: center;
+}
+
+.about-project-page--compact .about-hero__content {
+  justify-items: center;
+  margin-inline: auto;
+}
+
+.about-hero__content h2 {
+  color: #102a36;
+}
+
+.about-hero__content p {
+  max-width: 760px;
+}
+
+.about-info-card,
+.about-creator-card,
+.about-cocreators-card {
+  border-color: rgba(16, 42, 54, 0.12);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(247, 251, 250, 0.9));
+  box-shadow: var(--shadow-soft);
+  transition: transform 190ms ease, box-shadow 190ms ease, border-color 190ms ease;
+}
+
+.about-info-card {
+  justify-items: center;
+  text-align: center;
+}
+
+.about-info-card:hover,
+.about-creator-card:hover,
+.about-cocreators-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(15, 143, 121, 0.24);
+  box-shadow: var(--shadow-hover);
+}
+
+.about-info-card__icon {
+  border: 1px solid rgba(7, 52, 95, 0.10);
+  background: linear-gradient(135deg, rgba(15, 143, 121, 0.16), rgba(7, 52, 95, 0.10));
+  color: #07345f;
+}
+
+.about-info-card h3,
+.about-creator-card h3,
+.about-cocreators-card h3 {
+  color: #102a36;
+}
+
+.about-creator-card__photo,
+.about-cocreators-card__photo {
+  filter: saturate(1.03) contrast(1.02);
+}
+
+.about-final-cta {
+  border: 1px solid rgba(16, 42, 54, 0.10);
+  border-radius: var(--radius-card);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(229, 241, 245, 0.72));
+  padding: clamp(1rem, 2.4vw, 1.35rem);
+  box-shadow: var(--shadow-soft);
+}
+
+.about-final-cta > div:first-child {
+  max-width: 760px;
+}
+
+@media (max-width: 640px) {
+  .about-hero {
+    padding: 1rem;
+  }
+
+  .about-project-page--compact .about-hero,
+  .about-project-page--compact .about-hero__content,
+  .about-info-card {
+    justify-items: start;
+    text-align: left;
+  }
+
+  .about-info-card:hover,
+  .about-creator-card:hover,
+  .about-cocreators-card:hover {
+    transform: none;
+  }
+}

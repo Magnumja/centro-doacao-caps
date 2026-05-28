@@ -849,3 +849,432 @@
     font-size: 0.94rem;
   }
 }
+
+/* Premium public experience */
+.home-highlights-section,
+.home-location-section,
+.home-urgent-section,
+.how-it-works-section,
+.home-final-cta {
+  isolation: isolate;
+}
+
+.home-highlights-section--featured {
+  overflow: hidden;
+}
+
+.home-highlights-section--featured::after {
+  content: '';
+  position: absolute;
+  inset: 0 -8vw auto;
+  height: min(56vh, 520px);
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(115deg, transparent 0 18%, rgba(7, 52, 95, 0.045) 18.2% 18.6%, transparent 19% 100%),
+    linear-gradient(120deg, transparent 0 42%, rgba(15, 143, 121, 0.05) 42.2% 42.6%, transparent 43% 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.76), rgba(243, 248, 246, 0));
+  background-size: 220% 100%, 240% 100%, 100% 100%;
+  animation: homeBackgroundDrift 42s ease-in-out infinite alternate;
+}
+
+.home-location-section,
+.home-urgent-section {
+  overflow: hidden;
+}
+
+.home-location-section::after,
+.home-urgent-section::after {
+  content: '';
+  position: absolute;
+  inset: -1rem -6vw auto;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.26;
+  background-image:
+    linear-gradient(rgba(7, 52, 95, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(7, 52, 95, 0.026) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: linear-gradient(180deg, transparent, #000 18%, #000 70%, transparent);
+  animation: homeGridFloat 84s linear infinite;
+}
+
+.how-it-works-section {
+  position: relative;
+}
+
+.how-it-works-section::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 -0.7rem;
+  z-index: -1;
+  height: 58%;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent, rgba(247, 189, 79, 0.10), transparent),
+    linear-gradient(180deg, transparent, rgba(228, 246, 241, 0.55));
+  transform: skewY(-1.5deg);
+  animation: homeSoftBand 32s ease-in-out infinite alternate;
+}
+
+.home-highlights-section--featured {
+  position: relative;
+  padding-top: clamp(1.6rem, 3.6vw, 2.6rem);
+}
+
+.home-highlights-section--featured::before,
+.home-location-section::before,
+.home-urgent-section::before {
+  content: '';
+  position: absolute;
+  inset: auto 0 -0.65rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(7, 52, 95, 0.12), transparent);
+  pointer-events: none;
+}
+
+.home-highlights-section,
+.home-location-section,
+.home-urgent-section,
+.how-it-works-section,
+.donate-page {
+  position: relative;
+}
+
+.home-urgent-header,
+.home-location-header,
+.donate-page__header,
+.section-heading {
+  align-items: flex-start;
+}
+
+.home-urgent-header h2,
+.home-location-header h2,
+.donate-page__header h2,
+.section-heading h2 {
+  color: #102a36;
+  font-size: clamp(1.52rem, 2.8vw, 2.25rem);
+}
+
+.home-urgent-header p,
+.home-location-header p,
+.donate-page__header p,
+.section-heading p {
+  color: #58707a;
+}
+
+.news-carousel,
+.home-location-map,
+.how-it-works-card,
+.donate-filter-panel,
+.home-urgent-empty {
+  border-color: rgba(16, 42, 54, 0.12);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(247, 251, 250, 0.88));
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(14px);
+}
+
+.news-carousel {
+  padding: clamp(0.7rem, 1.4vw, 1rem);
+  overflow: hidden;
+}
+
+.news-carousel__progress-track {
+  height: 4px;
+  background: rgba(7, 52, 95, 0.08);
+}
+
+.news-carousel__progress-value {
+  background: linear-gradient(90deg, #f7bd4f, #0f8f79);
+}
+
+.news-carousel__slide {
+  grid-template-columns: minmax(240px, 0.56fr) minmax(0, 1fr);
+  gap: clamp(0.9rem, 2.4vw, 1.5rem);
+}
+
+.news-carousel__image {
+  min-height: 210px;
+  max-height: 260px;
+  box-shadow: 0 14px 32px rgba(9, 36, 61, 0.12);
+}
+
+.news-carousel__content h3 {
+  color: #102a36;
+  font-size: clamp(1.34rem, 2.6vw, 2rem);
+}
+
+.news-carousel__content p {
+  font-size: 1.02rem;
+}
+
+.home-card-tag,
+.donation-request-card__category,
+.urgency-badge,
+.status-request-badge {
+  border: 1px solid rgba(16, 42, 54, 0.10);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.58);
+}
+
+.news-carousel__controls button,
+.category-filter__button {
+  border-color: rgba(16, 42, 54, 0.13);
+  background: rgba(255, 255, 255, 0.82);
+  color: #102a36;
+}
+
+.news-carousel__controls button:hover:not(:disabled),
+.category-filter__button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(15, 143, 121, 0.28);
+  box-shadow: 0 10px 20px rgba(9, 36, 61, 0.08);
+}
+
+.news-carousel__dot {
+  border-radius: 999px;
+}
+
+.news-carousel__dot.is-active {
+  width: 1.35rem;
+  background: linear-gradient(135deg, #07345f, #0f8f79);
+}
+
+.how-it-works-grid {
+  gap: clamp(0.75rem, 2vw, 1rem);
+}
+
+.how-it-works-card {
+  padding: clamp(1rem, 2vw, 1.25rem);
+  transition: transform 190ms ease, box-shadow 190ms ease, border-color 190ms ease;
+}
+
+.how-it-works-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(15, 143, 121, 0.26);
+  box-shadow: var(--shadow-hover);
+}
+
+.how-it-works-card__icon {
+  width: 2.25rem;
+  height: 2.25rem;
+  background:
+    linear-gradient(135deg, rgba(15, 143, 121, 0.16), rgba(7, 52, 95, 0.10));
+  color: #07345f;
+}
+
+.how-it-works-card__step {
+  background: #ffffff;
+  box-shadow: 0 8px 18px rgba(9, 36, 61, 0.08);
+}
+
+.donation-request-card {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(16, 42, 54, 0.12);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 251, 252, 0.9));
+  box-shadow: var(--shadow-soft);
+  animation: cardRise 280ms cubic-bezier(.2, .7, .2, 1) both;
+}
+
+.donation-request-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: linear-gradient(90deg, rgba(7, 52, 95, 0.9), rgba(15, 143, 121, 0.8));
+  opacity: 0.72;
+}
+
+.donation-request-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(15, 143, 121, 0.24);
+  box-shadow: var(--shadow-hover);
+}
+
+.donation-request-card--priority-alta::before {
+  background: linear-gradient(90deg, #b33a30, #f07d5c);
+}
+
+.donation-request-card--priority-media::before {
+  background: linear-gradient(90deg, #c27512, #f7bd4f);
+}
+
+.donation-request-card--priority-baixa::before {
+  background: linear-gradient(90deg, #2563eb, #48a0d7);
+}
+
+.donation-request-card h3 {
+  color: #102a36;
+}
+
+.donation-request-card__meta div {
+  min-width: 96px;
+  border-color: rgba(16, 42, 54, 0.10);
+}
+
+.donation-request-card__progress {
+  background: rgba(7, 52, 95, 0.08);
+}
+
+.donation-request-card__progress span {
+  background: linear-gradient(90deg, #07345f, #0f8f79);
+}
+
+.donate-summary-strip {
+  overflow: hidden;
+  border: 1px solid rgba(16, 42, 54, 0.10);
+  border-radius: var(--radius-card);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: var(--shadow-soft);
+}
+
+.donate-summary-strip article {
+  background: transparent;
+  padding: 1rem;
+}
+
+.donate-summary-strip strong {
+  color: #102a36;
+}
+
+.donate-filter-panel {
+  padding: 1rem;
+  border: 1px solid rgba(16, 42, 54, 0.10);
+}
+
+.donate-search-field {
+  max-width: none;
+}
+
+.donate-search-field input {
+  min-height: 48px;
+}
+
+.category-filter__button--active,
+.donate-time-chips button.is-active {
+  border-color: rgba(15, 143, 121, 0.35);
+  background: linear-gradient(135deg, rgba(15, 143, 121, 0.14), rgba(7, 52, 95, 0.08));
+  color: #07345f;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.62);
+}
+
+.home-final-cta {
+  border: 1px solid rgba(16, 42, 54, 0.10);
+  border-radius: var(--radius-card);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(229, 241, 245, 0.72));
+  padding: clamp(1rem, 2.4vw, 1.4rem);
+  box-shadow: var(--shadow-soft);
+}
+
+.skeleton-card {
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.skeleton-line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.82), transparent);
+  transform: translateX(-100%);
+  animation: skeletonSweep 1.4s ease-in-out infinite;
+}
+
+@keyframes cardRise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes skeletonSweep {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes homeBackgroundDrift {
+  from {
+    background-position: 0% 0%, 100% 0%, 0 0;
+    opacity: 0.78;
+  }
+
+  to {
+    background-position: 100% 0%, 0% 0%, 0 0;
+    opacity: 1;
+  }
+}
+
+@keyframes homeGridFloat {
+  from {
+    background-position: 0 0, 0 0;
+  }
+
+  to {
+    background-position: 64px 64px, 64px 64px;
+  }
+}
+
+@keyframes homeSoftBand {
+  from {
+    transform: translateY(0) skewY(-1.5deg);
+    opacity: 0.55;
+  }
+
+  to {
+    transform: translateY(-6px) skewY(-1.5deg);
+    opacity: 0.68;
+  }
+}
+
+@media (max-width: 900px) {
+  .news-carousel__slide {
+    grid-template-columns: 1fr;
+  }
+
+  .news-carousel__image {
+    min-height: 180px;
+  }
+
+  .donate-summary-strip {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .news-carousel__image {
+    min-height: 150px;
+    max-height: 190px;
+  }
+
+  .donate-filter-panel {
+    padding: 0.85rem;
+  }
+
+  .donation-request-card {
+    border-radius: 10px;
+  }
+
+  .donate-summary-strip article {
+    padding: 0.85rem 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .donation-request-card,
+  .skeleton-line::after,
+  .home-highlights-section--featured::after,
+  .home-location-section::after,
+  .home-urgent-section::after,
+  .how-it-works-section::after {
+    animation: none;
+  }
+}
