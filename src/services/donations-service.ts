@@ -17,6 +17,7 @@ const categoryMap: Record<string, 'roupa' | 'comida' | 'utensilios'> = {
   Comida: 'comida',
   'Higiene pessoal': 'utensilios',
   'Material de limpeza': 'utensilios',
+  'Utensílios': 'utensilios',
   Utensilios: 'utensilios',
   Brinquedos: 'utensilios',
   Outros: 'utensilios',

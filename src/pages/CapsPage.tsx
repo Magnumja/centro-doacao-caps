@@ -1,5 +1,16 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { FaMapMarkerAlt, FaWhatsapp } from 'react-icons/fa'
+import {
+  FaCalendarCheck,
+  FaCheck,
+  FaClock,
+  FaEnvelope,
+  FaGift,
+  FaInfoCircle,
+  FaMapMarkerAlt,
+  FaTimes,
+  FaUser,
+  FaWhatsapp,
+} from 'react-icons/fa'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 import CapsCard from '../components/CapsCard'
@@ -17,6 +28,7 @@ import '../Styles/CapsPage.css'
 
 const donationOptions = donationCategories
 const selectionAnimationDurationMs = 260
+const suggestedDonationTimes = ['08:00', '09:00', '10:00', '14:00', '15:00', '16:00']
 
 function resolveUnitPhotoPath(photo?: string): string | undefined {
   if (!photo) return undefined
@@ -198,6 +210,11 @@ export default function CapsPage(): React.ReactElement {
     navigate('/caps')
   }
 
+  const handleRegisterAnotherDonation = (): void => {
+    setShowSuccessOverlay(false)
+    resetDonationForm()
+  }
+
   const toggleItem = (item: string): void => {
     setFormMessage('')
     setSelectedItems((prevItems) => {
@@ -212,6 +229,16 @@ export default function CapsPage(): React.ReactElement {
 
       return [...prevItems, item]
     })
+  }
+
+  const removeSelectedItem = (item: string): void => {
+    setSelectedItems((current) => current.filter((selectedItem) => selectedItem !== item))
+    setItemQuantities((current) => {
+      const next = { ...current }
+      delete next[item]
+      return next
+    })
+    setFormMessage('')
   }
 
   const handleQuantityChange = (item: string, value: string): void => {
@@ -280,6 +307,7 @@ export default function CapsPage(): React.ReactElement {
           donationTime,
           isAnonymous: anonymousDonation === 'sim',
           donorName: anonymousDonation === 'sim' ? undefined : donorName,
+          donorEmail: anonymousDonation === 'sim' ? undefined : donorEmail,
         })
 
         const itensList = selectedItems.map((it) => `${it}: ${itemQuantities[it]}`).join(', ')
@@ -303,6 +331,14 @@ export default function CapsPage(): React.ReactElement {
   const selectedUnitUrgentNeeds = selectedUnitNeeds.filter(
     (need) => need.priority === 'alta' || need.urgency === 'Urgente',
   ).length
+  const selectedDonationSummary = selectedItems.map((item) => ({
+    name: item,
+    quantity: itemQuantities[item]?.trim() || 'Quantidade pendente',
+  }))
+  const minDonationDate = new Date().toISOString().slice(0, 10)
+  const donorIdentityLabel = anonymousDonation === 'sim'
+    ? 'Doação anônima'
+    : donorName.trim() || 'Nome pendente'
 
   return (
     <section className="page-block caps-page">
@@ -315,7 +351,7 @@ export default function CapsPage(): React.ReactElement {
             <p className="donation-success-details">{successMessage}</p>
 
             <div className="donation-success-actions">
-              <button type="button" className="unit-donate-button" onClick={() => setShowSuccessOverlay(false)}>
+              <button type="button" className="unit-donate-button" onClick={handleRegisterAnotherDonation}>
                 Fazer nova doação
               </button>
               <button type="button" className="donation-success-close" onClick={handleCloseDonationSuccess}>
@@ -447,6 +483,11 @@ export default function CapsPage(): React.ReactElement {
           <article className="page-card donation-panel donation-guidelines">
             <h3>Registrar interesse em doar</h3>
             <p className="donation-guidelines__unit"><strong>Unidade:</strong> {selectedUnit.title}</p>
+            <div className="donation-flow-steps" aria-label="Etapas do registro">
+              <span className={selectedItems.length > 0 ? 'is-complete' : ''}><FaGift aria-hidden="true" /> Itens</span>
+              <span className={donationDate && donationTime ? 'is-complete' : ''}><FaCalendarCheck aria-hidden="true" /> Entrega</span>
+              <span className={anonymousDonation === 'sim' || (donorName && donorEmail) ? 'is-complete' : ''}><FaUser aria-hidden="true" /> Dados</span>
+            </div>
             <p>Selecione uma ou mais categorias, informe quantidade e combine a entrega com a unidade.</p>
             <p className="guideline-warning">Não aceitamos dinheiro pelo site.</p>
 
@@ -457,9 +498,11 @@ export default function CapsPage(): React.ReactElement {
                   <button
                     key={item}
                     type="button"
+                    aria-pressed={active}
                     className={`donation-action-button${active ? ' donation-action-button--active' : ''}`}
                     onClick={() => toggleItem(item)}
                   >
+                    {active ? <FaCheck aria-hidden="true" /> : null}
                     {item}
                   </button>
                 )
@@ -472,12 +515,22 @@ export default function CapsPage(): React.ReactElement {
                   <legend>Quantidade por item</legend>
                   {selectedItems.map((item) => (
                     <label key={item}>
-                      {item}
+                      <span className="donation-quantity-label">
+                        {item}
+                        <button
+                          type="button"
+                          className="donation-remove-item"
+                          onClick={() => removeSelectedItem(item)}
+                          aria-label={`Remover ${item}`}
+                        >
+                          <FaTimes aria-hidden="true" />
+                        </button>
+                      </span>
                       <input
                         type="text"
                         inputMode="text"
                         autoComplete="off"
-                        placeholder={`Quantidade de ${item.toLowerCase()}`}
+                        placeholder="Ex.: 10 unidades, 5 kg, 3 kits"
                         value={itemQuantities[item] ?? ''}
                         onChange={(event) => handleQuantityChange(item, event.target.value)}
                       />
@@ -488,7 +541,12 @@ export default function CapsPage(): React.ReactElement {
 
               <label>
                 Dia da entrega
-                <input type="date" value={donationDate} onChange={(event) => setDonationDate(event.target.value)} />
+                <input
+                  type="date"
+                  min={minDonationDate}
+                  value={donationDate}
+                  onChange={(event) => setDonationDate(event.target.value)}
+                />
               </label>
 
               <label>
@@ -496,9 +554,23 @@ export default function CapsPage(): React.ReactElement {
                 <input type="time" value={donationTime} onChange={(event) => setDonationTime(event.target.value)} />
               </label>
 
+              <div className="donation-time-chips" role="group" aria-label="Horários sugeridos">
+                {suggestedDonationTimes.map((time) => (
+                  <button
+                    key={time}
+                    type="button"
+                    className={donationTime === time ? 'is-active' : ''}
+                    onClick={() => setDonationTime(time)}
+                  >
+                    <FaClock aria-hidden="true" />
+                    {time}
+                  </button>
+                ))}
+              </div>
+
               <fieldset className="donation-form__anonymity">
                 <legend>Doador anônimo?</legend>
-                <label>
+                <label className={anonymousDonation === 'sim' ? 'is-selected' : ''}>
                   <input
                     type="radio"
                     name="anonymousDonation"
@@ -506,9 +578,10 @@ export default function CapsPage(): React.ReactElement {
                     checked={anonymousDonation === 'sim'}
                     onChange={() => setAnonymousDonation('sim')}
                   />
+                  <FaInfoCircle aria-hidden="true" />
                   Sim
                 </label>
-                <label>
+                <label className={anonymousDonation === 'nao' ? 'is-selected' : ''}>
                   <input
                     type="radio"
                     name="anonymousDonation"
@@ -516,6 +589,7 @@ export default function CapsPage(): React.ReactElement {
                     checked={anonymousDonation === 'nao'}
                     onChange={() => setAnonymousDonation('nao')}
                   />
+                  <FaUser aria-hidden="true" />
                   Não
                 </label>
               </fieldset>
@@ -549,10 +623,51 @@ export default function CapsPage(): React.ReactElement {
               <button type="submit" className="unit-donate-button" disabled={isSubmittingDonation}>
                 {isSubmittingDonation ? 'Registrando...' : 'Registrar intenção de doação'}
               </button>
+              <button type="button" className="unit-secondary-button donation-reset-button" onClick={resetDonationForm}>
+                Limpar formulário
+              </button>
 
               {formMessage ? <p className="form-feedback" role="status" aria-live="polite">{formMessage}</p> : null}
             </form>
           </article>
+
+          <aside className="page-card donation-summary-panel" aria-label="Resumo da intenção de doação">
+            <span className="page-kicker">Resumo</span>
+            <h3>Antes de registrar</h3>
+
+            <div className="donation-summary-panel__section">
+              <strong>Itens selecionados</strong>
+              {selectedDonationSummary.length > 0 ? (
+                <ul>
+                  {selectedDonationSummary.map((item) => (
+                    <li key={item.name}>
+                      <span>{item.name}</span>
+                      <b>{item.quantity}</b>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>Escolha ao menos uma categoria para continuar.</p>
+              )}
+            </div>
+
+            <div className="donation-summary-panel__section">
+              <strong>Entrega</strong>
+              <p>{donationDate || 'Data pendente'} às {donationTime || 'horário pendente'}</p>
+            </div>
+
+            <div className="donation-summary-panel__section">
+              <strong>Identificação</strong>
+              <p>{donorIdentityLabel}</p>
+            </div>
+
+            {whatsappUrl ? (
+              <a className="unit-secondary-button" href={whatsappUrl} target="_blank" rel="noreferrer">
+                <FaWhatsapp aria-hidden="true" />
+                Combinar entrega
+              </a>
+            ) : null}
+          </aside>
         </div>
       ) : null}
     </section>

@@ -59,6 +59,10 @@ export default function DonationRequestCard({
       <div className="donation-request-card__progress" aria-label={`${progress}% atendido`}>
         <span style={{ width: `${progress}%` }} />
       </div>
+      <div className="donation-request-card__progress-label">
+        <span>{progress}% atendido</span>
+        <strong>{donatedAmount} de {need.amount}</strong>
+      </div>
 
       {onDonate ? (
         <button type="button" className="unit-donate-button" onClick={() => onDonate(need)}>

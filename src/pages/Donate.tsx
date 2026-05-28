@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { FaBoxes, FaFilter, FaHospital, FaRegClock } from 'react-icons/fa'
+import { FaBoxes, FaFilter, FaHospital, FaRegClock, FaSearch } from 'react-icons/fa'
 
 import CategoryFilter from '../components/CategoryFilter'
 import DonationRequestCard from '../components/DonationRequestCard'
@@ -11,6 +11,8 @@ import '../Styles/Home.css'
 export default function Donate(): React.ReactElement {
   const [needs, setNeeds] = useState<Need[]>([])
   const [activeCategory, setActiveCategory] = useState<DonationCategoryName | 'Todas'>('Todas')
+  const [activePriority, setActivePriority] = useState<'Todas' | Need['priority']>('Todas')
+  const [searchTerm, setSearchTerm] = useState('')
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -31,16 +33,31 @@ export default function Donate(): React.ReactElement {
     }
   }, [])
 
-  const visibleNeeds = useMemo(
-    () => activeCategory === 'Todas'
-      ? needs
-      : needs.filter((need) => need.category === activeCategory),
-    [activeCategory, needs],
-  )
+  const visibleNeeds = useMemo(() => {
+    const normalizedSearch = searchTerm.trim().toLocaleLowerCase('pt-BR')
+
+    return needs.filter((need) => {
+      const matchesCategory = activeCategory === 'Todas' || need.category === activeCategory
+      const matchesPriority = activePriority === 'Todas' || need.priority === activePriority
+      const matchesSearch = !normalizedSearch
+        || `${need.title} ${need.description} ${need.unitName} ${need.category}`
+          .toLocaleLowerCase('pt-BR')
+          .includes(normalizedSearch)
+
+      return matchesCategory && matchesPriority && matchesSearch
+    })
+  }, [activeCategory, activePriority, needs, searchTerm])
 
   const urgentNeeds = visibleNeeds.filter((need) => need.priority === 'alta')
   const otherNeeds = visibleNeeds.filter((need) => need.priority !== 'alta')
   const unitsCount = new Set(visibleNeeds.map((need) => need.unitId)).size
+  const hasActiveFilters = activeCategory !== 'Todas' || activePriority !== 'Todas' || searchTerm.trim().length > 0
+
+  const resetFilters = (): void => {
+    setActiveCategory('Todas')
+    setActivePriority('Todas')
+    setSearchTerm('')
+  }
 
   return (
     <section className="page-block home-urgent-section donate-page">
@@ -49,7 +66,7 @@ export default function Donate(): React.ReactElement {
           <span className="page-kicker">Necessidades da rede</span>
           <h2>Pedidos abertos para doação</h2>
           <p>
-            Filtre por categoria, confira prioridade e status, e escolha a unidade para combinar a entrega.
+            Filtre por categoria, prioridade ou unidade, confira o andamento de cada pedido e escolha onde doar.
           </p>
         </div>
       </header>
@@ -75,13 +92,49 @@ export default function Donate(): React.ReactElement {
       <section className="donate-filter-panel" aria-label="Filtros de necessidades">
         <div className="donate-filter-panel__title">
           <FaFilter aria-hidden="true" />
-          <strong>Filtrar por categoria</strong>
+          <strong>Encontrar pedidos</strong>
         </div>
+
+        <label className="donate-search-field">
+          <FaSearch aria-hidden="true" />
+          <span className="sr-only">Buscar pedido</span>
+          <input
+            type="search"
+            placeholder="Buscar por item, descrição ou CAPS"
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+          />
+        </label>
+
         <CategoryFilter
           categories={donationCategories}
           activeCategory={activeCategory}
           onChange={setActiveCategory}
         />
+
+        <div className="donate-priority-filter" role="group" aria-label="Filtrar por prioridade">
+          {[
+            { value: 'Todas', label: 'Todas' },
+            { value: 'alta', label: 'Urgentes' },
+            { value: 'media', label: 'Moderadas' },
+            { value: 'baixa', label: 'Baixa prioridade' },
+          ].map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              className={`category-filter__button${activePriority === option.value ? ' category-filter__button--active' : ''}`}
+              onClick={() => setActivePriority(option.value as 'Todas' | Need['priority'])}
+            >
+              {option.label}
+            </button>
+          ))}
+
+          {hasActiveFilters ? (
+            <button type="button" className="donate-filter-clear" onClick={resetFilters}>
+              Limpar filtros
+            </button>
+          ) : null}
+        </div>
       </section>
 
       <section className="donate-requests-section" aria-labelledby="urgent-needs-title">
@@ -101,19 +154,19 @@ export default function Donate(): React.ReactElement {
                 key={need.id}
                 need={need}
                 actionTo={`/caps?unit=${need.unitId}`}
-                actionLabel="Quero doar"
+                actionLabel="Doar este pedido"
               />
             ))}
           </div>
         ) : (
-          <p className="home-urgent-empty">Não há pedidos urgentes nesta categoria.</p>
+          <p className="home-urgent-empty">Não há pedidos urgentes com os filtros atuais.</p>
         )}
       </section>
 
       <section className="donate-requests-section" aria-labelledby="other-needs-title">
         <div className="home-urgent-header">
           <div>
-            <span className="page-kicker">Apoio continuo</span>
+            <span className="page-kicker">Apoio contínuo</span>
             <h2 id="other-needs-title">Pedidos moderados e de baixa prioridade</h2>
           </div>
         </div>
@@ -127,15 +180,14 @@ export default function Donate(): React.ReactElement {
                 key={need.id}
                 need={need}
                 actionTo={`/caps?unit=${need.unitId}`}
-                actionLabel="Ver detalhes"
+                actionLabel="Ver e doar"
               />
             ))}
           </div>
         ) : (
-          <p className="home-urgent-empty">Não há pedidos adicionais nesta categoria.</p>
+          <p className="home-urgent-empty">Não há pedidos adicionais com os filtros atuais.</p>
         )}
       </section>
-
     </section>
   )
 }
