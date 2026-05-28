@@ -28,6 +28,24 @@ import '../Styles/CapsPage.css'
 
 const donationOptions = donationCategories
 const selectionAnimationDurationMs = 260
+const donationTimeOptions = [
+  '08:00',
+  '08:30',
+  '09:00',
+  '09:30',
+  '10:00',
+  '10:30',
+  '11:00',
+  '11:30',
+  '13:00',
+  '13:30',
+  '14:00',
+  '14:30',
+  '15:00',
+  '15:30',
+  '16:00',
+  '16:30',
+]
 const suggestedDonationTimes = ['08:00', '09:00', '10:00', '14:00', '15:00', '16:00']
 
 function resolveUnitPhotoPath(photo?: string): string | undefined {
@@ -488,7 +506,7 @@ export default function CapsPage(): React.ReactElement {
               <span className={donationDate && donationTime ? 'is-complete' : ''}><FaCalendarCheck aria-hidden="true" /> Entrega</span>
               <span className={anonymousDonation === 'sim' || (donorName && donorEmail) ? 'is-complete' : ''}><FaUser aria-hidden="true" /> Dados</span>
             </div>
-            <p>Selecione uma ou mais categorias, informe quantidade e combine a entrega com a unidade.</p>
+            <p>Escolha os itens, agende a entrega e registre seus dados.</p>
             <p className="guideline-warning">Não aceitamos dinheiro pelo site.</p>
 
             <div className="donation-actions" role="group" aria-label="Categorias de doação">
@@ -539,8 +557,11 @@ export default function CapsPage(): React.ReactElement {
                 </fieldset>
               ) : null}
 
+              <fieldset className="donation-schedule-card">
+                <legend>Entrega</legend>
+                <div className="donation-schedule-grid">
               <label>
-                Dia da entrega
+                Data
                 <input
                   type="date"
                   min={minDonationDate}
@@ -551,7 +572,12 @@ export default function CapsPage(): React.ReactElement {
 
               <label>
                 Horário da entrega
-                <input type="time" value={donationTime} onChange={(event) => setDonationTime(event.target.value)} />
+                <select value={donationTime} onChange={(event) => setDonationTime(event.target.value)}>
+                  <option value="">Selecione um horário</option>
+                  {donationTimeOptions.map((time) => (
+                    <option key={time} value={time}>{time}</option>
+                  ))}
+                </select>
               </label>
 
               <div className="donation-time-chips" role="group" aria-label="Horários sugeridos">
@@ -567,6 +593,9 @@ export default function CapsPage(): React.ReactElement {
                   </button>
                 ))}
               </div>
+
+                </div>
+              </fieldset>
 
               <fieldset className="donation-form__anonymity">
                 <legend>Doador anônimo?</legend>
