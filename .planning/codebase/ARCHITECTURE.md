@@ -1,323 +1,316 @@
-<!-- refreshed: 2026-05-19 -->
+<!-- refreshed: 2026-05-29 -->
 # Architecture
 
-**Analysis Date:** 2026-05-19
+**Analysis Date:** 2026-05-29
 
 ## System Overview
 
 ```text
-+-------------------------------------------------------------+
-|                 Vite React Single Page App                  |
-|  `index.html` -> `src/main.tsx` -> `src/app/router.tsx`      |
-+------------------+-------------------+----------------------+
-| Public pages     | Admin pages       | Shared UI            |
-| `src/pages`      | `src/pages/admin` | `src/components`     |
-+---------+--------+---------+---------+----------+-----------+
-          |                  |                    |
-          v                  v                    v
-+-------------------------------------------------------------+
-| Frontend data layer                                         |
-| `src/services` + `src/lib/api.ts` + `src/hooks`             |
-+------------------------------+------------------------------+
-                               |
-                               v
-+-------------------------------------------------------------+
-| Express API                                                  |
-| `server/src/index.ts` -> `server/src/app.ts` -> routes       |
-+------------------+-------------------+----------------------+
-| Routes           | Controllers       | Middleware           |
-| `server/src/routes` | `server/src/controllers` | `server/src/middleware` |
-+---------+--------+---------+---------+----------+-----------+
-          |                  |                    |
-          v                  v                    v
-+-------------------------------------------------------------+
-| Domain services, repositories, Prisma client                 |
-| `server/src/services`, `server/src/repositories`,            |
-| `server/src/lib/prisma.ts`                                  |
-+-------------------------------------------------------------+
-                               |
-                               v
-+-------------------------------------------------------------+
-| PostgreSQL schema and migrations                             |
-| `server/prisma/schema.prisma`, `server/prisma/migrations`    |
-+-------------------------------------------------------------+
+┌─────────────────────────────────────────────────────────────┐
+│                 Browser React SPA, Vite build               │
+│                 `src/main.tsx`, `src/app/router.tsx`         │
+├──────────────────┬──────────────────┬───────────────────────┤
+│   Public Pages   │  Admin Pages     │   Shared Components   │
+│   `src/pages/`   │  `src/pages/admin/` │ `src/components/`   │
+└────────┬─────────┴────────┬─────────┴──────────┬────────────┘
+         │                  │                     │
+         ▼                  ▼                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│        Frontend API and browser state adapters               │
+│        `src/services/`, `src/lib/`, `src/hooks/`             │
+└───────────────────────────────┬─────────────────────────────┘
+                                │ `/api/*` via Vite proxy or `VITE_API_URL`
+                                ▼
+┌─────────────────────────────────────────────────────────────┐
+│                 Express REST API application                 │
+│                 `server/src/index.ts`, `server/src/app.ts`   │
+├──────────────────┬──────────────────┬───────────────────────┤
+│     Routes       │   Controllers    │  Services/Repositories│
+│ `server/src/routes/` │ `server/src/controllers/` │ `server/src/services/`, `server/src/repositories/` │
+└────────┬─────────┴────────┬─────────┴──────────┬────────────┘
+         │                  │                     │
+         ▼                  ▼                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│                 Prisma Client and PostgreSQL                 │
+│                 `server/src/lib/prisma.ts`, `server/prisma/schema.prisma` │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ## Component Responsibilities
 
 | Component | Responsibility | File |
 |-----------|----------------|------|
-| Browser shell | Loads the React module, security metadata, root mount node, favicon, and CSP/connect policy. | `index.html` |
-| React bootstrap | Installs browser performance telemetry, wraps the app in `ThemeProvider`, and renders `Router`. | `src/main.tsx` |
-| App router | Defines all hash routes and nests pages under the shared `Layout`. | `src/app/router.tsx` |
-| Shared layout | Owns the global navigation, menu state, theme toggle location, and route outlet. | `src/components/Layout.tsx` |
-| Public pages | Compose visitor flows for home, CAPS selection, donation browsing, donor records, and project information. | `src/pages/Home.tsx`, `src/pages/CapsPage.tsx`, `src/pages/Donate.tsx`, `src/pages/YourDonations.tsx`, `src/pages/AboutProject.tsx` |
-| Admin pages | Compose login and dashboard flows for hosts/admins. | `src/pages/admin/Login.tsx`, `src/pages/admin/Dashboard.tsx` |
-| Frontend API client | Centralizes `fetch` base URL, credentials, mutation headers, JSON parsing, and `ApiError`. | `src/lib/api.ts` |
-| Frontend services | Convert UI intentions into API calls and normalize API payloads into frontend types. | `src/services/units-service.ts`, `src/services/needs-service.ts`, `src/services/donations-service.ts`, `src/services/auth-service.ts`, `src/services/dashboard-service.ts` |
-| Frontend hooks | Encapsulate admin login and dashboard data loading side effects. | `src/hooks/useAdminLogin.ts`, `src/hooks/useDashboardData.ts` |
-| API bootstrap | Validates environment, connects Prisma, enables mock mode in local database failures, and starts Express. | `server/src/index.ts` |
-| API app | Configures security middleware, rate limits, JSON parsing, route mounts, healthcheck, and error middleware. | `server/src/app.ts` |
-| API routes | Bind HTTP methods and paths to handlers, controllers, and auth middleware. | `server/src/routes/*.ts` |
-| Controllers | Translate Express requests into service calls for the needs and donations domains. | `server/src/controllers/needs-controller.ts`, `server/src/controllers/donations-controller.ts` |
-| Services | Own validation, pagination, permission checks, fallback feed parsing, and domain decisions. | `server/src/services/*.ts` |
-| Repositories | Isolate Prisma reads/writes for needs and donations. | `server/src/repositories/needs-repository.ts`, `server/src/repositories/donations-repository.ts` |
-| Prisma schema | Defines Units, Needs, Hosts, Donations, Residents, and enums for persisted state. | `server/prisma/schema.prisma` |
+| Vite shell | Loads the React app into `#root` and installs frontend performance telemetry. | `src/main.tsx` |
+| SPA router | Owns all browser routes and wraps them in the shared layout. | `src/app/router.tsx` |
+| Shared layout | Owns navigation, footer, mobile menu state, and admin link target selection. | `src/components/Layout.tsx` |
+| Public home | Loads news highlights, urgent needs, map, and scroll telemetry. | `src/pages/Home.tsx` |
+| CAPS donation flow | Loads units and needs, selects a unit, validates donation intent UI state, and submits donation records. | `src/pages/CapsPage.tsx` |
+| Needs listing page | Loads public needs, filters them client-side, and renders donation request cards. | `src/pages/Donate.tsx` |
+| Admin login | Presents login UI and delegates authentication state to the login hook. | `src/pages/admin/Login.tsx` |
+| Admin dashboard | Owns tab state, admin need creation/deletion UI, donation analytics, and resident display. | `src/pages/admin/Dashboard.tsx` |
+| Frontend API client | Centralizes fetch base URL, credentials, JSON mutation headers, CSRF marker, and API error shape. | `src/lib/api.ts` |
+| Frontend services | Convert UI actions into REST calls and normalize API payloads. | `src/services/needs-service.ts`, `src/services/donations-service.ts`, `src/services/dashboard-service.ts`, `src/services/auth-service.ts` |
+| Frontend hooks | Encapsulate admin login and dashboard loading/redirect behavior. | `src/hooks/useAdminLogin.ts`, `src/hooks/useDashboardData.ts` |
+| Express app | Applies security middleware, rate limits, route mounts, health check, and error handlers. | `server/src/app.ts` |
+| API bootstrap | Validates environment, applies production migrations, connects Prisma, starts HTTP server, and handles shutdown. | `server/src/index.ts` |
+| API routes | Map HTTP verbs and paths to handlers and auth requirements. | `server/src/routes/` |
+| Controllers | Adapt Express requests/responses into service calls for richer domains. | `server/src/controllers/needs-controller.ts`, `server/src/controllers/donations-controller.ts` |
+| Services | Validate payloads with Zod and enforce domain rules before persistence. | `server/src/services/needs-service.ts`, `server/src/services/donations-service.ts`, `server/src/services/highlights-service.ts`, `server/src/services/telemetry-service.ts` |
+| Repositories | Encapsulate Prisma reads/writes for needs and donations. | `server/src/repositories/needs-repository.ts`, `server/src/repositories/donations-repository.ts` |
+| Prisma schema | Defines Unit, Need, Host, Donation, Resident models and indexes. | `server/prisma/schema.prisma` |
 
 ## Pattern Overview
 
-**Overall:** Split frontend/backend application with a React composition layer and an Express REST API backed by Prisma.
+**Overall:** Split frontend/backend monorepo with a React SPA, service-adapter frontend layer, and Express REST backend using route-controller-service-repository layering where the domain is non-trivial.
 
 **Key Characteristics:**
-- Use the frontend page -> service -> `src/lib/api.ts` path for browser/API communication.
-- Use the backend route -> controller -> service -> repository -> Prisma path for domains that already have controllers (`needs`, `donations`).
-- Keep shared presentation components in `src/components` and page orchestration in `src/pages`.
-- Keep persistent data contracts in `server/prisma/schema.prisma` and frontend DTO mapping in `src/services`.
-- Keep static-hosting-safe navigation in `HashRouter` inside `src/app/router.tsx`.
+- Frontend pages in `src/pages/` own route-level state, while reusable presentational UI lives in `src/components/`.
+- Frontend REST calls go through `src/lib/api.ts`; feature-specific adapters live in `src/services/`.
+- Backend public and admin endpoints are grouped by resource in `server/src/routes/`.
+- Backend domains with validation and authorization complexity use controller/service/repository classes in `server/src/controllers/`, `server/src/services/`, and `server/src/repositories/`.
+- Simpler backend resources keep route-local handlers and direct Prisma access in `server/src/routes/units.ts`, `server/src/routes/residents.ts`, and `server/src/routes/auth.ts`.
+- Shared fallback/demo data exists on both sides: frontend `src/data/mockData.ts` and backend `server/src/data/public-fallback.ts`.
 
 ## Layers
 
-**Browser Shell:**
-- Purpose: Provide the static HTML host for the SPA and constrain browser resource loading.
-- Location: `index.html`
-- Contains: Root `<div id="root">`, CSP, metadata, and Vite module script.
-- Depends on: `src/main.tsx`
-- Used by: Vite development server and production static hosting.
+**React Entry and Routing:**
+- Purpose: Mount the SPA and translate hash-based browser paths into page components.
+- Location: `src/main.tsx`, `src/app/router.tsx`
+- Contains: `createRoot`, `HashRouter`, `Routes`, route fallback, route redirects.
+- Depends on: `react`, `react-dom/client`, `react-router-dom`, `src/components/Layout.tsx`.
+- Used by: The browser entry `index.html` and Vite build pipeline in `vite.config.js`.
 
-**Frontend Routing and Page Composition:**
-- Purpose: Map URLs to page components and compose page-level workflows.
-- Location: `src/app/router.tsx`, `src/pages`
-- Contains: Hash routes, public pages, admin pages, page-local state, and page-specific effects.
-- Depends on: `react-router-dom`, `src/components`, `src/services`, `src/hooks`, `src/types`
-- Used by: `src/main.tsx`
+**Page Layer:**
+- Purpose: Own route-level workflows, local UI state, effects, filters, and orchestration.
+- Location: `src/pages/`, `src/pages/admin/`
+- Contains: Public pages `src/pages/Home.tsx`, `src/pages/CapsPage.tsx`, `src/pages/Donate.tsx`, `src/pages/AboutProject.tsx`, `src/pages/YourDonations.tsx`; admin pages `src/pages/admin/Login.tsx`, `src/pages/admin/Dashboard.tsx`.
+- Depends on: Components from `src/components/`, service adapters from `src/services/`, helpers from `src/lib/`, types from `src/types/`.
+- Used by: Route declarations in `src/app/router.tsx`.
 
-**Frontend Components:**
-- Purpose: Reusable visual and interactive building blocks.
-- Location: `src/components`, `src/components/ui`
-- Contains: Cards, badges, map, layout, carousel, theme toggle, skeletons, stat widgets.
-- Depends on: React, `react-icons`, `react-leaflet`, `src/types`, selected `src/lib` helpers.
-- Used by: `src/pages`
+**Component Layer:**
+- Purpose: Render reusable UI blocks and compose page sections without owning cross-route data loading.
+- Location: `src/components/`, `src/components/ui/`
+- Contains: Layout, cards, badges, map, dashboard summary, carousel, skeletons.
+- Depends on: Props from `src/types/`, static assets from `public/` and `src/public/`, helper functions from `src/lib/contact.ts`.
+- Used by: Pages in `src/pages/` and `src/pages/admin/`.
 
-**Frontend Data and Utility Layer:**
-- Purpose: Hide API details and shared browser utilities from pages.
-- Location: `src/services`, `src/lib`, `src/hooks`
-- Contains: API transport, DTO normalization, telemetry, local donation intentions, auth bypass checks, dashboard loading.
-- Depends on: `fetch`, `localStorage`, `import.meta.env`, `src/types`
-- Used by: `src/pages`, `src/components/ui/ThemeToggle.tsx`, `src/lib/performance-metrics.ts`
+**Frontend Service and Helper Layer:**
+- Purpose: Keep API mechanics, API payload normalization, local browser storage, auth bypass checks, telemetry, and contact URL helpers out of UI components.
+- Location: `src/services/`, `src/lib/`, `src/hooks/`
+- Contains: Fetch wrappers in `src/lib/api.ts`, public need helper in `src/lib/needs.ts`, local auth logic in `src/lib/auth.ts`, donation intent storage in `src/services/donor-intentions-service.ts`, dashboard loading in `src/hooks/useDashboardData.ts`.
+- Depends on: Browser APIs, `import.meta.env`, `fetch`, `localStorage`, and frontend types in `src/types/`.
+- Used by: Pages and components across `src/pages/`, `src/components/`, and `src/hooks/`.
 
-**API Composition Layer:**
-- Purpose: Build and configure the Express app.
+**Express Application Layer:**
+- Purpose: Configure global API behavior before resource routes run.
 - Location: `server/src/app.ts`
-- Contains: Helmet, CORS, rate limiters, cookie parsing, origin/content-type guards, route mounts, healthcheck.
-- Depends on: `server/src/routes`, `server/src/middleware`, `server/src/config/security.ts`
-- Used by: `server/src/index.ts`
+- Contains: Helmet, CORS delegate, rate limits, cookie parsing, trusted-origin enforcement, JSON content-type enforcement, JSON body parser, route mounts, health endpoint, 404/error handlers.
+- Depends on: Middleware in `server/src/middleware/`, security config in `server/src/config/security.ts`, routers in `server/src/routes/`.
+- Used by: HTTP bootstrap in `server/src/index.ts`.
 
-**API Route Layer:**
-- Purpose: Define REST endpoints and attach auth requirements.
-- Location: `server/src/routes`
-- Contains: `auth`, `units`, `needs`, `donations`, `residents`, `highlights`, and `telemetry` routers.
-- Depends on: Controllers, services, middleware, Prisma for direct-route domains.
-- Used by: `server/src/app.ts`
+**Backend Route Layer:**
+- Purpose: Bind REST paths and HTTP verbs to resource handlers and auth requirements.
+- Location: `server/src/routes/`
+- Contains: `server/src/routes/auth.ts`, `server/src/routes/units.ts`, `server/src/routes/needs.ts`, `server/src/routes/donations.ts`, `server/src/routes/residents.ts`, `server/src/routes/highlights.ts`, `server/src/routes/telemetry.ts`.
+- Depends on: `express.Router`, `server/src/utils/async-handler.ts`, auth middleware, controllers, services, and Prisma.
+- Used by: `server/src/app.ts`.
 
-**API Domain Layer:**
-- Purpose: Validate inputs, apply business rules, paginate, and coordinate persistence.
-- Location: `server/src/controllers`, `server/src/services`, `server/src/repositories`
-- Contains: Controller classes for needs/donations, service classes, singleton services, repository classes.
-- Depends on: `zod`, `AppError`, `ValidationError`, `server/src/lib/prisma.ts`, `server/src/utils`
-- Used by: `server/src/routes`
+**Backend Domain Layer:**
+- Purpose: Validate inputs, enforce resource ownership, normalize pagination, and coordinate persistence.
+- Location: `server/src/controllers/`, `server/src/services/`, `server/src/repositories/`
+- Contains: Needs and donations controllers, services, repositories, plus singleton in-memory services for highlights and telemetry.
+- Depends on: Zod, `server/src/errors/`, repositories, Prisma, and utility helpers.
+- Used by: Routes in `server/src/routes/`.
 
 **Persistence Layer:**
-- Purpose: Define database shape and expose Prisma access.
-- Location: `server/prisma/schema.prisma`, `server/prisma/migrations`, `server/src/lib/prisma.ts`
-- Contains: Prisma models, migrations, seed script, Prisma singleton.
-- Depends on: PostgreSQL via `DATABASE_URL`
-- Used by: Repositories and direct-route handlers.
+- Purpose: Provide database schema, generated Prisma client, migrations, and seed data.
+- Location: `server/prisma/`, `server/src/lib/prisma.ts`, `server/src/prisma/seed.ts`
+- Contains: PostgreSQL datasource, Prisma models, migrations, client singleton, seed script.
+- Depends on: `@prisma/client`, `prisma`, `DATABASE_URL`.
+- Used by: Repositories and direct route handlers in `server/src/routes/`.
 
 ## Data Flow
 
-### Public Donation Registration Path
+### Primary Public Donation Path
 
-1. Visitor chooses a CAPS unit and submits the donation form in `src/pages/CapsPage.tsx:236`.
-2. The page validates browser-side fields with `validateDonationInput` from `src/services/donations-service.ts:25`.
-3. `registerDonations` maps selected labels to API categories and posts each donation to `/api/donations` through `src/lib/api.ts:42`.
-4. Express mounts the donations router at `/api/donations` in `server/src/app.ts:86`.
-5. `server/src/routes/donations.ts:9` sends public creation requests to `DonationsController.create`.
-6. `server/src/controllers/donations-controller.ts:7` delegates to `DonationsService.create`.
-7. `server/src/services/donations-service.ts:25` validates with Zod, resolves the unit by slug, and calls the repository.
-8. `server/src/repositories/donations-repository.ts:18` writes the donation through Prisma.
-9. Prisma persists to the `Donation` model in `server/prisma/schema.prisma`.
-10. On success, the page also records a local donor intention through `src/services/donor-intentions-service.ts`.
+1. User enters the CAPS flow through the hash route `/caps/*` in `src/app/router.tsx:27`.
+2. `src/pages/CapsPage.tsx:86` loads units with `fetchUnits()` from `src/services/units-service.ts` and falls back to `src/data/mockData.ts` when API data is unavailable.
+3. `src/pages/CapsPage.tsx:96` loads needs through `fetchPublicNeeds()` from `src/lib/needs.ts`, which delegates to `fetchNeeds()` and `normalizeNeed()` in `src/services/needs-service.ts`.
+4. `src/pages/CapsPage.tsx:245` validates form state with `validateDonationInput()` from `src/services/donations-service.ts`.
+5. `src/pages/CapsPage.tsx:265` submits one API request per selected item with `registerDonations()` from `src/services/donations-service.ts`.
+6. `src/services/donations-service.ts:43` posts to `/api/donations` through `src/lib/api.ts`.
+7. `server/src/app.ts:84` routes `/api/donations` to `server/src/routes/donations.ts`.
+8. `server/src/routes/donations.ts:9` handles public donation creation through `DonationsController.create`.
+9. `server/src/controllers/donations-controller.ts:7` calls `DonationsService.create()`.
+10. `server/src/services/donations-service.ts:24` validates with Zod, resolves the target unit, and calls `DonationsRepository.create()`.
+11. `server/src/repositories/donations-repository.ts:10` writes the donation with Prisma using `server/src/lib/prisma.ts`.
 
-### Public Needs Browsing Path
+### Admin Need Management Path
 
-1. `src/pages/Home.tsx:46` requests urgent needs with `fetchNeedsPage`.
-2. `src/services/needs-service.ts:62` builds `/api/needs?paginate=true&page=...&priority=...`.
-3. `src/lib/api.ts:37` sends the credentialed GET request.
-4. `server/src/app.ts:85` mounts the needs router.
-5. `server/src/routes/needs.ts:9` calls `NeedsController.list`.
-6. `server/src/controllers/needs-controller.ts:11` parses priority, unit, and pagination options.
-7. When `API_MOCK_MODE` is active, `server/src/controllers/needs-controller.ts:25` returns `server/src/data/public-fallback.ts` data.
-8. Otherwise `server/src/services/needs-service.ts:19` resolves pagination and asks `NeedsRepository.listPaginated`.
-9. `server/src/repositories/needs-repository.ts:25` fetches rows and count in a Prisma transaction.
-10. `src/services/needs-service.ts:44` normalizes API needs into frontend `Need` objects.
+1. Admin routes are declared at `/admin/login` and `/admin/*` in `src/app/router.tsx:33` and `src/app/router.tsx:36`.
+2. `src/hooks/useAdminLogin.ts` logs in through `src/services/auth-service.ts` and stores the host snapshot in `localStorage`.
+3. `src/hooks/useDashboardData.ts:29` loads the current host with `/api/auth/me` and redirects to `/admin/login` when auth fails.
+4. `src/hooks/useDashboardData.ts:36` loads dashboard collections through `src/services/dashboard-service.ts`.
+5. `src/pages/admin/Dashboard.tsx:82` creates a need through `createNeed()` from `src/services/needs-service.ts`.
+6. `src/services/needs-service.ts:78` posts to `/api/needs`.
+7. `server/src/app.ts:83` routes `/api/needs` to `server/src/routes/needs.ts`.
+8. `server/src/routes/needs.ts:10` protects creation with `requireAuth` from `server/src/middleware/auth.ts`.
+9. `server/src/controllers/needs-controller.ts:62` passes `req.authHost!.unitId` into `NeedsService.create()`.
+10. `server/src/services/needs-service.ts:37` validates payloads and writes through `NeedsRepository.create()`.
+11. `server/src/repositories/needs-repository.ts:49` persists the Need row through Prisma.
 
-### Admin Authentication and Dashboard Path
+### Highlight and Telemetry Path
 
-1. The admin route `/admin/login` renders `src/pages/admin/Login.tsx` through `src/app/router.tsx:32`.
-2. `src/hooks/useAdminLogin.ts:36` posts credentials using `loginWithEmail` from `src/services/auth-service.ts`.
-3. `src/lib/api.ts:42` includes JSON and anti-CSRF headers for mutations.
-4. `server/src/app.ts:80` applies a strict login rate limiter before the auth router.
-5. `server/src/routes/auth.ts:51` validates credentials, supports configured environment admin login, verifies bcrypt hashes, and sets an httpOnly JWT cookie.
-6. `src/hooks/useAdminLogin.ts:38` calls `/api/auth/me` to load the current host.
-7. `server/src/middleware/auth.ts:64` reads the cookie, verifies the JWT, and attaches `req.authHost`.
-8. `src/hooks/useDashboardData.ts:25` fetches the logged host, then `src/services/dashboard-service.ts:8` loads needs, donations, and residents in parallel.
-9. Protected backend routes filter data by `req.authHost!.unitId` in files such as `server/src/routes/residents.ts:18` and `server/src/controllers/donations-controller.ts:12`.
-
-### API Startup and Fallback Path
-
-1. `server/src/index.ts:6` validates environment before listening.
-2. `server/src/index.ts:13` attempts `prisma.$connect()`.
-3. In non-production database connection failures, `server/src/index.ts:20` sets `API_MOCK_MODE=true`.
-4. Fallback-aware routes and controllers return `server/src/data/public-fallback.ts` data for public reads.
-5. `server/src/index.ts:24` starts Express on `PORT` or `3333`.
+1. `src/pages/Home.tsx:23` loads highlights through `src/services/highlights-service.ts`.
+2. `server/src/routes/highlights.ts:8` exposes public highlights and sets a short public cache header.
+3. `server/src/services/highlights-service.ts:78` combines filtered RSS news with in-memory seeded highlights.
+4. `src/pages/Home.tsx:58` emits scroll-depth telemetry through `src/services/telemetry-service.ts`.
+5. `server/src/routes/telemetry.ts:8` accepts telemetry events without auth and stores them in `server/src/services/telemetry-service.ts`.
+6. `server/src/routes/telemetry.ts:13` exposes summaries only through `requireAdmin`.
 
 **State Management:**
-- Frontend state is React local state in pages and hooks, plus browser `localStorage` for logged host cache and donor intentions.
-- Theme state lives in `src/theme/ThemeProvider.tsx` and is consumed by `src/components/ui/ThemeToggle.tsx`.
-- Backend request state uses Express `req.authHost` added by `server/src/middleware/auth.ts`.
-- Backend global state includes the Prisma singleton in `server/src/lib/prisma.ts`, in-memory telemetry in `server/src/services/telemetry-service.ts`, and in-memory highlights state in `server/src/services/highlights-service.ts`.
+- React local state and effects handle page workflows in `src/pages/Home.tsx`, `src/pages/CapsPage.tsx`, `src/pages/Donate.tsx`, and `src/pages/admin/Dashboard.tsx`.
+- Auth session UI state is mirrored in `localStorage` by `src/hooks/useAdminLogin.ts`, `src/hooks/useDashboardData.ts`, and `src/components/Layout.tsx`; the actual backend session is an httpOnly JWT cookie configured in `server/src/lib/session-cookie.ts`.
+- Donor intentions for the "Minhas doacoes" page are local browser records managed in `src/services/donor-intentions-service.ts`.
+- Backend telemetry is process-local memory in `server/src/services/telemetry-service.ts`.
+- Backend highlight admin mutations are process-local memory in `server/src/services/highlights-service.ts`; seeded highlights come from `server/src/data/highlights.ts`.
 
 ## Key Abstractions
 
-**Frontend API Transport:**
-- Purpose: Normalize fetch, base URL, credentials, JSON mutation headers, and errors.
-- Examples: `src/lib/api.ts`, `src/services/needs-service.ts`, `src/services/donations-service.ts`
-- Pattern: Small transport module exported as named functions and default object.
+**API Client:**
+- Purpose: Provide one fetch boundary for frontend API calls and consistent error handling.
+- Examples: `src/lib/api.ts`, `src/services/needs-service.ts`, `src/services/donations-service.ts`, `src/services/auth-service.ts`
+- Pattern: `api.get`, `api.post`, and `api.del` wrap `fetch` with credentials and parse error bodies into `ApiError`.
 
-**Frontend DTO Mappers:**
-- Purpose: Convert backend DTOs into UI types.
-- Examples: `src/services/units-service.ts`, `src/services/needs-service.ts`
-- Pattern: Export API-specific types and pure mapper functions such as `mapApiUnitToCap` and `normalizeNeed`.
+**Frontend Feature Services:**
+- Purpose: Keep payload mapping and fallback normalization out of page components.
+- Examples: `src/services/needs-service.ts`, `src/services/units-service.ts`, `src/services/dashboard-service.ts`, `src/lib/needs.ts`
+- Pattern: Export typed functions, normalize API records into `src/types/`, and return empty arrays or fallback data when public pages can continue.
 
-**Page-Oriented Workflows:**
-- Purpose: Keep user workflows close to the routed page.
-- Examples: `src/pages/CapsPage.tsx`, `src/pages/Home.tsx`, `src/pages/admin/Dashboard.tsx`
-- Pattern: Page components compose services, hooks, local state, and presentation components.
+**Admin Hooks:**
+- Purpose: Encapsulate auth, redirect, local bypass, and dashboard bootstrap behavior.
+- Examples: `src/hooks/useAdminLogin.ts`, `src/hooks/useDashboardData.ts`
+- Pattern: Hooks own side effects and return state/actions to admin pages.
 
-**Backend Controller Classes:**
-- Purpose: Keep Express request/response adaptation separate from domain services for needs and donations.
-- Examples: `server/src/controllers/needs-controller.ts`, `server/src/controllers/donations-controller.ts`
-- Pattern: Classes with arrow-function handlers and injectable service constructor defaults.
+**Route-Controller-Service-Repository:**
+- Purpose: Separate HTTP wiring from validation/domain logic and Prisma persistence for needs and donations.
+- Examples: `server/src/routes/needs.ts`, `server/src/controllers/needs-controller.ts`, `server/src/services/needs-service.ts`, `server/src/repositories/needs-repository.ts`
+- Pattern: Route constructs a controller once, controller methods are arrow properties, services validate with Zod, repositories call Prisma.
 
-**Backend Services:**
-- Purpose: Validate payloads and apply business rules before persistence.
-- Examples: `server/src/services/needs-service.ts`, `server/src/services/donations-service.ts`, `server/src/services/highlights-service.ts`, `server/src/services/telemetry-service.ts`
-- Pattern: Zod validation, `AppError`/`ValidationError`, repository delegation where repositories exist.
+**Async Route Wrapper:**
+- Purpose: Forward rejected promises into the centralized Express error handler.
+- Examples: `server/src/utils/async-handler.ts`, `server/src/routes/needs.ts`, `server/src/routes/donations.ts`, `server/src/routes/highlights.ts`
+- Pattern: Wrap async route handlers with `asyncHandler(handler)`.
 
-**Backend Repositories:**
-- Purpose: Encapsulate Prisma queries for domains with controller/service separation.
-- Examples: `server/src/repositories/needs-repository.ts`, `server/src/repositories/donations-repository.ts`
-- Pattern: Class methods return Prisma calls and transactions.
+**Application Errors:**
+- Purpose: Carry HTTP status and safe validation details through Express.
+- Examples: `server/src/errors/app-error.ts`, `server/src/errors/validation-error.ts`, `server/src/middleware/error-handler.ts`
+- Pattern: Throw `AppError` or `ValidationError` from services; `errorHandler` serializes known errors and logs unknown errors.
 
-**Auth Context:**
-- Purpose: Attach authenticated host identity and authorization role to Express requests.
-- Examples: `server/src/middleware/auth.ts`, `server/src/lib/jwt.ts`, `server/src/routes/auth.ts`
-- Pattern: JWT in httpOnly cookie, Zod-validated payload, `req.authHost` extension, role checks in middleware and services.
+**Prisma Singleton:**
+- Purpose: Share one Prisma client with consistent logging and transaction timeout options.
+- Examples: `server/src/lib/prisma.ts`, `server/src/repositories/donations-repository.ts`, `server/src/routes/units.ts`
+- Pattern: Import the default `prisma` singleton rather than constructing `PrismaClient` in request code.
 
 ## Entry Points
 
-**Frontend HTML:**
+**Frontend HTML Entry:**
 - Location: `index.html`
-- Triggers: Browser request to the static site.
-- Responsibilities: CSP, metadata, root element, and Vite module entry.
+- Triggers: Browser loads the Vite bundle.
+- Responsibilities: Provides `#root` for React and static document shell.
 
-**Frontend Runtime:**
+**Frontend React Entry:**
 - Location: `src/main.tsx`
-- Triggers: Vite script module loaded by `index.html`.
-- Responsibilities: Install performance telemetry, provide theme context, render router.
+- Triggers: Vite module execution in the browser.
+- Responsibilities: Install performance metrics and render `Router` inside `React.StrictMode`.
 
-**Frontend Routing:**
+**Frontend Router:**
 - Location: `src/app/router.tsx`
-- Triggers: Hash URL changes.
-- Responsibilities: Route public/admin pages under `Layout`, redirect `/home`, handle unmatched routes.
+- Triggers: React render from `src/main.tsx`.
+- Responsibilities: Declare hash routes, redirects, shared layout, admin routes, and route fallback.
 
-**API Runtime:**
+**Backend HTTP Entry:**
 - Location: `server/src/index.ts`
-- Triggers: `npm --prefix server run dev` or `npm --prefix server start`.
-- Responsibilities: Load environment, validate configuration, connect Prisma, start Express.
+- Triggers: `npm --prefix server run dev`, `npm --prefix server run start`, or root `dev:api`.
+- Responsibilities: Load environment, validate config, optionally deploy migrations in production, connect Prisma, listen on `PORT`, and graceful shutdown.
 
-**Express App:**
+**Backend Express App:**
 - Location: `server/src/app.ts`
-- Triggers: Imported by `server/src/index.ts` and Express request dispatch.
-- Responsibilities: Configure security, rate limits, JSON parsing, routers, healthcheck, and error handling.
+- Triggers: Imported by `server/src/index.ts` and potentially tests.
+- Responsibilities: Configure middleware and mount all `/api/*` routers.
 
-**Database Schema:**
-- Location: `server/prisma/schema.prisma`
-- Triggers: Prisma generate, migrate, seed, runtime client queries.
-- Responsibilities: Define persisted models and relations.
+**Database Schema and Migrations:**
+- Location: `server/prisma/schema.prisma`, `server/prisma/migrations/`
+- Triggers: `npm --prefix server run db:migrate`, `db:deploy`, `db:generate`, or server production startup.
+- Responsibilities: Define and evolve PostgreSQL tables used by Prisma.
 
-**Seed Script:**
-- Location: `server/src/prisma/seed.ts`
-- Triggers: `npm --prefix server run db:seed`.
-- Responsibilities: Upsert units, hosts, and initial needs.
+**Development Orchestration Scripts:**
+- Location: `scripts/dev.mjs`, `scripts/dev-all.mjs`, `scripts/preview.mjs`
+- Triggers: Root `npm run dev`, `npm run dev:all`, and `npm run start`.
+- Responsibilities: Start frontend preview/development processes and combined local development workflows.
 
 ## Architectural Constraints
 
-- **Threading:** Node/Express and Vite run on a single event loop per process. Request concurrency is async I/O through Express handlers, Prisma promises, and browser fetches.
-- **Global state:** `server/src/lib/prisma.ts` creates one Prisma singleton. `server/src/services/telemetry-service.ts` and `server/src/services/highlights-service.ts` keep process-local state. `src/theme/ThemeProvider.tsx` keeps browser theme state and `src/services/donor-intentions-service.ts` persists donor records in `localStorage`.
-- **Circular imports:** Not detected in the inspected source. Imports generally point from pages to components/services/types, routes to controllers/services/middleware, services to repositories, and repositories to Prisma.
-- **Routing mode:** The frontend uses `HashRouter` in `src/app/router.tsx` so static hosts do not need rewrite rules.
-- **API base URL:** Frontend calls use `VITE_API_URL` via `src/lib/api.ts`; when unset, relative `/api` requests use the Vite dev proxy in `vite.config.js`.
-- **Auth storage:** API sessions use an httpOnly `token` cookie from `server/src/routes/auth.ts`; frontend caches display host data in `localStorage` but does not own the authoritative session.
-- **Production environment validation:** `server/src/config/env.ts` requires production `DATABASE_URL`, `FRONTEND_URL`, a sufficiently long `JWT_SECRET`, and disables local auth bypass.
-- **Asset resolution:** Public assets exist in both `public` and `src/public`. Import-based image use points at `src/public`; URL path use points at `public`.
+- **Threading:** `src/` runs in the browser event loop; `server/src/` runs in a single Node.js process with async I/O and no worker thread layer.
+- **Global state:** `server/src/lib/prisma.ts` exports a process-wide Prisma client; `server/src/services/highlights-service.ts` and `server/src/services/telemetry-service.ts` export process-wide singleton services; `src/services/donor-intentions-service.ts` uses browser `localStorage`.
+- **Circular imports:** Not detected in sampled imports across `src/` and `server/src/`; imports generally flow from entry/page layers into components/services/helpers and from backend routes into controllers/services/repositories.
+- **Auth boundary:** Backend authorization lives in `server/src/middleware/auth.ts`; frontend `src/lib/auth.ts` only controls local UI bypass and never replaces backend checks.
+- **API base path:** Frontend calls relative `/api/*` by default through `src/lib/api.ts`; Vite proxies `/api` to `http://localhost:3333` in `vite.config.js`; deployed clients can override with `VITE_API_URL`.
+- **Static hosting:** `src/app/router.tsx` uses `HashRouter`, so new frontend routes must work after `#` without server rewrites.
+- **Database provider:** `server/prisma/schema.prisma` uses PostgreSQL; repository code assumes Prisma models generated from this schema.
+- **Secrets:** Runtime secrets are environment variables consumed by `server/src/config/env.ts`, `server/src/lib/jwt.ts`, and `server/src/routes/auth.ts`; do not read `.env` files or duplicate secret values into code.
 
 ## Anti-Patterns
 
-### Direct Prisma in Route Handlers
+### Bypassing Frontend Service Adapters
 
-**What happens:** Several route modules call Prisma directly instead of using a controller/service/repository chain.
-**Why it's wrong:** Auth, validation, persistence, and response shaping become harder to reuse and test when mixed in route handlers.
-**Do this instead:** For new database-backed endpoints, follow `server/src/routes/needs.ts` -> `server/src/controllers/needs-controller.ts` -> `server/src/services/needs-service.ts` -> `server/src/repositories/needs-repository.ts`.
+**What happens:** Some pages coordinate many service calls directly, while API mechanics are centralized in `src/lib/api.ts` and feature adapters such as `src/services/needs-service.ts`.
+**Why it's wrong:** Raw `fetch` in pages would duplicate credentials, CSRF headers, response parsing, and API error handling already defined in `src/lib/api.ts`.
+**Do this instead:** Add or extend a typed adapter in `src/services/` or `src/lib/` first, then call it from pages such as `src/pages/Home.tsx`, `src/pages/CapsPage.tsx`, or `src/pages/admin/Dashboard.tsx`.
 
-### Large Page Components as Workflow Containers
+### Adding Complex Backend Logic Directly In Routes
 
-**What happens:** Pages such as `src/pages/CapsPage.tsx` and `src/pages/admin/Dashboard.tsx` contain substantial state orchestration, service calls, form behavior, and rendering in one file.
-**Why it's wrong:** New workflow branches can make page files harder to reason about and can duplicate loading/error behavior.
-**Do this instead:** Move reusable side effects into hooks following `src/hooks/useDashboardData.ts` and `src/hooks/useAdminLogin.ts`; keep shared API and normalization logic in `src/services`.
+**What happens:** Simple resources use direct route handlers in `server/src/routes/units.ts`, `server/src/routes/residents.ts`, and `server/src/routes/auth.ts`; needs and donations use deeper classes because they have validation, ownership, and pagination rules.
+**Why it's wrong:** New complex route-local logic makes validation, authorization, and persistence harder to test and reuse.
+**Do this instead:** For new resource workflows with branching rules or persistence policies, follow `server/src/routes/needs.ts` -> `server/src/controllers/needs-controller.ts` -> `server/src/services/needs-service.ts` -> `server/src/repositories/needs-repository.ts`.
 
-### Mixed Mock and API Fallbacks
+### Treating Process Memory As Durable Storage
 
-**What happens:** The frontend falls back to mock data in pages and lib helpers, while the backend can also enter `API_MOCK_MODE`.
-**Why it's wrong:** Public screens can show different fallback shapes depending on which layer failed.
-**Do this instead:** Prefer backend fallback for public read endpoints through `server/src/data/public-fallback.ts`, and keep frontend fallback limited to last-resort UI resilience in `src/lib/needs.ts` and page loaders.
+**What happens:** `server/src/services/highlights-service.ts` stores admin-created highlights in a `Map`, and `server/src/services/telemetry-service.ts` stores telemetry in an in-memory array.
+**Why it's wrong:** Process-local data resets on restart and does not scale across multiple API instances.
+**Do this instead:** Use process-local services only for ephemeral features; durable resources should get Prisma models in `server/prisma/schema.prisma`, migrations in `server/prisma/migrations/`, repository methods in `server/src/repositories/`, and route/service APIs under `server/src/routes/` and `server/src/services/`.
+
+### Confusing UI Auth State With API Auth
+
+**What happens:** `src/components/Layout.tsx`, `src/hooks/useAdminLogin.ts`, and `src/hooks/useDashboardData.ts` use `localStorage` to guide navigation and local demo behavior.
+**Why it's wrong:** `localStorage` is not proof of authorization; protected API mutations rely on the httpOnly cookie validated by `server/src/middleware/auth.ts`.
+**Do this instead:** Use frontend auth state only for UI routing, and protect every sensitive backend route with `requireAuth` or `requireAdmin` as shown in `server/src/routes/needs.ts`, `server/src/routes/donations.ts`, `server/src/routes/residents.ts`, `server/src/routes/highlights.ts`, and `server/src/routes/telemetry.ts`.
 
 ## Error Handling
 
-**Strategy:** Convert expected domain failures into structured HTTP errors, catch async route errors centrally, and surface frontend fetch failures as `ApiError`.
+**Strategy:** Frontend services throw typed `ApiError` from `src/lib/api.ts`; backend async route failures are forwarded by `server/src/utils/async-handler.ts` into `server/src/middleware/error-handler.ts`, where known `AppError` instances produce controlled JSON responses.
 
 **Patterns:**
-- Wrap async Express handlers with `server/src/utils/async-handler.ts`.
-- Throw `AppError` or `ValidationError` from services and security config.
-- Use `server/src/middleware/error-handler.ts` after all routes to handle not-found and unexpected errors.
-- Parse Zod validation failures into `details` through `server/src/errors/validation-error.ts`.
-- Throw `ApiError` from `src/lib/api.ts` when fetch responses are not `ok`.
-- Use page-level fallback catches in `src/pages/Home.tsx`, `src/pages/CapsPage.tsx`, `src/hooks/useDashboardData.ts`, and `src/hooks/useAdminLogin.ts`.
+- Use `safeParse` with Zod in backend services and route handlers, as in `server/src/services/donations-service.ts`, `server/src/services/needs-service.ts`, `server/src/routes/auth.ts`, and `server/src/routes/residents.ts`.
+- Throw `ValidationError` or `AppError` from backend service layers, as in `server/src/services/needs-service.ts` and `server/src/services/donations-service.ts`.
+- Return explicit 401/403 responses inside auth middleware in `server/src/middleware/auth.ts`.
+- Let public frontend pages fall back to local data where the UX can continue, as in `src/pages/CapsPage.tsx`, `src/pages/Home.tsx`, `src/lib/needs.ts`, and `server/src/data/public-fallback.ts`.
+- Use `try/catch` in page-level effects around optional public data such as highlights and needs, as in `src/pages/Home.tsx`.
 
 ## Cross-Cutting Concerns
 
-**Logging:** Backend startup and unexpected errors use `console` in `server/src/index.ts` and `server/src/middleware/error-handler.ts`. Prisma warning/error logging is configured in `server/src/lib/prisma.ts`.
+**Logging:** Backend startup and shutdown logs live in `server/src/index.ts`; unknown backend errors are logged in `server/src/middleware/error-handler.ts`; Prisma log levels are configured in `server/src/lib/prisma.ts`.
 
-**Validation:** Backend validation uses Zod in `server/src/services/needs-service.ts`, `server/src/services/donations-service.ts`, `server/src/routes/auth.ts`, `server/src/routes/residents.ts`, and `server/src/lib/jwt.ts`. Frontend form validation uses `src/services/donations-service.ts`.
+**Validation:** Frontend form validation is local in `src/services/donations-service.ts` and `src/pages/admin/Dashboard.tsx`; authoritative backend validation uses Zod in `server/src/services/donations-service.ts`, `server/src/services/needs-service.ts`, `server/src/routes/auth.ts`, `server/src/routes/residents.ts`, `server/src/services/highlights-service.ts`, and `server/src/services/telemetry-service.ts`.
 
-**Authentication:** Login is in `server/src/routes/auth.ts`; JWT signing/verification is in `server/src/lib/jwt.ts`; route protection and local bypass are in `server/src/middleware/auth.ts`; frontend login/dashboard hooks are in `src/hooks/useAdminLogin.ts` and `src/hooks/useDashboardData.ts`.
+**Authentication:** Backend sessions use JWTs signed in `server/src/lib/jwt.ts`, stored with `server/src/lib/session-cookie.ts`, and verified by `server/src/middleware/auth.ts`; frontend login state and local bypass UI live in `src/hooks/useAdminLogin.ts`, `src/hooks/useDashboardData.ts`, and `src/lib/auth.ts`.
 
-**Security:** `server/src/app.ts` installs Helmet, CORS, cookie parsing, JSON limits, rate limits, trusted-origin checks, and content-type checks. `index.html` adds a browser CSP. `server/src/config/env.ts` validates production security configuration.
+**Security Middleware:** `server/src/app.ts` applies Helmet, CORS, trusted-origin checks, JSON content-type checks, body size limits, cookie parsing, and per-route rate limits; origin policy and CSRF header rules live in `server/src/config/security.ts`.
 
-**Telemetry:** Browser telemetry is sent from `src/lib/performance-metrics.ts`, `src/services/telemetry-service.ts`, and UI components to `/api/telemetry`; the API stores summaries in `server/src/services/telemetry-service.ts`.
+**Configuration:** Frontend TypeScript config is `tsconfig.json`; backend TypeScript config is `server/tsconfig.json`; Vite proxy and preview host rules are in `vite.config.js`; backend environment validation is in `server/src/config/env.ts`.
 
-**Styling:** Page and component styles are organized in `src/Styles/*.css`; global layout styles live in `src/Styles/Layout.css`.
+**Fallback Data:** Public/demo fallback data lives in `src/data/mockData.ts` and `server/src/data/public-fallback.ts`; fallback should be explicit and scoped to public UX or local development modes.
 
 ---
 
-*Architecture analysis: 2026-05-19*
+*Architecture analysis: 2026-05-29*

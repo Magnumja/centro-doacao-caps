@@ -1,36 +1,34 @@
 # Testing Patterns
 
-**Analysis Date:** 2026-05-19
+**Analysis Date:** 2026-05-29
 
 ## Test Framework
 
 **Runner:**
-- Node built-in test runner through `tsx --test`.
-- Version source: `server/package.json` uses Node test imports in `server/src/services/*.test.ts` and the script `"test:unit": "tsx --test src/services/*.test.ts"`.
-- Config: Not detected. There is no `jest.config.*`, `vitest.config.*`, or `playwright.config.*`.
+- Node.js built-in test runner through `tsx --test`.
+- Config: no dedicated test config file is present. The unit test command is defined in `server/package.json`.
+- Test files: `server/src/services/donations-service.test.ts`, `server/src/services/highlights-service.test.ts`, `server/src/services/needs-service.test.ts`.
 
 **Assertion Library:**
-- `node:assert/strict`, imported as `assert` in `server/src/services/needs-service.test.ts`, `server/src/services/donations-service.test.ts`, and `server/src/services/highlights-service.test.ts`.
+- `node:assert/strict`, imported as `assert` in all backend unit tests.
 
 **Run Commands:**
 ```bash
-npm --prefix server run test:unit   # Run backend service unit tests
-npm --prefix server run test:api    # Run manual API smoke script against localhost:3333
-npm run build:all                   # Type-check/build frontend and backend
+npm --prefix server run test:unit   # Run backend unit tests
+npm --prefix server run test:api    # Run manual API smoke script against a local server
+npm run build:all                   # Build frontend and backend as a broader compile check
 ```
-
-No watch-mode or coverage command is defined in `package.json` or `server/package.json`.
 
 ## Test File Organization
 
 **Location:**
-- Backend unit tests are co-located with services under `server/src/services/`.
-- Generated compiled test files also exist under `server/dist/services/`; do not edit generated `server/dist/**` files.
-- Frontend tests are not detected under `src/`.
+- Unit tests are co-located with backend services under `server/src/services/`.
+- Frontend tests are not present under `src/`.
+- Backend route, controller, repository, middleware, and Prisma integration tests are not present under `server/src/`.
 
 **Naming:**
-- Use `*.test.ts` for source unit tests: `server/src/services/needs-service.test.ts`, `server/src/services/donations-service.test.ts`, `server/src/services/highlights-service.test.ts`.
-- Test names are plain English strings naming the class and behavior: `NeedsService.listPaginated returns pagination contract`, `HighlightsService CRUD flow works`.
+- Use the suffix `.test.ts`.
+- Match the service filename under test: `server/src/services/needs-service.ts` has `server/src/services/needs-service.test.ts`; `server/src/services/highlights-service.ts` has `server/src/services/highlights-service.test.ts`.
 
 **Structure:**
 ```text
@@ -60,21 +58,19 @@ test('NeedsService.listPaginated returns pagination contract', async () => {
   const result = await service.listPaginated({}, '2', '2')
 
   assert.equal(result.page, 2)
-  assert.equal(result.limit, 2)
 })
 ```
 
 **Patterns:**
-- Tests are independent top-level `test(...)` calls, not nested `describe` suites.
-- Arrange dependencies inline in each test. Repository doubles are plain object literals passed into service constructors.
-- Use direct assertions with `assert.equal`, `assert.ok`, and `assert.rejects`.
-- Prefer testing service behavior through public methods, not private helpers.
-- Use async tests when the service method returns a promise: `server/src/services/needs-service.test.ts`, `server/src/services/donations-service.test.ts`.
-- Use synchronous tests for synchronous in-memory flows: `HighlightsService CRUD flow works` in `server/src/services/highlights-service.test.ts`.
+- Use top-level `test(...)` calls rather than nested `describe(...)` suites: `server/src/services/needs-service.test.ts`, `server/src/services/highlights-service.test.ts`.
+- Name tests as behavior sentences containing the class and method under test: `NeedsService.listPaginated returns pagination contract`, `DonationsService.listByHost falls back when pagination params are invalid`.
+- Instantiate services directly and inject lightweight object mocks through constructors: `new NeedsService(mockRepository as any)` in `server/src/services/needs-service.test.ts`, `new DonationsService(mockRepository as any)` in `server/src/services/donations-service.test.ts`.
+- Keep Arrange/Act/Assert inline inside each test body; there are no shared `beforeEach` or `afterEach` helpers.
+- Use local captured variables to verify repository call arguments: `capturedSkip`, `capturedTake`, and `deletedId` in `server/src/services/needs-service.test.ts`.
 
 ## Mocking
 
-**Framework:** Plain JavaScript object/function replacement. No Sinon, Jest, Vitest, MSW, or test-double library is installed.
+**Framework:** Manual object/function mocks only
 
 **Patterns:**
 ```typescript
@@ -89,7 +85,6 @@ const mockRepository = {
 }
 
 const service = new DonationsService(mockRepository as any)
-const result = await service.listByHost('unit-1', 'abc', 'xyz')
 ```
 
 ```typescript
@@ -109,15 +104,14 @@ try {
 ```
 
 **What to Mock:**
-- Mock repositories when testing backend services that depend on Prisma repositories: `NeedsService` in `server/src/services/needs-service.test.ts`, `DonationsService` in `server/src/services/donations-service.test.ts`.
-- Mock `globalThis.fetch` when testing feed/network behavior in `HighlightsService`: `server/src/services/highlights-service.test.ts`.
-- Capture arguments in local variables when validating repository pagination behavior.
+- Mock repositories when testing service business rules: `server/src/services/needs-service.test.ts`, `server/src/services/donations-service.test.ts`.
+- Mock `globalThis.fetch` when testing RSS/news behavior in `server/src/services/highlights-service.test.ts`.
+- Use empty initial data for stateful in-memory services when isolation matters: `new HighlightsService([])` in `server/src/services/highlights-service.test.ts`.
 
 **What NOT to Mock:**
-- Do not mock the service under test. Instantiate the real class: `new NeedsService(...)`, `new DonationsService(...)`, `new HighlightsService(...)`.
-- Do not mock pure helpers when the public method naturally covers them, such as pagination through `listPaginated` and `listByHost`.
-- Do not hit a real database in current unit tests. Repository doubles keep tests isolated from Prisma and migrations.
-- Do not edit or assert against generated `server/dist/services/*.test.js` files.
+- Do not mock the service class under test.
+- Do not hit Prisma or a real database in current unit tests; repository access is mocked.
+- Do not call live external feeds in unit tests; `globalThis.fetch` is replaced in `server/src/services/highlights-service.test.ts`.
 
 ## Fixtures and Factories
 
@@ -137,39 +131,36 @@ const xml = `<?xml version="1.0" encoding="UTF-8" ?>
 ```
 
 **Location:**
-- Inline fixtures are used inside test files: `server/src/services/highlights-service.test.ts`, `server/src/services/needs-service.test.ts`.
-- Production seed/fallback data is not used as a unit-test fixture source. It lives in `server/src/data/public-fallback.ts`, `server/src/data/highlights.ts`, `src/data/mock.ts`, and `src/data/mockData.ts`.
-- The manual API script builds request payloads inline in `server/scripts/test-api.ts`.
+- Test fixtures are inline in the test files.
+- Static app data for runtime fallback lives in `src/data/mockData.ts`, `src/data/highlights.ts`, `server/src/data/public-fallback.ts`, and `server/src/data/highlights.ts`, but current unit tests do not import separate fixture modules.
 
 ## Coverage
 
-**Requirements:** None enforced. No coverage threshold or coverage script is defined.
+**Requirements:** None enforced. No coverage tool or threshold is configured in `package.json`, `server/package.json`, or detected test config files.
 
 **View Coverage:**
 ```bash
 # Not configured
 ```
 
-If coverage is added, keep generated coverage output out of source directories and avoid committing build artifacts.
-
 ## Test Types
 
 **Unit Tests:**
-- Current automated tests are backend service unit tests only.
-- Covered source files: `server/src/services/needs-service.ts`, `server/src/services/donations-service.ts`, `server/src/services/highlights-service.ts`.
-- Scope includes pagination fallback, validation errors, CRUD behavior, and RSS/news filtering behavior.
+- Backend service unit tests exist for pagination defaults, validation failures, delete authorization, in-memory highlight CRUD, and filtered RSS feed parsing.
+- Covered files include `server/src/services/needs-service.ts`, `server/src/services/donations-service.ts`, and `server/src/services/highlights-service.ts`.
+- Current unit test run result: `npm --prefix server run test:unit` passes 10 tests.
 
 **Integration Tests:**
-- No automated integration test runner is configured.
-- `server/scripts/test-api.ts` is a manual smoke script that assumes the API is running at `http://localhost:3333`, logs in with seed credentials, creates a public donation, and lists authenticated donations.
-- Use `npm --prefix server run test:api` only as an operator-driven local check. It is not isolated and may write to the configured database.
+- Automated integration tests are not present.
+- `server/scripts/test-api.ts` is a manual smoke script that logs in, creates a public donation, and lists authenticated donations against `http://localhost:3333`.
+- The smoke script is invoked with `npm --prefix server run test:api` and requires a running API and seeded credentials.
 
 **E2E Tests:**
-- Not used. No Playwright, Cypress, or browser E2E config was detected.
+- Not used. No Playwright, Cypress, Selenium, or browser test config is present.
 
 **Frontend Tests:**
-- Not detected. There are no `*.test.tsx` or `*.spec.tsx` files under `src/`, and root `package.json` does not define a `test` script.
-- Verify frontend changes with `npm run build` until a frontend test runner is added.
+- Not used. There are no `*.test.tsx` or `*.spec.tsx` files under `src/`.
+- Frontend validation currently relies on TypeScript/Vite build checks and manual browser behavior.
 
 ## Common Patterns
 
@@ -192,44 +183,33 @@ test('NeedsService.create throws ValidationError when payload is invalid', async
 **Error Testing:**
 ```typescript
 await assert.rejects(
-  () => service.create({ title: 'x' }, 'unit-1'),
-  (error: unknown) => error instanceof ValidationError,
+  () => service.delete('n1', { unitId: 'unit-1', role: 'host' }),
+  (error: unknown) => error instanceof AppError && error.statusCode === 403,
 )
 ```
 
-**State Restoration:**
+**Stateful Service Testing:**
 ```typescript
-const originalFetch = globalThis.fetch
-globalThis.fetch = async () => new Response(xml, { status: 200 })
+const service = new HighlightsService([])
+const created = service.create({
+  title: 'Campanha de inverno',
+  description: 'Arrecadacao de cobertores para unidades com acolhimento noturno.',
+  image: '/capa.jpg',
+  ctaLabel: 'Participar',
+  ctaLink: '/caps',
+})
 
-try {
-  // assertions
-} finally {
-  globalThis.fetch = originalFetch
-}
+assert.ok(created.id)
+assert.equal(service.list().length, 1)
 ```
 
-**Pagination Argument Capture:**
-```typescript
-let capturedSkip: number | undefined
-let capturedTake: number | undefined
-
-const mockRepository = {
-  listPaginated: async (_filters: unknown, skip: number, take: number) => {
-    capturedSkip = skip
-    capturedTake = take
-    return [[], 0]
-  },
-}
+**Manual API Smoke Testing:**
+```bash
+npm --prefix server run test:api
 ```
 
-## Gaps To Respect When Adding Tests
-
-- Add backend tests near the service being tested in `server/src/services/`.
-- Add controller/route integration coverage only after choosing a request-level test tool; no supertest dependency exists.
-- Add frontend component/hook tests only after adding and documenting a frontend runner; no Vitest/Jest/Testing Library setup exists.
-- Avoid relying on `server/scripts/test-api.ts` for repeatable CI verification because it requires a running server and seed/database state.
+Use `server/scripts/test-api.ts` only after the local backend is running and seeded. It performs real HTTP requests and prints status/body output; it is not part of the unit test runner.
 
 ---
 
-*Testing analysis: 2026-05-19*
+*Testing analysis: 2026-05-29*

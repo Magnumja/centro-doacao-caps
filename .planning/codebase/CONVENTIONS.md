@@ -1,117 +1,107 @@
 # Coding Conventions
 
-**Analysis Date:** 2026-05-19
+**Analysis Date:** 2026-05-29
 
 ## Naming Patterns
 
 **Files:**
-- Use PascalCase for React component and page files: `src/components/DonationRequestCard.tsx`, `src/pages/CapsPage.tsx`, `src/pages/admin/Dashboard.tsx`.
-- Use camelCase with `use` prefix for custom hooks: `src/hooks/useDashboardData.ts`, `src/hooks/useAdminLogin.ts`.
-- Use kebab-case for frontend service/helper modules: `src/services/needs-service.ts`, `src/services/donor-intentions-service.ts`, `src/lib/performance-metrics.ts`.
-- Use kebab-case for backend service, repository, route, middleware, config, and error modules: `server/src/services/needs-service.ts`, `server/src/repositories/needs-repository.ts`, `server/src/middleware/error-handler.ts`, `server/src/config/security.ts`.
-- Use global page/component stylesheet files under `src/Styles/` with PascalCase names for page-level CSS: `src/Styles/Home.css`, `src/Styles/Dashboard.css`, `src/Styles/CapsPage.css`.
-- Source tests are co-located with backend services using `*.test.ts`: `server/src/services/needs-service.test.ts`, `server/src/services/donations-service.test.ts`, `server/src/services/highlights-service.test.ts`.
+- Use PascalCase for React page and component files: `src/pages/Donate.tsx`, `src/pages/CapsPage.tsx`, `src/components/DonationRequestCard.tsx`, `src/components/AdminDashboard.tsx`.
+- Use `use` + PascalCase for hook files and exported hook functions: `src/hooks/useDashboardData.ts`, `src/hooks/useAdminLogin.ts`.
+- Use kebab-case for service and backend support modules: `src/services/needs-service.ts`, `src/services/donor-intentions-service.ts`, `server/src/services/highlights-service.ts`, `server/src/utils/async-handler.ts`.
+- Use `.test.ts` beside the backend service under test: `server/src/services/needs-service.test.ts`, `server/src/services/donations-service.test.ts`, `server/src/services/highlights-service.test.ts`.
+- Use domain CSS names that mirror pages/components under `src/Styles/`: `src/Styles/Home.css`, `src/Styles/CapsPage.css`, `src/Styles/Dashboard.css`.
 
 **Functions:**
-- Use camelCase for functions and methods: `resolvePagination` in `server/src/utils/pagination.ts`, `normalizeNeed` and `fetchNeedsPage` in `src/services/needs-service.ts`, `validateDonationInput` and `registerDonations` in `src/services/donations-service.ts`.
-- Use event-handler names prefixed with `handle` inside React pages: `handleLogout` and `handleNeedPublish` in `src/pages/admin/Dashboard.tsx`.
-- Use `fetch*`, `create*`, `delete*`, `list*`, and `normalize*` verbs for service functions: `fetchCurrentHost` in `src/services/auth-service.ts`, `createNeed` in `src/services/needs-service.ts`, `listByHost` in `server/src/services/donations-service.ts`.
-- Backend controller methods are class fields with arrow functions to preserve `this` when passed into `asyncHandler`: `list = async (...) => {}` and `create = async (...) => {}` in `server/src/controllers/needs-controller.ts`.
+- Export React components as default PascalCase functions returning `React.ReactElement`: `src/pages/Donate.tsx`, `src/components/DonationRequestCard.tsx`, `src/components/ui/NewsCarousel.tsx`.
+- Export hooks as named camelCase functions prefixed with `use`: `useDashboardData` in `src/hooks/useDashboardData.ts`, `useAdminLogin` in `src/hooks/useAdminLogin.ts`.
+- Use camelCase for service, utility, repository, and controller methods: `normalizeNeed`, `fetchNeedsPage`, `createNeed`, and `deleteNeed` in `src/services/needs-service.ts`; `listPaginated`, `create`, and `delete` in `server/src/services/needs-service.ts`.
+- Use verb-based names for API calls and mutations: `fetchCurrentHost` in `src/services/auth-service.ts`, `registerDonations` in `src/services/donations-service.ts`, `removeDonorIntention` in `src/services/donor-intentions-service.ts`.
 
 **Variables:**
-- Use camelCase for local variables and derived values: `localAuthBypassEnabled` in `src/hooks/useDashboardData.ts`, `normalizedResidentSearch` and `pieChartBackground` in `src/pages/admin/Dashboard.tsx`.
-- Use uppercase constants only for environment-like or module-wide fixed values: `BASE` and `MUTATION_HEADERS` in `src/lib/api.ts`, `ENV_ADMIN_TOKEN_PREFIX` in `server/src/routes/auth.ts`.
-- Use explicit domain names for state setters and collections: `publishedNeeds`, `setPublishedNeeds`, `hostDonations`, and `residents` in `src/hooks/useDashboardData.ts`.
+- Use camelCase for local state, derived values, and handlers: `activeCategory`, `visibleNeeds`, `hasActiveFilters`, and `resetFilters` in `src/pages/Donate.tsx`.
+- Use `is` and `has` prefixes for booleans: `isLoading` in `src/hooks/useAdminLogin.ts`, `isPaused` and `isPageVisible` in `src/components/ui/NewsCarousel.tsx`, `hasMore` in `server/src/services/needs-service.ts`.
+- Use uppercase snake case only for module-level constants that behave as stable configuration: `BASE` and `MUTATION_HEADERS` in `src/lib/api.ts`, `STORAGE_KEY` in `src/services/donor-intentions-service.ts`.
+- Use plural names for arrays and collections: `publishedNeeds`, `hostDonations`, and `residents` in `src/hooks/useDashboardData.ts`; `fallbackImages` in `server/src/services/highlights-service.ts`.
 
 **Types:**
-- Use PascalCase for TypeScript types and classes: `Need`, `DonationFormInput`, `NeedsPageResponse`, `AppError`, `ValidationError`.
-- Keep public domain types in `src/types/index.ts` and backend query/filter types near their owning modules, such as `NeedFilters` in `server/src/repositories/needs-repository.ts`.
-- Use literal union types for constrained domain values: `DonationUrgency`, `DonationStatus`, and `DonationCategoryName` in `src/types/index.ts`; `Priority` in `server/src/repositories/needs-repository.ts`.
-- Use `Props` suffix for React component props types: `DonationRequestCardProps` in `src/components/DonationRequestCard.tsx`.
+- Use PascalCase type aliases for domain types: `Cap`, `Need`, `Donation`, `Resident`, and `ProjectStats` in `src/types/index.ts`.
+- Use a `Props` suffix for component prop types: `DonationRequestCardProps` in `src/components/DonationRequestCard.tsx`, `CategoryFilterProps` in `src/components/CategoryFilter.tsx`, `StatusBadgeProps` in `src/components/StatusBadge.tsx`.
+- Use `Api*`, `Create*Payload`, and `*Response` names for API boundary types: `ApiNeed`, `CreateNeedPayload`, and `NeedsPageResponse` in `src/services/needs-service.ts`.
+- Use backend class names ending in the role they own: `NeedsService` in `server/src/services/needs-service.ts`, `NeedsRepository` in `server/src/repositories/needs-repository.ts`, `NeedsController` in `server/src/controllers/needs-controller.ts`.
 
 ## Code Style
 
 **Formatting:**
-- Formatter config: Not detected. No `.prettierrc*`, `eslint.config.*`, `.eslintrc*`, or `biome.json` was found at repo root or below.
-- Match the existing TypeScript style: two-space indentation, single quotes, no semicolons, trailing commas in multiline calls and object/array literals.
-- Prefer multiline object/function signatures when parameters carry domain meaning, as in `fetchNeedsPage(params: { page?: number, limit?: number, priority?: ... })` in `src/services/needs-service.ts`.
-- Preserve the current line-ending and quote style in touched files. Do not introduce broad formatting churn.
-- CSS uses block comments and BEM-like class names for component sections, e.g. `.home-institutional-hero__content` and `.home-hero-button--primary` in `src/Styles/Home.css`.
+- No formatter configuration is present. There is no `.prettierrc`, `eslint.config.*`, `.eslintrc*`, or `biome.json` at repo root.
+- Preserve the existing TypeScript style: two-space indentation, single quotes, no semicolons, and trailing commas in multiline calls/objects where already used.
+- Keep JSX readable with one prop per line for multiline elements, as in `src/pages/Donate.tsx` and `src/components/DonationRequestCard.tsx`.
+- Use explicit `React.ReactElement` return types for exported React components, matching `src/pages/Donate.tsx`, `src/components/Layout.tsx`, and `src/components/ui/NewsCarousel.tsx`.
+- Keep strict TypeScript enabled. Frontend strictness is configured in `tsconfig.json`; backend strictness is configured in `server/tsconfig.json`.
 
 **Linting:**
-- Lint tool: Not detected.
-- TypeScript strict mode is enabled for frontend and backend through `tsconfig.json` and `server/tsconfig.json`.
-- Use `npm run build` for frontend type/build validation and `npm --prefix server run build` for backend type/build validation. Root `npm run build:all` runs both via `package.json`.
-- Avoid adding new `any` in application code. Existing `any` appears in API boundary and untyped XML parsing code: `src/lib/api.ts`, `src/services/dashboard-service.ts`, `server/src/services/highlights-service.ts`.
-- Test-only repository doubles currently use `as any` to satisfy service constructors: `server/src/services/needs-service.test.ts`, `server/src/services/donations-service.test.ts`.
+- Linting tool: Not detected.
+- Type checking is the main static quality gate. Root scripts in `package.json` run `vite build`; backend scripts in `server/package.json` run `tsc` through `npm --prefix server run build`.
+- Do not introduce path aliases unless `tsconfig.json` and `server/tsconfig.json` are updated together; current code uses relative imports only.
 
 ## Import Organization
 
 **Order:**
-1. External packages and Node built-ins first: `react`, `react-router-dom`, `zod`, `express`, `node:test`, `node:assert/strict`.
-2. Internal modules next, using relative paths: `../services/needs-service`, `../types`, `../utils/pagination`.
-3. Styles and static assets last in frontend files: `../Styles/Home.css`, `../public/logosesau.png`.
+1. External packages first: `react`, `react-router-dom`, `zod`, `express`, `@prisma/client`.
+2. Internal domain modules next: components, services, hooks, data, repositories, errors, and types.
+3. Side-effect imports last: CSS in frontend components/pages, such as `src/pages/Donate.tsx` importing `src/Styles/Home.css`, and Leaflet CSS in `src/components/CapsMap.tsx`.
 
 **Path Aliases:**
-- No path aliases are configured. `tsconfig.json` and `server/tsconfig.json` do not define `paths`.
-- Use relative imports consistently. Frontend imports use `../` and `../../`, such as `src/pages/admin/Dashboard.tsx`; backend imports use `../` or `./`, such as `server/src/routes/needs.ts`.
+- No path aliases are configured in `tsconfig.json` or `server/tsconfig.json`.
+- Use relative imports from the current file: `../services/needs-service` in `src/pages/admin/Dashboard.tsx`, `../errors/app-error` in `server/src/services/needs-service.ts`, `./needs-service` in `server/src/services/needs-service.test.ts`.
 
 ## Error Handling
 
 **Patterns:**
-- Backend domain validation uses `zod` schemas and `safeParse`, then throws `ValidationError` or `AppError`: `server/src/services/needs-service.ts`, `server/src/services/donations-service.ts`, `server/src/errors/validation-error.ts`, `server/src/errors/app-error.ts`.
-- Backend async route handlers must be wrapped with `asyncHandler` so thrown errors reach Express error middleware: `server/src/utils/async-handler.ts`, `server/src/routes/needs.ts`, `server/src/routes/donations.ts`.
-- Backend error responses are centralized in `server/src/middleware/error-handler.ts`. Throw `AppError` for expected status codes and let unexpected errors become 500 responses.
-- Some route modules respond directly for validation/auth cases instead of throwing: `server/src/routes/auth.ts`, `server/src/routes/residents.ts`. Match the local route style when editing those files.
-- Frontend API requests should go through `src/lib/api.ts`, which parses JSON/text and throws `ApiError` on non-OK responses.
-- Frontend page and hook code catches API errors near UI state updates and sets user-visible messages or fallback state: `src/hooks/useAdminLogin.ts`, `src/hooks/useDashboardData.ts`, `src/pages/admin/Dashboard.tsx`, `src/pages/CapsPage.tsx`.
-- Silent catch blocks are used only for fallback behavior and optional telemetry/performance paths: `src/services/telemetry-service.ts`, `src/lib/performance-metrics.ts`, `src/hooks/useDashboardData.ts`.
+- Validate backend request and service payloads with Zod `safeParse`, then throw `ValidationError` or `AppError`: `server/src/services/needs-service.ts`, `server/src/services/donations-service.ts`, `server/src/controllers/needs-controller.ts`.
+- Route async failures through `asyncHandler` so Express reaches the shared error middleware: `server/src/utils/async-handler.ts`, `server/src/routes/needs.ts`, `server/src/routes/donations.ts`, `server/src/routes/highlights.ts`.
+- Convert domain failures to HTTP responses through `AppError` in `server/src/errors/app-error.ts` and `errorHandler` in `server/src/middleware/error-handler.ts`.
+- Use `ValidationError` for Zod field errors so responses include flattened `details`: `server/src/errors/validation-error.ts`.
+- On the frontend, centralize fetch response parsing in `src/lib/api.ts`. Failed HTTP responses should throw `ApiError` with `message`, `status`, and optional `details`.
+- In React hooks and pages, catch user-facing failures locally and update UI state, as in `src/hooks/useAdminLogin.ts`, `src/hooks/useDashboardData.ts`, `src/pages/CapsPage.tsx`, and `src/pages/admin/Dashboard.tsx`.
+- Guard browser-only APIs for SSR/build safety: `typeof window === 'undefined'` in `src/services/donor-intentions-service.ts`, `typeof document === 'undefined'` in `src/components/ui/NewsCarousel.tsx`.
 
 ## Logging
 
 **Framework:** console
 
 **Patterns:**
-- Backend startup and seed scripts use `console.log`, `console.warn`, and `console.error`: `server/src/index.ts`, `server/src/prisma/seed.ts`.
-- Central unexpected error logging lives in `server/src/middleware/error-handler.ts`.
-- Frontend app code generally avoids direct console logging. Telemetry is sent through `src/services/telemetry-service.ts` and `src/lib/performance-metrics.ts`.
-- Manual API script output is console-based in `server/scripts/test-api.ts`; keep this style for diagnostic scripts only.
+- Use `console.log`, `console.warn`, and `console.error` in backend process scripts and entrypoints only: `server/src/index.ts`, `server/src/prisma/seed.ts`, `server/scripts/test-api.ts`.
+- Use `console.error` in `server/src/middleware/error-handler.ts` only for unhandled server errors; known `AppError` failures return structured JSON without logging.
+- Use telemetry for frontend interaction tracking instead of console logging: `trackEvent` in `src/components/ui/NewsCarousel.tsx`, `src/lib/performance-metrics.ts`, and `src/services/telemetry-service.ts`.
 
 ## Comments
 
 **When to Comment:**
-- Comments are used for user-facing workflow explanation in long UI files, especially `src/pages/admin/Dashboard.tsx`, and for script steps in `server/scripts/test-api.ts`.
-- Prefer comments only when the code has non-obvious domain intent, UI derivation, or operational behavior. Example: `src/pages/admin/Dashboard.tsx` documents tab configuration, logout behavior, derived chart data, and accessibility text.
-- Avoid comments that restate simple assignments or JSX structure.
+- Keep comments sparse and explanatory. Existing comments document domain intent or non-obvious steps, such as the `Need` domain comment in `src/types/index.ts` and the API smoke-test steps in `server/scripts/test-api.ts`.
+- Avoid restating obvious assignments. Add comments only when they clarify workflow, browser behavior, security, or domain context.
 
 **JSDoc/TSDoc:**
-- Not used. Types and function names carry most documentation in `src/types/index.ts`, `src/types/dashboard.ts`, and service modules.
-- Do not introduce JSDoc/TSDoc unless documenting a public helper contract that cannot be made clear by its type signature.
+- Not used. Existing code uses plain TypeScript types rather than JSDoc/TSDoc annotations.
+- Prefer exported types in `src/types/index.ts`, `src/types/dashboard.ts`, and service-local type aliases over doc comments for API shape.
 
 ## Function Design
 
-**Size:** Keep helpers small when possible. `server/src/utils/pagination.ts`, `src/lib/contact.ts`, and `src/services/needs-service.ts` show compact pure helpers. Large UI pages exist (`src/pages/CapsPage.tsx`, `src/pages/admin/Dashboard.tsx`); new logic should be extracted into hooks, services, or helpers instead of increasing these files.
+**Size:** Keep most utilities and service methods short and single-purpose. Larger UI pages already exist in `src/pages/CapsPage.tsx` and `src/pages/admin/Dashboard.tsx`; new behavior should be extracted to hooks, components, or services when it starts to duplicate patterns from those files.
 
-**Parameters:** Prefer typed object parameters when a function has multiple optional or domain fields. Examples: `fetchNeedsPage(params: { ... })` in `src/services/needs-service.ts` and `DonationFormInput` in `src/services/donations-service.ts`.
+**Parameters:** Pass object payloads for create/update operations and grouped options: `CreateNeedPayload` in `src/services/needs-service.ts`, `DonationFormInput` in `src/services/donations-service.ts`, and `NeedFilters` in `server/src/repositories/needs-repository.ts`.
 
-**Return Values:** Prefer explicit return types for exported React components, hooks, backend controller methods, and service functions when they define a contract. Examples: `DonationRequestCard(...): React.ReactElement`, `useDashboardData(): UseDashboardDataResult`, `asyncHandler(...): void`, and `listPublic(): Promise<HighlightItem[]>`.
+**Return Values:** Return typed domain objects, arrays, or pagination contracts. Use `Promise<void>` for mutations with no response body, such as `deleteNeed` in `src/services/needs-service.ts` and `remove` in `server/src/controllers/needs-controller.ts`.
 
 ## Module Design
 
-**Exports:** Use named exports for reusable services, hooks, helpers, and types. Examples: `export function normalizeNeed`, `export async function createNeed`, `export function useDashboardData`, `export class NeedsService`.
+**Exports:** Use default exports for React components and named exports for hooks, services, utilities, backend classes, and domain types. Examples: default `DonationRequestCard` in `src/components/DonationRequestCard.tsx`, named `useDashboardData` in `src/hooks/useDashboardData.ts`, named `NeedsService` in `server/src/services/needs-service.ts`.
 
-**Default Exports:** Use default exports for React page/component entry points and Express routers where the importer expects one module instance: `src/pages/Home.tsx`, `src/components/DonationRequestCard.tsx`, `server/src/routes/needs.ts`, `server/src/app.ts`.
+**Barrel Files:** Not used. Import modules directly from their concrete files: `src/app/router.tsx`, `src/pages/Home.tsx`, `server/src/routes/needs.ts`.
 
-**Barrel Files:** Not used. Import directly from owning modules. The closest shared type entry point is `src/types/index.ts`, which is imported as `../types`.
+**Frontend Placement:** Put reusable UI in `src/components/`, route-level screens in `src/pages/`, frontend API adapters in `src/services/`, shared browser/domain helpers in `src/lib/`, and shared types in `src/types/`.
 
-**Layer Boundaries:**
-- Frontend API transport belongs in `src/lib/api.ts`; domain-specific frontend normalization belongs in `src/services/*.ts`.
-- Frontend views should consume services/hooks rather than calling raw `fetch` directly, except isolated telemetry/performance helpers.
-- Backend routes wire middleware/controllers only: `server/src/routes/needs.ts`.
-- Backend controllers translate HTTP/query/body/auth state into service calls: `server/src/controllers/needs-controller.ts`.
-- Backend services own validation and domain decisions: `server/src/services/needs-service.ts`, `server/src/services/donations-service.ts`.
-- Backend repositories own Prisma access: `server/src/repositories/needs-repository.ts`, `server/src/repositories/donations-repository.ts`.
+**Backend Placement:** Put Express route registration in `server/src/routes/`, request/response orchestration in `server/src/controllers/`, business rules in `server/src/services/`, Prisma access in `server/src/repositories/`, cross-cutting middleware in `server/src/middleware/`, and reusable errors/utilities in `server/src/errors/` and `server/src/utils/`.
 
 ---
 
-*Convention analysis: 2026-05-19*
+*Convention analysis: 2026-05-29*

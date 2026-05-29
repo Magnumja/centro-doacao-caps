@@ -1,220 +1,261 @@
 # Codebase Concerns
 
-**Analysis Date:** 2026-05-19
+**Analysis Date:** 2026-05-29
 
 ## Tech Debt
 
-**Client-side admin session shadow state:**
-- Issue: The authenticated session is stored in an `httpOnly` cookie on the API, but the frontend also stores and reads a `loggedHost` object in `localStorage` for navigation and dashboard state.
-- Files: `src/hooks/useAdminLogin.ts`, `src/hooks/useDashboardData.ts`, `src/components/Layout.tsx`, `src/services/auth-service.ts`, `server/src/routes/auth.ts`, `server/src/lib/session-cookie.ts`
-- Impact: UI state can imply admin access even when the server cookie is absent or expired. The API still enforces auth, but navigation and local demo data can confuse operators and make auth bugs harder to diagnose.
-- Fix approach: Treat `/api/auth/me` as the only source of truth for admin state. Use `localStorage` only for non-sensitive UI preferences, and make `src/components/Layout.tsx` derive the dashboard link from a server-backed auth hook or explicit loading state.
+**Mock and fallback data remain in runtime paths:**
+- Issue: Public and admin UI paths still depend on mock data as runtime fallback instead of a clearly isolated development fixture path.
+- Files: `src/pages/CapsPage.tsx`, `src/pages/admin/Dashboard.tsx`, `src/components/CapsMap.tsx`, `src/lib/needs.ts`, `src/data/mock.ts`, `src/data/mockData.ts`, `server/src/controllers/needs-controller.ts`, `server/src/routes/units.ts`, `server/src/index.ts`
+- Impact: Backend outages, schema mismatches, or empty API responses can be hidden behind mock content; admin dashboard summaries mix persisted data with static `projectStats`/`mockNeeds`.
+- Fix approach: Keep fixtures under a development-only boundary, gate all fallback mode through one typed config helper, and surface API failure states in production UI instead of silently substituting `src/data/mockData.ts`.
 
-**Local/demo auth paths mixed into production-facing modules:**
-- Issue: Local bypass behavior and demo admin state are embedded in regular frontend hooks and auth services instead of being isolated behind a development-only adapter.
-- Files: `src/lib/auth.ts`, `src/hooks/useAdminLogin.ts`, `src/hooks/useDashboardData.ts`, `src/services/auth-service.ts`, `server/src/middleware/auth.ts`, `server/src/config/env.ts`
-- Impact: Production config validation blocks server-side bypass, but the frontend still includes bypass branches in the shipped bundle. This raises the chance of future regressions when login behavior changes.
-- Fix approach: Move demo auth into a separate development-only module and keep runtime checks centralized. Preserve `server/src/config/env.ts` production guards and add tests around bypass-disabled login behavior.
+**In-memory highlight management:**
+- Issue: Admin-created highlights are stored in a process-local `Map`, not in PostgreSQL.
+- Files: `server/src/services/highlights-service.ts`, `server/src/routes/highlights.ts`
+- Impact: Highlight create/update/delete changes disappear on process restart and diverge across multiple server instances.
+- Fix approach: Add a Prisma `Highlight` model in `server/prisma/schema.prisma`, move CRUD persistence into a repository, and keep RSS cache separate from stored editorial highlights.
 
-**Mock and live data paths are tightly interleaved:**
-- Issue: Public pages silently fall back to mock data when API calls fail, and admin summary cards still render static mock/project stats beside live API data.
-- Files: `src/pages/CapsPage.tsx`, `src/pages/YourDonations.tsx`, `src/lib/needs.ts`, `src/pages/admin/Dashboard.tsx`, `src/data/mock.ts`, `src/data/mockData.ts`
-- Impact: Outages can look like valid but stale content. Admin users may compare live donations/residents against static overview numbers and make incorrect operational decisions.
-- Fix approach: Show explicit degraded states for API failures, reserve mock data for development fixtures, and remove `mockNeeds`/`projectStats` from admin production views.
+**In-memory telemetry store:**
+- Issue: Telemetry events are stored in a process-local array capped at 1000 records.
+- Files: `server/src/services/telemetry-service.ts`, `server/src/routes/telemetry.ts`
+- Impact: Analytics reset on restart, do not aggregate across instances, and cannot support historical reporting.
+- Fix approach: Persist summarized telemetry or raw events in PostgreSQL with retention rules, or send events to an external analytics service through a dedicated adapter.
 
-**Large components concentrate unrelated workflows:**
-- Issue: Multi-step donation UX, data loading, unit selection, form submission, and success overlay logic live in one page component. The admin dashboard similarly owns tabs, analytics, profile, residents, and request publishing in one file.
-- Files: `src/pages/CapsPage.tsx`, `src/pages/admin/Dashboard.tsx`, `src/components/ui/NewsCarousel.tsx`, `server/src/services/highlights-service.ts`
-- Impact: Small UI changes have a broad blast radius and are harder to test in isolation. Future changes should avoid adding more state branches to these files.
-- Fix approach: Extract focused hooks and child components under `src/hooks/`, `src/components/`, and page-local subcomponents. Keep API calls in `src/services/` and pass typed view models into presentational pieces.
+**Large page and stylesheet files:**
+- Issue: Several files combine many responsibilities and are difficult to modify safely.
+- Files: `src/pages/CapsPage.tsx`, `src/pages/admin/Dashboard.tsx`, `src/Styles/CapsPage.css`, `src/Styles/Dashboard.css`, `src/Styles/Home.css`, `server/src/services/highlights-service.ts`
+- Impact: UI behavior, data loading, form state, presentation, and analytics calculations are tightly coupled, increasing regression risk for small UI changes.
+- Fix approach: Split pages into feature components and hooks, split CSS by component/feature, and extract highlight RSS fetching/parsing from `server/src/services/highlights-service.ts`.
 
-**Type dependency drift is masked by permissive config:**
-- Issue: Runtime dependencies use React 18 and React Router 7, while type packages include React 19 types and React Router DOM v5 types.
-- Files: `package.json`, `package-lock.json`, `tsconfig.json`
-- Impact: Builds currently pass, but mismatched type packages can create misleading compile errors or hide route/component typing bugs during future upgrades.
-- Fix approach: Align `@types/react` and `@types/react-dom` with the installed React major, remove obsolete `@types/react-router-dom` for React Router 7, and keep `skipLibCheck` from becoming the only safety net.
+**Frontend API contract relies on `any`:**
+- Issue: The frontend API wrapper and dashboard normalization parse unknown JSON into `any` before mapping.
+- Files: `src/lib/api.ts`, `src/services/dashboard-service.ts`, `src/pages/CapsPage.tsx`, `src/pages/admin/Dashboard.tsx`
+- Impact: Backend contract drift is discovered at runtime; missing fields can render empty UI or incorrect dashboard metrics without a compile-time failure.
+- Fix approach: Add shared DTO types or response validators, replace `api.get<any[]>` and `catch (err: any)` with typed results, and keep endpoint response shapes documented next to `server/src/services/*.ts`.
 
-**Generated/build artifacts and runtime logs are present in the working tree:**
-- Issue: `dist/` and `codex-*.log` outputs exist locally; `.gitignore` excludes them, but they add noise to repo scans and can be mistaken for source during manual review.
-- Files: `dist/`, `codex-dev.log`, `codex-vite.err.log`, `.gitignore`
-- Impact: Local artifacts can obscure real diffs and make size/performance checks harder to interpret.
-- Fix approach: Keep generated artifacts out of commits and run concern scans with `dist/`, `node_modules/`, and log files excluded.
+**Direct Prisma access is mixed with service/repository layers:**
+- Issue: Some routes call Prisma directly while needs/donations use service and repository classes.
+- Files: `server/src/routes/auth.ts`, `server/src/routes/units.ts`, `server/src/routes/residents.ts`, `server/src/services/needs-service.ts`, `server/src/repositories/needs-repository.ts`, `server/src/services/donations-service.ts`, `server/src/repositories/donations-repository.ts`
+- Impact: Authorization, validation, selection shaping, and error handling patterns are inconsistent across endpoints.
+- Fix approach: Move `auth`, `units`, and `residents` data access into service/repository modules following `server/src/services/needs-service.ts` and `server/src/repositories/needs-repository.ts`.
 
 ## Known Bugs
 
-**Profile action buttons do nothing:**
-- Symptoms: The admin profile screen renders "Editar perfil" and "Alterar senha" buttons without handlers, routes, disabled state, or explanatory state.
-- Files: `src/pages/admin/Dashboard.tsx`
-- Trigger: Open `/admin/dashboard`, select the profile tab, and click either profile action.
-- Workaround: Not detected; profile and password changes are not exposed in the current UI.
+**Donation registration can partially succeed:**
+- Symptoms: A multi-item donation submits one POST per selected item with `Promise.all`; if one request fails after another succeeds, the user sees a failure while partial donation records remain in the database.
+- Files: `src/services/donations-service.ts`, `src/pages/CapsPage.tsx`, `server/src/routes/donations.ts`, `server/src/services/donations-service.ts`
+- Trigger: Select multiple items on `src/pages/CapsPage.tsx`, then encounter a network/API failure after at least one `/api/donations` request succeeds.
+- Workaround: Manual cleanup through the authenticated donation list and delete endpoint in `server/src/routes/donations.ts`.
 
-**Frontend only allows two need priorities while the API supports three:**
-- Symptoms: The admin create-need form can submit `media` or `alta`, but not `baixa`, even though `NeedsService.create` and the Prisma enum support `baixa`.
-- Files: `src/pages/admin/Dashboard.tsx`, `server/src/services/needs-service.ts`, `server/prisma/schema.prisma`, `server/src/services/needs-service.test.ts`
-- Trigger: Use the admin "Solicitar Doacoes" form and try to create a low-priority need.
-- Workaround: Create low-priority needs through backend/API code paths rather than the current dashboard form.
+**Admin dashboard can lose real unit identity:**
+- Symptoms: The dashboard resolves `hostCaps` from static mock units using `loggedHost.capId`; real backend sessions return `capId` from `unit.slug`, while dashboard display data remains tied to `src/data/mock.ts`.
+- Files: `src/pages/admin/Dashboard.tsx`, `src/hooks/useDashboardData.ts`, `src/services/auth-service.ts`, `server/src/routes/auth.ts`, `src/data/mock.ts`
+- Trigger: A persisted host/unit exists in PostgreSQL but is absent from the static mock unit list.
+- Workaround: Keep seed slugs aligned with `src/data/mockData.ts`; long-term fix is fetching the current unit profile from `/api/units/:slug` or including unit details in `/api/auth/me`.
 
-**Text encoding is inconsistent in some source literals:**
-- Symptoms: Some source strings contain mojibake-style text such as the `anonymousDonation` union value and several Portuguese literals/comments.
-- Files: `src/services/donations-service.ts`, `server/package.json`, `server/src/services/highlights-service.ts`, `server/prisma/schema.prisma`
-- Trigger: Render affected strings or edit files with a UTF-8-aware editor after text has been double-encoded.
-- Workaround: Prefer ASCII in new code or normalize affected files to UTF-8 in a dedicated cleanup change.
+**Donation anonymity type contains a mojibake variant:**
+- Symptoms: The type for `anonymousDonation` includes `'nÃ£o'` while the UI state uses `'nao'`.
+- Files: `src/services/donations-service.ts`, `src/pages/CapsPage.tsx`
+- Trigger: New code using the malformed union member can pass type checks while not matching current form state comparisons.
+- Workaround: Normalize the union to `'sim' | 'nao'` and keep displayed Portuguese text separate from stored values.
+
+**Production startup runs migrations inside the web process:**
+- Symptoms: App startup executes `prisma migrate deploy` synchronously before listening.
+- Files: `server/src/index.ts`, `server/package.json`
+- Trigger: Production deploys with slow migrations, failed migration locks, or multiple instances starting concurrently.
+- Workaround: Run `npm --prefix server run db:deploy` as a separate release step before starting `server/src/index.ts`.
 
 ## Security Considerations
 
-**Donor and resident personal data has no explicit retention or export boundary:**
-- Risk: Donation records can store donor names/emails, resident records can store names/emergency contacts, and donor intentions can also persist in browser `localStorage`.
-- Files: `server/prisma/schema.prisma`, `server/src/repositories/donations-repository.ts`, `server/src/routes/residents.ts`, `src/services/donor-intentions-service.ts`, `src/pages/YourDonations.tsx`
-- Current mitigation: Anonymous donations clear donor name/email before database insert; resident routes require auth; donation listing requires auth; local donor intentions can be removed by id.
-- Recommendations: Define retention/deletion rules, document what PII is collected, add admin deletion/export flows where required, and avoid storing donor email in browser state longer than needed.
+**Public write endpoints depend mainly on rate limits:**
+- Risk: Anonymous clients can create donation records and telemetry events; IP-based limits reduce volume but do not prevent spam, scripted abuse, or junk PII.
+- Files: `server/src/routes/donations.ts`, `server/src/routes/telemetry.ts`, `server/src/app.ts`, `server/src/services/donations-service.ts`, `server/src/services/telemetry-service.ts`
+- Current mitigation: Zod validation in `server/src/services/donations-service.ts` and `server/src/services/telemetry-service.ts`, global/donation/telemetry rate limits in `server/src/app.ts`, trusted-origin checks in `server/src/config/security.ts`.
+- Recommendations: Add CAPTCHA/honeypot or signed submission tokens for public donations, persist moderation status, and add request logging/alerting for abuse spikes.
 
-**Public donation endpoint accepts unauthenticated writes:**
-- Risk: Anyone can create donation records for any valid unit slug, so spam or junk operational records are possible.
-- Files: `server/src/routes/donations.ts`, `server/src/services/donations-service.ts`, `server/src/app.ts`, `server/src/config/security.ts`
-- Current mitigation: Zod validation, JSON-only body enforcement, trusted-origin/CSRF header checks in production, and a donation-specific rate limit.
-- Recommendations: Add abuse monitoring, consider CAPTCHA or email verification for public donation submissions, and add tests for rate-limit/origin behavior around `/api/donations`.
+**PII is stored in browser localStorage:**
+- Risk: Donor intentions and host profile data are readable by any script running on the origin and persist on shared devices.
+- Files: `src/services/donor-intentions-service.ts`, `src/hooks/useAdminLogin.ts`, `src/hooks/useDashboardData.ts`, `src/components/Layout.tsx`, `src/pages/CapsPage.tsx`
+- Current mitigation: Auth token itself is an httpOnly cookie from `server/src/lib/session-cookie.ts`.
+- Recommendations: Store only non-sensitive display state in `localStorage`, add TTL/clear flows for `donorIntentions`, and derive admin session display state from `/api/auth/me` instead of trusting `loggedHost`.
 
-**CSRF model depends on exact frontend and proxy configuration:**
-- Risk: Cookie auth uses cross-origin credentials, and unsafe methods require a trusted origin plus `X-CSRF-Protection` in production. Misconfigured `FRONTEND_URL`, `TRUST_PROXY`, or cookie SameSite settings can block legitimate traffic or weaken origin checks.
-- Files: `server/src/config/security.ts`, `server/src/lib/session-cookie.ts`, `server/src/config/env.ts`, `server/src/app.ts`, `src/lib/api.ts`, `DEPLOYMENT.md`
-- Current mitigation: Production startup validates `FRONTEND_URL`, HTTPS origins, cookie SameSite values, and bypass flags.
-- Recommendations: Add integration tests for production-like CORS/CSRF/cookie combinations and keep deployment docs synchronized with API config.
+**Demo credentials and personal-looking fixture data are committed to the frontend bundle:**
+- Risk: Static fixture data includes a demo password, donor emails, and emergency contact phone numbers; this is easy to mistake for real data and can leak through production bundles when mocks are imported.
+- Files: `src/data/mockData.ts`, `src/data/mock.ts`, `server/scripts/test-api.ts`
+- Current mitigation: `.env` and `.env.*` files are ignored by `.gitignore`; only `.env.example` and `.env.production.example` files are tracked.
+- Recommendations: Replace fixture PII with clearly synthetic values, remove password fields from frontend fixture types, and keep API test credentials in documented local setup data rather than reusable literals.
 
-**Local auth bypass is intentionally powerful:**
-- Risk: When enabled in development, loopback requests can become admin without a password.
-- Files: `server/src/middleware/auth.ts`, `server/src/routes/auth.ts`, `server/src/config/env.ts`, `src/lib/auth.ts`, `src/hooks/useAdminLogin.ts`
-- Current mitigation: Server bypass requires `ENABLE_LOCAL_AUTH_BYPASS=true`, `NODE_ENV=development`, local hostname, and loopback remote address; production startup rejects bypass flags.
-- Recommendations: Keep bypass disabled by default in shared dev/staging environments and add explicit automated checks that production builds set `VITE_ENABLE_LOCAL_AUTH_BYPASS=false`.
+**Local auth bypass is enabled by frontend default on localhost:**
+- Risk: The frontend treats local bypass as enabled unless `VITE_ENABLE_LOCAL_AUTH_BYPASS="false"`; backend bypass requires `ENABLE_LOCAL_AUTH_BYPASS=true` and development mode, so the UI can silently create a fake local admin view when backend auth fails.
+- Files: `src/lib/auth.ts`, `src/hooks/useAdminLogin.ts`, `src/hooks/useDashboardData.ts`, `src/services/auth-service.ts`, `server/src/middleware/auth.ts`, `server/src/config/env.ts`
+- Current mitigation: Backend bypass is restricted to development, loopback hostname, and loopback remote address in `server/src/middleware/auth.ts`; production env validation rejects bypass flags in `server/src/config/env.ts`.
+- Recommendations: Require an explicit frontend flag for demo fallback, make demo mode visually distinct, and avoid persisting fake admin records under the same `loggedHost` key used for real sessions.
+
+**Session cookie defaults to cross-site mode in production:**
+- Risk: `SameSite=None` is the production default unless overridden; this is necessary for some split-domain deployments but expands CSRF exposure if frontend and API are same-site.
+- Files: `server/src/lib/session-cookie.ts`, `server/src/config/security.ts`, `server/src/app.ts`
+- Current mitigation: Production cookies are `httpOnly` and `secure`, unsafe methods require trusted origin and `X-CSRF-Protection: 1`.
+- Recommendations: Set `SESSION_COOKIE_SAMESITE=lax` or `strict` for same-site deployments, keep `none` only for verified HTTPS cross-site deployments, and add route-level CSRF tests.
 
 ## Performance Bottlenecks
 
-**News highlights fan out to many RSS searches on cache miss:**
-- Problem: `HighlightsService.listPublic()` builds one RSS feed URL per search term and waits for all settled fetches before responding.
+**Highlights RSS fetch fans out concurrently:**
+- Problem: Public highlights fetch one RSS search feed per search term with `Promise.allSettled` after cache expiry.
 - Files: `server/src/services/highlights-service.ts`, `server/src/routes/highlights.ts`
-- Cause: Parallel `Promise.allSettled` over all search terms plus an 8-second per-feed timeout means a cold `/api/highlights` request can wait on the slowest feed.
-- Improvement path: Pre-fetch highlights on a background interval, cap concurrent feed requests, lower timeout after measuring real latency, and persist/cache feed results outside process memory.
+- Cause: `searchTerms` creates many external requests every 15 minutes; there is no concurrency cap or background refresh.
+- Improvement path: Fetch feeds through a bounded queue, cache stale results on fetch failure, and move refresh work out of the request path.
 
-**Dashboard fetches unpaginated public needs then filters client-side:**
-- Problem: Admin dashboard loads all public needs, all current-unit donations, and residents in parallel, then filters needs in the browser.
-- Files: `src/services/dashboard-service.ts`, `server/src/repositories/needs-repository.ts`, `server/src/repositories/donations-repository.ts`, `server/src/routes/residents.ts`
-- Cause: `/api/needs` supports pagination but `fetchDashboardCollections()` calls the unpaginated endpoint and filters by unit in frontend code.
-- Improvement path: Add a unit-scoped dashboard endpoint or call `/api/needs?paginate=true&unitId=...` and keep server-side pagination for growing data.
+**Dashboard loads all needs before client-side filtering:**
+- Problem: The admin dashboard calls `/api/needs` without pagination, then filters by unit in the browser.
+- Files: `src/services/dashboard-service.ts`, `server/src/controllers/needs-controller.ts`, `server/src/repositories/needs-repository.ts`
+- Cause: `fetchDashboardCollections` requests all public needs even though it only needs the current unit.
+- Improvement path: Call `/api/needs?unitId=<id>&paginate=true` or add an authenticated dashboard endpoint that returns scoped needs, donations, and residents in one response.
 
-**Large raster assets are duplicated and one image dominates build weight:**
-- Problem: The same images are stored under both `public/` and `src/public/`; `capsdrafatima.jpg` is about 1.67 MB in each location and is emitted into the frontend build.
-- Files: `public/capsdrafatima.jpg`, `src/public/capsdrafatima.jpg`, `public/`, `src/public/`
-- Cause: Static files are duplicated between Vite public assets and imported source assets.
-- Improvement path: Keep one canonical asset location, compress/resize large images, and add an image-size check for committed public assets.
+**Frontend bundle includes heavy static UI/data paths:**
+- Problem: Large CSS and page files plus static mock imports increase parse and maintenance cost.
+- Files: `src/pages/CapsPage.tsx`, `src/pages/admin/Dashboard.tsx`, `src/Styles/CapsPage.css`, `src/Styles/Dashboard.css`, `src/data/mockData.ts`, `src/components/CapsMap.tsx`
+- Cause: Feature pages import broad mock datasets and large style sheets directly.
+- Improvement path: Lazy-load admin/dashboard-only modules, split map code from general CAPS page paths, and isolate mock data from production imports.
 
-**Telemetry is in-memory and process-local:**
-- Problem: Events are capped at 1000 and stored in a process array; summary data is lost on restart and inconsistent across multiple API instances.
-- Files: `server/src/services/telemetry-service.ts`, `server/src/routes/telemetry.ts`, `src/services/telemetry-service.ts`
-- Cause: Telemetry is implemented as a lightweight singleton service rather than a durable store or observability integration.
-- Improvement path: Keep this only for local diagnostics, or move production telemetry to a database/table, log sink, or metrics service with retention limits.
+**Rate limiting uses process-local state:**
+- Problem: `express-rate-limit` is configured without a shared store.
+- Files: `server/src/app.ts`
+- Cause: Default in-memory limiter state is per process.
+- Improvement path: Use Redis or another shared store before horizontal scaling so public donation, telemetry, and login limits apply consistently across instances.
 
 ## Fragile Areas
 
-**Admin dashboard combines live and static concepts:**
-- Files: `src/pages/admin/Dashboard.tsx`, `src/components/AdminDashboard.tsx`, `src/data/mock.ts`, `src/hooks/useDashboardData.ts`
-- Why fragile: It mixes live API collections with static stats and mock needs, while also owning tab state, form state, analytics calculations, and residents filtering.
-- Safe modification: Extract one tab at a time into separate components and pass only typed props from `useDashboardData()`. Avoid adding more API calls directly to `Dashboard.tsx`.
-- Test coverage: No frontend tests are present for dashboard rendering, auth redirects, or failed API states.
+**Development mock mode mutates process environment at runtime:**
+- Files: `server/src/index.ts`, `server/src/controllers/needs-controller.ts`, `server/src/routes/units.ts`
+- Why fragile: When the database connection fails in non-production, `server/src/index.ts` sets `process.env.API_MOCK_MODE = 'true'`; only selected public routes understand that mode, while authenticated routes still depend on database access.
+- Safe modification: Replace environment mutation with a typed app state/config object and route all mock-mode behavior through explicit service adapters.
+- Test coverage: No route-level tests cover database-down local startup or mixed mock/auth behavior.
 
-**Donation flow spans form UI, API writes, and local browser history:**
-- Files: `src/pages/CapsPage.tsx`, `src/services/donations-service.ts`, `src/services/donor-intentions-service.ts`, `server/src/services/donations-service.ts`, `server/src/routes/donations.ts`
-- Why fragile: A single submit writes one API donation per selected item and also saves a donor intention locally. Partial API failures can leave backend and browser history out of sync.
-- Safe modification: Introduce a batch donation endpoint or explicit client transaction state, then test multi-item success and partial failure paths.
-- Test coverage: Backend unit tests cover pagination but do not cover donation creation validation, multi-item submission, anonymous behavior, or partial failures.
+**Admin UI trusts local session display state:**
+- Files: `src/hooks/useDashboardData.ts`, `src/hooks/useAdminLogin.ts`, `src/components/Layout.tsx`, `src/pages/admin/Dashboard.tsx`
+- Why fragile: `loggedHost` in `localStorage` influences navigation and display, while actual authorization depends on the httpOnly cookie and `/api/auth/me`.
+- Safe modification: Treat `localStorage` as cache only; always refresh `/api/auth/me` before rendering admin data and clear stale cache on 401.
+- Test coverage: No frontend tests exercise stale `loggedHost`, expired cookies, or local bypass fallback.
 
-**Public fallback data can hide API outages:**
-- Files: `src/pages/CapsPage.tsx`, `src/pages/YourDonations.tsx`, `src/lib/needs.ts`, `server/src/index.ts`, `server/src/data/public-fallback.ts`
-- Why fragile: The frontend falls back to mock data on fetch failure, and the backend flips to `API_MOCK_MODE` in local development when the database is unavailable.
-- Safe modification: Keep local backend fallback, but surface API failure banners in production frontend paths and log fetch failures.
-- Test coverage: No tests assert fallback/degraded UI behavior.
+**Residents route owns validation, authorization, and persistence inline:**
+- Files: `server/src/routes/residents.ts`, `server/prisma/schema.prisma`
+- Why fragile: CRUD logic is concentrated in route handlers instead of reusable service methods, unlike needs and donations.
+- Safe modification: Introduce `server/src/services/residents-service.ts` and `server/src/repositories/residents-repository.ts` before adding resident features.
+- Test coverage: No tests cover resident CRUD authorization or validation.
 
-**Highlights service parses and sanitizes remote XML manually:**
-- Files: `server/src/services/highlights-service.ts`, `server/src/services/highlights-service.test.ts`
-- Why fragile: RSS item shape is treated as `any`, HTML is stripped with regex, and image extraction trusts remote item fields after only basic URL checks.
-- Safe modification: Add typed RSS normalization helpers, validate extracted image URLs, and keep tests for malformed XML, large feeds, redirects, and unexpected item shapes.
-- Test coverage: One service test covers a happy-path RSS filter, but malformed feed and timeout behavior are not covered.
+**Highlight service combines external fetching, parsing, filtering, caching, and CRUD:**
+- Files: `server/src/services/highlights-service.ts`, `server/src/routes/highlights.ts`, `server/src/services/highlights-service.test.ts`
+- Why fragile: A single class owns RSS network IO, XML parsing, relevance filtering, in-memory editorial state, and cache state.
+- Safe modification: Split RSS feed fetching/parsing from editorial highlight persistence and test each part independently.
+- Test coverage: Existing tests cover happy-path CRUD and one RSS filter case; timeout, oversized feed, redirect rejection, and cache behavior are not covered.
+
+**Text encoding consistency is uneven:**
+- Files: `src/services/donations-service.ts`, `server/package.json`, `server/prisma/schema.prisma`, `server/scripts/test-api.ts`
+- Why fragile: At least one source literal contains mojibake (`'nÃ£o'`), and some package/script text displays encoding artifacts in tooling output.
+- Safe modification: Normalize source files to UTF-8, keep internal enum/string values ASCII where possible, and verify user-facing Portuguese text in browser rendering.
+- Test coverage: No tests assert user-facing labels or internal string values for encoding correctness.
 
 ## Scaling Limits
 
-**Database query patterns assume modest row counts:**
-- Current capacity: Pagination exists for donations and optional needs pages, but residents listing and dashboard needs loading are unpaginated.
-- Limit: Large resident lists or many public needs increase response size and client rendering work.
-- Scaling path: Add pagination/search parameters to `server/src/routes/residents.ts`, use `NeedsService.listPaginated()` from dashboard flows, and add database indexes for frequent filters such as `unitId`, `priority`, and `registeredAt`.
+**Single-process state prevents horizontal consistency:**
+- Current capacity: Highlights are held in `Map` and telemetry keeps the last 1000 events per process.
+- Limit: Multiple API instances return different admin highlights and telemetry summaries.
+- Scaling path: Persist highlight records and telemetry summaries in PostgreSQL or an external service.
+- Files: `server/src/services/highlights-service.ts`, `server/src/services/telemetry-service.ts`, `server/src/routes/highlights.ts`, `server/src/routes/telemetry.ts`
 
-**Single-process in-memory services do not scale horizontally:**
-- Current capacity: Highlights edits and telemetry summaries live in memory.
-- Limit: Multiple API instances will have divergent highlights and telemetry, and restarts discard admin-created highlights.
-- Scaling path: Persist highlights and telemetry summaries in PostgreSQL or an external service before running multiple API replicas.
+**Startup migrations couple deploy safety to app lifecycle:**
+- Current capacity: A single server process can run `prisma migrate deploy` during startup.
+- Limit: Multi-instance deploys can race startup migration execution or keep all instances unavailable while migration runs.
+- Scaling path: Move migrations into CI/CD or release command execution outside `server/src/index.ts`.
+- Files: `server/src/index.ts`, `server/package.json`, `server/prisma/migrations/20260330212620_init/migration.sql`, `server/prisma/migrations/20260504103000_add_baixa_need_priority/migration.sql`
+
+**Donation and resident records have no retention or archival boundary:**
+- Current capacity: Donations and residents accumulate indefinitely in PostgreSQL.
+- Limit: PII retention and dashboard queries become harder to govern as usage grows.
+- Scaling path: Add retention policy fields/statuses, archival jobs, and scoped/paginated admin endpoints.
+- Files: `server/prisma/schema.prisma`, `server/src/repositories/donations-repository.ts`, `server/src/routes/residents.ts`, `src/services/dashboard-service.ts`
 
 ## Dependencies at Risk
 
-**React and router type packages:**
-- Risk: Type packages do not match runtime majors.
-- Impact: Future TypeScript upgrades can surface noisy or misleading errors around React components and route APIs.
-- Migration plan: Align `@types/react`/`@types/react-dom` with React 18 or upgrade runtime React intentionally; remove `@types/react-router-dom` because React Router 7 ships its own types.
+**React/router type versions are mismatched:**
+- Risk: Runtime packages and type packages span different major versions.
+- Impact: Type checks may not accurately model runtime behavior for React and React Router APIs.
+- Migration plan: Align `react`, `react-dom`, `@types/react`, `@types/react-dom`, `react-router-dom`, and router type packages in `package.json`; remove `@types/react-router-dom` if using `react-router-dom` v7 types directly.
+- Files: `package.json`, `package-lock.json`, `src/app/router.tsx`, `src/main.tsx`
 
-**Prisma package range drift:**
-- Risk: `server/package.json` declares `@prisma/client` and `prisma` as `^5.13.0`, while installed generation reports Prisma Client `v5.22.0`.
-- Impact: Minor Prisma upgrades can affect generated client behavior, SQL, or migration tooling without an explicit package manifest change.
-- Migration plan: Pin Prisma versions when stability matters, update both packages together, and run `npm --prefix server run build` plus service tests after upgrades.
+**No lint or formatter configuration is present:**
+- Risk: Style, import ordering, unused code, and unsafe `any` patterns depend on manual review.
+- Impact: Large UI files and route handlers can accumulate inconsistent patterns without automated checks.
+- Migration plan: Add ESLint/Prettier or Biome config, wire scripts into `package.json` and `server/package.json`, and make `deploy:check` run lint/type checks before build.
+- Files: `package.json`, `server/package.json`, `tsconfig.json`, `server/tsconfig.json`
 
-**No production vulnerability findings from current audit:**
-- Risk: Not detected in production dependency audit on 2026-05-19.
-- Impact: `npm audit --omit=dev --audit-level=moderate` and `npm --prefix server audit --omit=dev --audit-level=moderate` reported `0 vulnerabilities`.
-- Migration plan: Keep audit in CI or release checks.
+**`path-to-regexp` override is unexplained:**
+- Risk: A dependency override can mask transitive compatibility or security constraints without a visible rationale.
+- Impact: Future dependency updates may remove or conflict with the override.
+- Migration plan: Add a short comment in dependency documentation or an ADR explaining the override, then remove it once upstream packages no longer require it.
+- Files: `server/package.json`, `server/package-lock.json`
 
 ## Missing Critical Features
 
-**Admin account management is not implemented:**
-- Problem: The UI exposes profile/password buttons, but there are no corresponding frontend handlers or API routes for profile update/password change.
-- Blocks: Hosts cannot rotate credentials or update contact data through the product.
+**Production observability is minimal:**
+- Problem: The backend uses `console.log`/`console.error` and process-local telemetry summaries; there is no structured logging, request correlation, error tracking, or alerting.
+- Blocks: Reliable production incident triage and abuse monitoring for public donation/telemetry endpoints.
+- Files: `server/src/index.ts`, `server/src/middleware/error-handler.ts`, `server/src/services/telemetry-service.ts`, `server/src/routes/telemetry.ts`
 
-**Operational moderation for public donations is limited:**
-- Problem: Admin users can list and delete donations, but there is no status workflow for confirmed, scheduled, delivered, rejected, or spam records.
-- Blocks: Donation lifecycle tracking and spam triage remain manual.
+**Admin account lifecycle is incomplete:**
+- Problem: Hosts are seeded and can log in, but there are no visible flows for password changes, password reset, host invitations, or profile edits.
+- Blocks: Operational management of real host users without direct database/seed changes.
+- Files: `server/src/routes/auth.ts`, `server/src/prisma/seed.ts`, `src/pages/admin/Dashboard.tsx`, `server/prisma/schema.prisma`
 
-**Resident management is API-only beyond listing:**
-- Problem: Backend routes support create/update/delete residents, but the dashboard only lists and filters residents.
-- Blocks: Admin users cannot maintain resident data through the frontend.
+**Donation workflow lacks moderation/status tracking:**
+- Problem: Public donations are immediately stored and displayed to hosts, but the schema has no moderation status, confirmation state, source metadata, or audit trail.
+- Blocks: Distinguishing valid donation intentions from spam, duplicates, or completed deliveries.
+- Files: `server/prisma/schema.prisma`, `server/src/services/donations-service.ts`, `server/src/repositories/donations-repository.ts`, `src/pages/admin/Dashboard.tsx`
+
+**Frontend has no automated regression harness:**
+- Problem: There are no frontend unit, component, accessibility, or end-to-end tests.
+- Blocks: Safe refactors of large interactive pages and admin flows.
+- Files: `package.json`, `src/pages/CapsPage.tsx`, `src/pages/admin/Dashboard.tsx`, `src/hooks/useDashboardData.ts`, `src/services/donations-service.ts`
 
 ## Test Coverage Gaps
 
-**Route-level security and auth middleware:**
-- What's not tested: CORS origin rejection, CSRF header enforcement, cookie options, local bypass constraints, login/logout, and admin-only route behavior.
-- Files: `server/src/config/security.ts`, `server/src/middleware/auth.ts`, `server/src/routes/auth.ts`, `server/src/routes/telemetry.ts`, `server/src/routes/highlights.ts`
-- Risk: Production security behavior can regress while service unit tests still pass.
+**Frontend workflows are untested:**
+- What's not tested: Donation registration, local donor intention storage, CAPS unit selection, admin login, dashboard request publishing/deletion, residents table display, and map rendering.
+- Files: `package.json`, `src/pages/CapsPage.tsx`, `src/pages/admin/Login.tsx`, `src/pages/admin/Dashboard.tsx`, `src/hooks/useAdminLogin.ts`, `src/hooks/useDashboardData.ts`, `src/components/CapsMap.tsx`
+- Risk: UI regressions and API contract drift are discovered manually.
 - Priority: High
 
-**Donation creation and donor privacy behavior:**
-- What's not tested: Zod validation for donation writes, anonymous donor clearing, unknown unit slug errors, delete authorization, and multi-item frontend submission.
-- Files: `server/src/services/donations-service.ts`, `server/src/repositories/donations-repository.ts`, `src/services/donations-service.ts`, `src/pages/CapsPage.tsx`
-- Risk: Donor PII handling or donation writes can break unnoticed.
+**Backend route/security behavior lacks integration tests:**
+- What's not tested: CORS/trusted-origin enforcement, CSRF header rejection, cookie options, login limiter behavior, local auth bypass restrictions, `/api/auth/me`, and protected route authorization.
+- Files: `server/src/app.ts`, `server/src/config/security.ts`, `server/src/lib/session-cookie.ts`, `server/src/middleware/auth.ts`, `server/src/routes/auth.ts`, `server/src/routes/donations.ts`, `server/src/routes/residents.ts`
+- Risk: Security regressions can pass the current service-only test suite.
 - Priority: High
 
-**Frontend auth and degraded API states:**
-- What's not tested: Login failure, bypass disabled/enabled branches, dashboard redirect on expired cookies, public mock fallbacks, and local storage cleanup.
-- Files: `src/hooks/useAdminLogin.ts`, `src/hooks/useDashboardData.ts`, `src/components/Layout.tsx`, `src/pages/CapsPage.tsx`, `src/pages/YourDonations.tsx`
-- Risk: Users can see stale or misleading UI when the API is unavailable or their session expires.
+**Donation create/delete paths are minimally tested:**
+- What's not tested: Donation payload validation, anonymous donor handling, unit slug lookup failures, delete authorization, and multi-item partial failure behavior.
+- Files: `server/src/services/donations-service.ts`, `server/src/repositories/donations-repository.ts`, `server/src/services/donations-service.test.ts`, `src/services/donations-service.ts`
+- Risk: Public donation records can be malformed or partially persisted without detection.
+- Priority: High
+
+**Persistence-backed features are not exercised against a database:**
+- What's not tested: Prisma schema constraints, migrations, seed data, repositories, and route-to-database behavior.
+- Files: `server/prisma/schema.prisma`, `server/prisma/migrations/20260330212620_init/migration.sql`, `server/prisma/migrations/20260504103000_add_baixa_need_priority/migration.sql`, `server/src/prisma/seed.ts`, `server/src/repositories/needs-repository.ts`, `server/src/repositories/donations-repository.ts`
+- Risk: SQL/migration issues and repository query behavior are missed by mock-repository service tests.
 - Priority: Medium
 
-**Performance-sensitive integrations:**
-- What's not tested: RSS feed timeout behavior, oversized feed rejection, duplicate item handling, telemetry payload limits, and image fallback behavior.
-- Files: `server/src/services/highlights-service.ts`, `server/src/services/telemetry-service.ts`, `src/components/ui/NewsCarousel.tsx`
-- Risk: External feed changes or large payloads can slow public endpoints or degrade the homepage without failing tests.
+**Highlights RSS edge cases are under-tested:**
+- What's not tested: External fetch timeout, oversized response rejection, disallowed redirect host, malformed XML, cache expiry, and duplicate link handling.
+- Files: `server/src/services/highlights-service.ts`, `server/src/services/highlights-service.test.ts`, `server/src/routes/highlights.ts`
+- Risk: Public highlights can fail slowly, return stale/empty content, or accept unexpected feed content.
 - Priority: Medium
 
-## Verification Signals
-
-- `npm run build` passes for the frontend build.
-- `npm --prefix server run build` passes for Prisma generation and TypeScript compilation.
-- `npm --prefix server run test:unit` passes 7 backend service tests.
-- `npm audit --omit=dev --audit-level=moderate` reports 0 production vulnerabilities.
-- `npm --prefix server audit --omit=dev --audit-level=moderate` reports 0 production vulnerabilities.
+**Telemetry behavior has no tests:**
+- What's not tested: Schema rejection, max-event trimming, summary aggregation, and admin-only summary access.
+- Files: `server/src/services/telemetry-service.ts`, `server/src/routes/telemetry.ts`
+- Risk: Analytics can silently drop data or expose summary endpoints incorrectly.
+- Priority: Medium
 
 ---
 
-*Concerns audit: 2026-05-19*
+*Concerns audit: 2026-05-29*
