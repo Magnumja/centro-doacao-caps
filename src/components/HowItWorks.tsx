@@ -36,11 +36,13 @@ export default function HowItWorks(): React.ReactElement {
 
       <div className="how-it-works-grid">
         {steps.map(({ title, description, icon: StepIcon }, index) => (
-          <article className="how-it-works-card" key={title}>
-            <span className="how-it-works-card__icon" aria-hidden="true">
-              <StepIcon />
-            </span>
-            <span className="how-it-works-card__step">{index + 1}</span>
+          <article className={`how-it-works-card how-it-works-card--step-${index + 1}`} key={title}>
+            <div className="how-it-works-card__header">
+              <span className="how-it-works-card__step" aria-label={`Passo ${index + 1}`}>{index + 1}</span>
+              <span className="how-it-works-card__icon" aria-hidden="true">
+                <StepIcon />
+              </span>
+            </div>
             <h3>{title}</h3>
             <p>{description}</p>
           </article>

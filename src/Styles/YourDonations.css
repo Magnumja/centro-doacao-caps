@@ -210,9 +210,6 @@
   padding: clamp(1rem, 2.4vw, 1.35rem);
 }
 
-.your-donations-section {
-  backdrop-filter: blur(14px);
-}
 
 .your-donation-card,
 .your-donations-empty {
@@ -267,4 +264,109 @@
   .page-block.your-donations-page {
     width: min(100%, calc(100vw - 1rem));
   }
+}
+
+/* ── YourDonations enhanced ── */
+
+/* Header */
+.your-donations-header h2 {
+  font-size: clamp(1.42rem, 2.6vw, 2rem);
+  text-wrap: balance;
+}
+
+.your-donations-header p {
+  text-wrap: pretty;
+}
+
+/* Section title */
+.your-donations-section__title h3 {
+  font-size: 1.05rem;
+  color: #102a36;
+}
+
+/* Card headings */
+.your-donation-card h4 {
+  font-size: 1rem;
+  line-height: 1.28;
+  color: #102a36;
+  text-wrap: balance;
+}
+
+/* Empty state — informativo, não interativo */
+.your-donations-empty {
+  text-align: center;
+  padding: clamp(1.5rem, 4vw, 2.5rem) 1.5rem;
+  gap: 0.75rem;
+  justify-items: center;
+}
+
+.your-donations-empty:hover {
+  transform: none;
+  box-shadow: var(--shadow-soft);
+  border-color: rgba(16, 42, 54, 0.12);
+}
+
+.your-donations-empty h4 {
+  font-size: 1.08rem;
+  color: #102a36;
+  text-wrap: balance;
+}
+
+.your-donations-empty p {
+  max-width: 48ch;
+  color: #58707a;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+.your-donations-empty .your-donations-primary {
+  margin-top: 0.5rem;
+}
+
+/* Next steps — diferenciar primário de secundário */
+.your-donations-next-steps {
+  gap: 0.6rem;
+  padding: clamp(0.85rem, 2vw, 1.1rem);
+}
+
+.your-donations-next-steps a:last-child {
+  background: transparent;
+  border: 1px solid rgba(16, 42, 54, 0.14);
+  color: #07345f;
+}
+
+.your-donations-next-steps a:last-child:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(15, 143, 121, 0.28);
+}
+
+/* Donation items in card */
+.your-donation-items li {
+  border-radius: var(--radius-control);
+  font-size: 0.9rem;
+}
+
+.your-donation-items li strong {
+  color: #102a36;
+  font-family: 'Lexend', sans-serif;
+}
+
+.your-donation-items li span {
+  color: #58707a;
+  font-weight: 700;
+  font-family: 'Lexend', sans-serif;
+  font-size: 0.84rem;
+}
+
+/* Footer link diferenciado do botão primário */
+.your-donation-card__footer a {
+  background: transparent;
+  border: 1px solid rgba(7, 52, 95, 0.18);
+  color: #07345f;
+  font-size: 0.8rem;
+}
+
+.your-donation-card__footer a:hover {
+  background: rgba(229, 241, 245, 0.6);
+  border-color: rgba(7, 52, 95, 0.28);
 }

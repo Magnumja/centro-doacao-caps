@@ -1016,6 +1016,8 @@
 }
 
 .selected-unit-compact-need {
+  position: relative;
+  overflow: hidden;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
@@ -1023,7 +1025,6 @@
   width: 100%;
   min-height: 46px;
   border: 1px solid rgba(16, 42, 54, 0.11);
-  border-left: 3px solid rgba(7, 52, 95, 0.22);
   border-radius: var(--radius-control);
   background: rgba(255, 255, 255, 0.78);
   color: var(--color-text);
@@ -1035,6 +1036,14 @@
     border-color 180ms ease,
     box-shadow 180ms ease,
     background 180ms ease;
+}
+
+.selected-unit-compact-need::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 2px;
+  background: rgba(7, 52, 95, 0.28);
 }
 
 .selected-unit-compact-need:hover,
@@ -1085,16 +1094,16 @@
   font-size: 0.72rem;
 }
 
-.selected-unit-compact-need--alta {
-  border-left-color: #b33a30;
+.selected-unit-compact-need--alta::before {
+  background: #b33a30;
 }
 
-.selected-unit-compact-need--media {
-  border-left-color: #c27512;
+.selected-unit-compact-need--media::before {
+  background: #c27512;
 }
 
-.selected-unit-compact-need--baixa {
-  border-left-color: #2563eb;
+.selected-unit-compact-need--baixa::before {
+  background: #2563eb;
 }
 
 .selected-unit-compact-needs__more {
@@ -1249,32 +1258,26 @@
 }
 
 .donation-request-card--priority-alta {
-  border-left-color: #c0392b;
   background: #fff8f8;
 }
 
 .donation-request-card--priority-alta:hover {
-  border-left-color: #a93226;
   box-shadow: 0 8px 20px rgba(192, 57, 43, 0.12);
 }
 
 .donation-request-card--priority-media {
-  border-left-color: #d97706;
   background: #fffbf5;
 }
 
 .donation-request-card--priority-media:hover {
-  border-left-color: #b45309;
   box-shadow: 0 8px 20px rgba(217, 119, 6, 0.12);
 }
 
 .donation-request-card--priority-baixa {
-  border-left-color: #3b82f6;
-  background: #f8fafd;
+  background: #f0f5ff;
 }
 
 .donation-request-card--priority-baixa:hover {
-  border-left-color: #2563eb;
   box-shadow: 0 8px 20px rgba(59, 130, 246, 0.12);
 }
 
@@ -1392,7 +1395,6 @@
 .donation-request-card {
   gap: 0.62rem;
   padding: 0.9rem;
-  border-left-width: 3px;
 }
 
 .unit-needs-section--compact .donation-request-card {
@@ -1800,6 +1802,11 @@
 .donation-panel h3,
 .donation-summary-panel h3 {
   color: #102a36;
+  text-wrap: balance;
+}
+
+.selected-unit-info-card p {
+  text-wrap: pretty;
 }
 
 .caps-card__details strong {
@@ -1843,7 +1850,6 @@
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(247, 251, 250, 0.9));
   box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(14px);
 }
 
 .selected-unit-photo-card .selected-unit-spotlight__photo {
@@ -2053,6 +2059,8 @@
   overflow: hidden;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
+  text-wrap: balance;
 }
 
 .caps-card__details {
@@ -2071,6 +2079,7 @@
   overflow: hidden;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
 .caps-card__details strong {
@@ -2121,12 +2130,14 @@
 
 .caps-page__intro h2 {
   font-size: clamp(1.5rem, 2.8vw, 2.12rem);
+  text-wrap: balance;
 }
 
 .caps-page__intro p {
   max-width: 660px;
   font-size: 0.94rem;
   line-height: 1.5;
+  text-wrap: pretty;
 }
 
 .selected-unit-overview {
@@ -2166,6 +2177,7 @@
   overflow: hidden;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
 .selected-unit-contact-card p {
@@ -2210,6 +2222,7 @@
   overflow: hidden;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
 .selected-unit-compact-needs {
@@ -2368,6 +2381,7 @@
   .selected-unit-info-card--identity p,
   .selected-unit-info-card--needs > p {
     -webkit-line-clamp: unset;
+    line-clamp: unset;
   }
 
   .selected-unit-contact-card p {

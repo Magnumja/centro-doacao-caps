@@ -3,9 +3,11 @@ import { Link } from 'react-router-dom'
 
 import CapsMap from '../components/CapsMap'
 import DonationRequestCard from '../components/DonationRequestCard'
+import HeroSection from '../components/HeroSection'
 import HowItWorks from '../components/HowItWorks'
 import NewsCarousel from '../components/ui/NewsCarousel'
 import { UrgentCarouselSkeleton } from '../components/ui/Skeletons'
+import { projectStats } from '../data/mockData'
 import { HighlightItem } from '../data/highlights'
 import { fetchPublicNeeds } from '../lib/needs'
 import { fetchHighlights } from '../services/highlights-service'
@@ -86,10 +88,11 @@ export default function Home(): React.ReactElement {
 
   return (
     <>
+      <HeroSection stats={projectStats} />
+
       <section className="page-block home-highlights-section home-highlights-section--featured">
         <div className="home-urgent-header">
           <div>
-            <span className="page-kicker">Notícias e destaques</span>
             <h2>Campanhas e informações da rede CAPS</h2>
             <p>Atualizações importantes aparecem primeiro para orientar quem deseja participar.</p>
           </div>
@@ -102,7 +105,6 @@ export default function Home(): React.ReactElement {
       <section className="page-block home-location-section">
         <div className="home-location-header">
           <div>
-            <span className="page-kicker">Mapa das unidades</span>
             <h2>Encontre uma unidade CAPS em Campo Grande</h2>
             <p>Use o mapa para conhecer a localização das unidades antes de escolher onde doar.</p>
           </div>
@@ -146,7 +148,6 @@ export default function Home(): React.ReactElement {
 
       <section className="page-block home-final-cta">
         <div>
-          <span className="page-kicker">Escolha seu caminho</span>
           <h2>Veja todos os pedidos ou escolha uma unidade CAPS.</h2>
           <p>A home mostra o essencial. As páginas internas trazem os detalhes para doar com segurança.</p>
         </div>

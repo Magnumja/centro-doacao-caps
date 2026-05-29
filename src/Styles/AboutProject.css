@@ -616,7 +616,7 @@
   }
 }
 
-/* Calmer editorial layout for less visual noise. */
+/* Calmer editorial layout — remove excessive cascade, keep hero entrance */
 .about-project-page .page-block,
 .about-hero__content .page-kicker,
 .about-hero__content h2,
@@ -629,6 +629,22 @@
 .about-final-cta::after,
 .about-final-cta__actions .home-hero-button--primary {
   animation: none;
+}
+
+/* Re-enable only the hero entrance */
+.about-project-page header.page-block {
+  animation: aboutHeroEnter 380ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes aboutHeroEnter {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-project-page header.page-block {
+    animation: none;
+  }
 }
 
 .about-hero,
@@ -674,6 +690,25 @@
 
 .about-step-card::after {
   display: none;
+}
+
+/* Step number differentiation — mesma linguagem do HowItWorks */
+.about-workflow-grid .about-step-card:nth-child(1) .about-step-card__number {
+  background: #07345f;
+}
+.about-workflow-grid .about-step-card:nth-child(2) .about-step-card__number {
+  background: #0f8f79;
+}
+.about-workflow-grid .about-step-card:nth-child(3) .about-step-card__number {
+  background: #c27512;
+}
+.about-workflow-grid .about-step-card:nth-child(4) .about-step-card__number {
+  background: #041b31;
+}
+
+/* Step card content typography */
+.about-step-card p {
+  text-wrap: balance;
 }
 
 .about-step-card__number,
@@ -914,10 +949,18 @@
 
 .about-hero__content h2 {
   color: #102a36;
+  text-wrap: balance;
+}
+
+.about-info-card h3,
+.about-creator-card h3,
+.about-cocreators-card h3 {
+  text-wrap: balance;
 }
 
 .about-hero__content p {
   max-width: 760px;
+  text-wrap: pretty;
 }
 
 .about-info-card,
@@ -949,6 +992,57 @@
   color: #07345f;
 }
 
+/* Info card hover differentiation per step color */
+.about-story-grid .about-info-card:nth-child(1):hover {
+  border-color: rgba(7, 52, 95, 0.26);
+}
+.about-story-grid .about-info-card:nth-child(1):hover .about-info-card__icon {
+  background: rgba(229, 241, 245, 0.95);
+}
+.about-story-grid .about-info-card:nth-child(2):hover {
+  border-color: rgba(15, 143, 121, 0.26);
+}
+.about-story-grid .about-info-card:nth-child(2):hover .about-info-card__icon {
+  background: rgba(228, 246, 241, 0.95);
+}
+.about-story-grid .about-info-card:nth-child(3):hover {
+  border-color: rgba(194, 117, 18, 0.30);
+}
+.about-story-grid .about-info-card:nth-child(3):hover .about-info-card__icon {
+  background: rgba(254, 243, 213, 0.95);
+}
+
+/* Info card icon differentiation — mesma linguagem dos steps */
+.about-story-grid .about-info-card:nth-child(1) .about-info-card__icon {
+  background: rgba(229, 241, 245, 0.8);
+  border-color: rgba(7, 52, 95, 0.14);
+  color: #07345f;
+}
+.about-story-grid .about-info-card:nth-child(2) .about-info-card__icon {
+  background: rgba(228, 246, 241, 0.8);
+  border-color: rgba(15, 143, 121, 0.16);
+  color: #0f8f79;
+}
+.about-story-grid .about-info-card:nth-child(3) .about-info-card__icon {
+  background: rgba(254, 243, 213, 0.8);
+  border-color: rgba(194, 117, 18, 0.18);
+  color: #c27512;
+}
+
+/* Subtle card background tint per info card */
+.about-story-grid .about-info-card:nth-child(1) {
+  border-color: rgba(7, 52, 95, 0.12);
+  background: linear-gradient(160deg, rgba(229, 241, 245, 0.45), rgba(255, 255, 255, 0.92));
+}
+.about-story-grid .about-info-card:nth-child(2) {
+  border-color: rgba(15, 143, 121, 0.14);
+  background: linear-gradient(160deg, rgba(228, 246, 241, 0.45), rgba(255, 255, 255, 0.92));
+}
+.about-story-grid .about-info-card:nth-child(3) {
+  border-color: rgba(194, 117, 18, 0.16);
+  background: linear-gradient(160deg, rgba(254, 243, 213, 0.45), rgba(255, 255, 255, 0.92));
+}
+
 .about-info-card h3,
 .about-creator-card h3,
 .about-cocreators-card h3 {
@@ -961,16 +1055,47 @@
 }
 
 .about-final-cta {
-  border: 1px solid rgba(16, 42, 54, 0.10);
+  border: 1px solid rgba(7, 52, 95, 0.12);
   border-radius: var(--radius-card);
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(229, 241, 245, 0.72));
-  padding: clamp(1rem, 2.4vw, 1.35rem);
+    linear-gradient(130deg, rgba(7, 52, 95, 0.06) 0%, transparent 44%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(229, 241, 245, 0.82));
+  padding: clamp(1.5rem, 3.5vw, 2.2rem);
   box-shadow: var(--shadow-soft);
+}
+
+.about-final-cta h2 {
+  font-size: clamp(1.4rem, 2.8vw, 2rem);
+  text-wrap: balance;
+  color: #102a36;
+}
+
+.about-final-cta p {
+  max-width: 54ch;
+  color: #58707a;
+  text-wrap: pretty;
 }
 
 .about-final-cta > div:first-child {
   max-width: 760px;
+}
+
+.about-final-cta .home-hero-button--primary,
+.about-final-cta .home-hero-button--secondary {
+  min-height: 48px;
+  padding: 0.72rem 1.2rem;
+  font-size: 0.92rem;
+}
+
+/* Co-creators card polish */
+.about-cocreators-card h3 {
+  text-wrap: balance;
+  font-size: 1.1rem;
+}
+
+.about-cocreators-card p {
+  text-wrap: pretty;
+  line-height: 1.6;
 }
 
 @media (max-width: 640px) {

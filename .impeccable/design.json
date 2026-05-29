@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-05-29T00:00:00Z",
+  "title": "Design System: Centro de Doação CAPS",
+  "extensions": {
+    "colorMeta": {
+      "navy-deep":     { "role": "primary",   "displayName": "Navy Profundo",    "canonical": "#07345f", "tonalRamp": ["#01090f","#041b31","#07345f","#0a4880","#1060a0","#3d85c8","#80b4e0","#c0d8f2"] },
+      "navy-darkest":  { "role": "primary",   "displayName": "Navy Escuro",      "canonical": "#041b31", "tonalRamp": ["#010608","#041b31","#082d52","#0e4272","#235d94","#5588b8","#97bad8","#ccddef"] },
+      "navy-ink":      { "role": "neutral",   "displayName": "Navy Tinta",       "canonical": "#102a36", "tonalRamp": ["#040e12","#102a36","#1e4255","#2e5e78","#4a7a96","#7ba2b8","#acc8d8","#d8e8ef"] },
+      "teal-accent":   { "role": "secondary", "displayName": "Teal Acento",      "canonical": "#0f8f79", "tonalRamp": ["#031f1b","#0f8f79","#18b09a","#30c8b2","#62d8c8","#96e4da","#c2f0ea","#e4f8f5"] },
+      "warm-gold":     { "role": "tertiary",  "displayName": "Ouro Quente",      "canonical": "#f7bd4f", "tonalRamp": ["#3a2900","#7d5b00","#c49200","#e8b200","#f7bd4f","#fad07f","#fce0aa","#fef2d5"] },
+      "muted-text":    { "role": "neutral",   "displayName": "Texto Muted",      "canonical": "#58707a", "tonalRamp": ["#13191c","#2e4049","#3e545e","#58707a","#78939c","#a0b5bc","#c4d4d8","#e5edef"] },
+      "border":        { "role": "neutral",   "displayName": "Border",           "canonical": "#d7e6e4", "tonalRamp": ["#2a3836","#4d6360","#6e8886","#9ab2b0","#bfd0ce","#d7e6e4","#ebf2f1","#f5f9f8"] },
+      "page-bg":       { "role": "neutral",   "displayName": "Fundo Página",     "canonical": "#f3f8f6", "tonalRamp": ["#1a2420","#2e3e3a","#4a5e58","#6a8078","#96aea6","#c0d0cc","#dde8e5","#f3f8f6"] },
+      "danger":        { "role": "semantic",  "displayName": "Perigo/Urgente",   "canonical": "#b33a30", "tonalRamp": ["#200805","#5c1a12","#8f2c24","#b33a30","#d05548","#e68880","#f3b8b4","#fbe8e6"] }
+    },
+    "typographyMeta": {
+      "display":  { "displayName": "Display",  "purpose": "Títulos de página e heroes. Máximo 1 por página." },
+      "headline": { "displayName": "Headline", "purpose": "Títulos de seção. Máximo 3-4 por página." },
+      "title":    { "displayName": "Title",    "purpose": "Títulos de card e item. Múltiplos por viewport." },
+      "body":     { "displayName": "Body",     "purpose": "Texto corrido. Source Sans 3 apenas. 65-75ch máximo." },
+      "label":    { "displayName": "Label",    "purpose": "Badges, chips, meta-data. Lexend 700 0.72rem." }
+    },
+    "shadows": [
+      { "name": "soft",  "value": "0 10px 28px rgba(9, 36, 61, 0.08)",  "purpose": "Cards de destaque em repouso. Usar com moderação." },
+      { "name": "card",  "value": "0 18px 46px rgba(9, 36, 61, 0.11)",  "purpose": "Cards em hover. Sempre com translateY(-2px a -4px)." },
+      { "name": "hover", "value": "0 22px 52px rgba(9, 36, 61, 0.14)",  "purpose": "Estado de hover explícito. O mais intenso do sistema." }
+    ],
+    "motion": [
+      { "name": "state-transition",  "value": "180ms cubic-bezier(0.2, 0.7, 0.2, 1)", "purpose": "Transições de estado em botões, links, cards." },
+      { "name": "page-enter",        "value": "320ms cubic-bezier(0.2, 0.7, 0.2, 1)", "purpose": "Entrada de página com opacity + translateY(6px)." },
+      { "name": "surface-enter",     "value": "360ms cubic-bezier(0.2, 0.7, 0.2, 1)", "purpose": "Entrada de seção com opacity + translateY(12px)." },
+      { "name": "nav-underline",     "value": "180ms ease",                            "purpose": "Underline de link nav: right de 100% para 0." }
+    ],
+    "breakpoints": [
+      { "name": "nav-collapse",  "value": "860px",  "purpose": "Mobile nav drawer ativa. Header muda para brand central + hambúrguer." },
+      { "name": "grid-collapse", "value": "740px",  "purpose": "Grids de 2-3 colunas colapsam para 1 coluna." },
+      { "name": "dense-mobile",  "value": "560px",  "purpose": "Paddings e fontes reduzidos. Width: min(100%, calc(100vw - 1.25rem))." },
+      { "name": "compact-xs",    "value": "420px",  "purpose": "Mobile nav toggle vira ícone puro sem label." }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Ação principal. Fundo navy com gradiente sutil. Sempre verbo + objeto no label.",
+      "html": "<button class=\"ds-btn-primary\">Ver necessidades</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem; min-height: 42px; border: 0; border-radius: 10px; background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent 45%), linear-gradient(135deg, #07345f 0%, #0c5f7e 100%); color: #ffffff; font-family: 'Lexend', sans-serif; font-size: 0.88rem; font-weight: 700; padding: 0.62rem 0.92rem; cursor: pointer; box-shadow: 0 12px 24px rgba(7, 52, 95, 0.22); transition: transform 180ms cubic-bezier(.2,.7,.2,1), box-shadow 180ms ease; } .ds-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 34px rgba(7, 52, 95, 0.26); } .ds-btn-primary:active { transform: translateY(0); } .ds-btn-primary:focus-visible { outline: 3px solid rgba(15, 143, 121, 0.28); outline-offset: 3px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Ação secundária. Fundo branco translúcido, borda discreta.",
+      "html": "<button class=\"ds-btn-secondary\">Conhecer o projeto</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem; min-height: 42px; border: 1px solid rgba(16,42,54,0.13); border-radius: 10px; background: rgba(255,255,255,0.82); color: #041b31; font-family: 'Lexend', sans-serif; font-size: 0.88rem; font-weight: 700; padding: 0.58rem 0.82rem; cursor: pointer; transition: transform 180ms cubic-bezier(.2,.7,.2,1), border-color 180ms ease, box-shadow 180ms ease, background 180ms ease; } .ds-btn-secondary:hover { transform: translateY(-2px); border-color: rgba(15,143,121,0.28); background: #ffffff; box-shadow: 0 10px 22px rgba(9,36,61,0.08); } .ds-btn-secondary:focus-visible { outline: 3px solid rgba(15, 143, 121, 0.28); outline-offset: 3px; }"
+    },
+    {
+      "name": "Category Chip",
+      "kind": "chip",
+      "refersTo": "chip-category",
+      "description": "Filtro de categoria. Fundo tinted, pill radius. Estado ativo com teal border.",
+      "html": "<button class=\"ds-chip\">Alimentos</button><button class=\"ds-chip ds-chip--active\">Higiene pessoal</button>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; gap: 0.35rem; min-height: 40px; border: 1px solid rgba(16,42,54,0.13); border-radius: 999px; background: rgba(255,255,255,0.82); color: #102a36; font-family: 'Lexend', sans-serif; font-size: 0.82rem; font-weight: 700; padding: 0.5rem 0.72rem; cursor: pointer; transition: transform 180ms ease, border-color 180ms ease, background 180ms ease; } .ds-chip:hover { transform: translateY(-1px); border-color: rgba(15,143,121,0.28); } .ds-chip--active { border-color: rgba(15,143,121,0.35); background: linear-gradient(135deg, rgba(15,143,121,0.14), rgba(7,52,95,0.08)); color: #07345f; box-shadow: inset 0 1px 0 rgba(255,255,255,0.62); }"
+    },
+    {
+      "name": "Donation Request Card",
+      "kind": "card",
+      "refersTo": "card-default",
+      "description": "Componente central. Barra de prioridade no topo via ::before. Sem side-stripe.",
+      "html": "<article class=\"ds-need-card ds-need-card--alta\"><h3>Cobertores de lã</h3><p>CAPS Centro — 20 unidades necessárias</p><div class=\"ds-need-card__progress\"><span style=\"width:35%\"></span></div><div class=\"ds-need-card__footer\"><span class=\"ds-badge ds-badge--urgent\">Urgente</span><span class=\"ds-meta\">35% atendido</span></div></article>",
+      "css": ".ds-need-card { position: relative; overflow: hidden; display: grid; gap: 0.62rem; padding: 0.9rem; border: 1px solid rgba(16,42,54,0.12); border-radius: 12px; background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,251,252,0.9)); box-shadow: 0 10px 28px rgba(9,36,61,0.08); transition: transform 190ms ease, box-shadow 190ms ease, border-color 190ms ease; } .ds-need-card::before { content: ''; position: absolute; inset: 0 0 auto; height: 3px; background: linear-gradient(90deg, rgba(7,52,95,0.9), rgba(15,143,121,0.8)); opacity: 0.72; } .ds-need-card--alta::before { background: linear-gradient(90deg, #b33a30, #f07d5c); } .ds-need-card--media::before { background: linear-gradient(90deg, #c27512, #f7bd4f); } .ds-need-card--baixa::before { background: linear-gradient(90deg, #2563eb, #48a0d7); } .ds-need-card:hover { transform: translateY(-4px); border-color: rgba(15,143,121,0.24); box-shadow: 0 22px 52px rgba(9,36,61,0.14); } .ds-need-card h3 { margin: 0; font-family: 'Lexend', sans-serif; font-size: 1.04rem; color: #102a36; } .ds-need-card p { margin: 0; color: #58707a; font-size: 0.9rem; } .ds-need-card__progress { height: 0.36rem; overflow: hidden; border-radius: 999px; background: rgba(7,52,95,0.08); } .ds-need-card__progress span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #07345f, #0f8f79); } .ds-need-card__footer { display: flex; justify-content: space-between; align-items: center; gap: 0.6rem; } .ds-badge { border-radius: 999px; padding: 0.18rem 0.52rem; font-family: 'Lexend', sans-serif; font-size: 0.72rem; font-weight: 700; } .ds-badge--urgent { background: #ffe8e5; color: #9a2f27; } .ds-meta { color: #58707a; font-size: 0.82rem; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "card-default",
+      "description": "Campo de formulário padrão. Focus ring teal. Min-height 44px.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field__label\">Nome completo</span><input class=\"ds-field__input\" type=\"text\" placeholder=\"Seu nome\"></label>",
+      "css": ".ds-field { display: grid; gap: 0.3rem; } .ds-field__label { font-family: 'Lexend', sans-serif; font-size: 0.84rem; font-weight: 600; color: #102a36; } .ds-field__input { width: 100%; min-height: 44px; border: 1px solid rgba(16,42,54,0.14); border-radius: 10px; background: rgba(255,255,255,0.94); color: #102a36; font-family: 'Source Sans 3', sans-serif; font-size: 1rem; padding: 0.55rem 0.7rem; box-shadow: inset 0 1px 0 rgba(255,255,255,0.7); transition: border-color 180ms ease, box-shadow 180ms ease; box-sizing: border-box; } .ds-field__input:hover { border-color: rgba(7,52,95,0.28); } .ds-field__input:focus { outline: none; border-color: rgba(15,143,121,0.66); box-shadow: 0 0 0 4px rgba(15,143,121,0.12); } .ds-field__input::placeholder { color: rgba(88,112,122,0.7); }"
+    },
+    {
+      "name": "Nav Link (Desktop)",
+      "kind": "nav",
+      "refersTo": "button-primary",
+      "description": "Link de navegação no header navy. Underline gold animado no hover/ativo.",
+      "html": "<nav class=\"ds-nav-demo\"><a class=\"ds-nav-link\" href=\"#\">Início</a><a class=\"ds-nav-link ds-nav-link--active\" href=\"#\">CAPS</a><a class=\"ds-nav-link\" href=\"#\">Necessidades</a></nav>",
+      "css": ".ds-nav-demo { display: flex; gap: 1.35rem; padding: 1rem; background: linear-gradient(90deg, rgba(4,27,49,0.98), rgba(7,52,95,0.94)); border-radius: 8px; } .ds-nav-link { position: relative; display: inline-flex; align-items: center; min-height: 38px; padding: 0.34rem 0; border: 0; background: transparent; color: rgba(255,255,255,0.94); font-family: 'Lexend', sans-serif; font-size: 0.9rem; font-weight: 700; text-decoration: none; transition: color 180ms ease; } .ds-nav-link::after { content: ''; position: absolute; left: 0; right: 100%; bottom: 0.12rem; height: 2px; border-radius: 999px; background: #f7bd4f; transition: right 180ms ease; } .ds-nav-link:hover, .ds-nav-link--active { color: #ffd872; } .ds-nav-link:hover::after, .ds-nav-link--active::after { right: 0; }"
+    },
+    {
+      "name": "Urgency Badge",
+      "kind": "chip",
+      "refersTo": "chip-category",
+      "description": "Badge semântico de urgência. Cor de fundo e texto por nível. Sempre com label textual.",
+      "html": "<span class=\"ds-urgency ds-urgency--high\">Alta prioridade</span><span class=\"ds-urgency ds-urgency--medium\">Moderada</span><span class=\"ds-urgency ds-urgency--low\">Baixa</span>",
+      "css": ".ds-urgency { display: inline-flex; width: fit-content; border-radius: 999px; border: 1px solid rgba(16,42,54,0.10); box-shadow: inset 0 1px 0 rgba(255,255,255,0.58); padding: 0.18rem 0.52rem; font-family: 'Lexend', sans-serif; font-size: 0.72rem; font-weight: 700; } .ds-urgency--high { background: #ffe8e5; color: #9a2f27; } .ds-urgency--medium { background: #fff5d8; color: #785d11; } .ds-urgency--low { background: #e8f2ff; color: #2d5f86; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "O Quadro de Cuidados da Rede",
+    "overview": "Imagine um mural bem cuidado numa unidade de saúde comunitária: cada pedido escrito com clareza, organizado por urgência, sempre atualizado. Quem entra sabe imediatamente o que é necessário e onde pode ajudar. Não há apelos dramáticos nem burocracia intimidante, apenas informação clara apresentada com cuidado. É dessa presença calma e organizada que este sistema visual nasce.\n\nO sistema usa uma paleta baseada em dois polos: o navy profundo do serviço público de qualidade, que transmite credibilidade e seriedade, e o teal claro da saúde comunitária, que traz abertura e esperança. O ouro quente aparece como terceiro elemento, raramente mas com força, no header e em momentos de destaque. O fundo é levemente verde-tinto, não branco puro nem creme, mas a cor exata de uma folha de papel num serviço de saúde ambiental limpo.\n\nEste sistema rejeita: a frieza azul-governo de portais públicos genéricos; a desolação visual de ONGs da década de 2010 com cores desbotadas e tipografia inconsistente; a urgência fabricada de plataformas de crowdfunding com contadores pulsantes e apelos emotivos agressivos. A confiança é conquistada pela clareza da informação, não por pressão emocional.",
+    "keyCharacteristics": [
+      "Paleta de dois tons (navy + teal) com acento quente pontual.",
+      "Tipografia dual: Lexend para hierarquia e navegação; Source Sans 3 para leitura de conteúdo.",
+      "Elevação estrutural (não decorativa): sombras apenas em hover ou em superfícies genuinamente elevadas.",
+      "Fundo levemente tintado de verde (não branco, não creme), criando um campo neutro de cuidado.",
+      "Bordas suaves (12px cards, 10px controles) sem arestas corporativas nem arredondamento exagerado.",
+      "Animações de entrada suaves e únicas por contexto; sem coreografia uniforme."
+    ],
+    "rules": [
+      { "name": "A Regra do Ouro Escasso", "body": "warm-gold (#f7bd4f) pode aparecer em no máximo um elemento por viewport. Se você encontrar dois elementos dourados visíveis ao mesmo tempo, um deles está errado.", "section": "colors" },
+      { "name": "A Regra do Teal Semântico", "body": "teal-accent (#0f8f79) é reservado para estados: foco, hover de link, progresso positivo, sucesso. Nunca use como cor decorativa de fundo ou de ícone em repouso.", "section": "colors" },
+      { "name": "A Regra das Duas Famílias", "body": "Este sistema usa exatamente duas famílias: Lexend e Source Sans 3. Não adicione uma terceira. Qualquer necessidade de diferenciação visual deve ser satisfeita por variação de peso, tamanho ou cor dentro dessas duas famílias.", "section": "typography" },
+      { "name": "A Regra do Clamp com Teto", "body": "clamp() em headings tem teto de 3.2rem no display e 2.25rem na headline. Acima disso, o título grita.", "section": "typography" },
+      { "name": "A Regra do Lift Combinado", "body": "Nunca aplique sombra de hover sem transform: translateY(Npx). Sombra sem movement parece erro de CSS. Movement sem sombra parece artefato. Os dois sempre juntos.", "section": "elevation" }
+    ],
+    "dos": [
+      "Usar Lexend para todos os elementos de hierarquia, navegação, labels e botões.",
+      "Usar text-wrap: balance em todos os h1–h3.",
+      "Usar barra de 3px no topo via ::before para prioridade em cards. Nunca side-stripe.",
+      "Testar contraste de texto muted (#58707a) contra o fundo exato onde aparece. Mínimo 4.5:1.",
+      "Combinar transform: translateY(Npx) com toda sombra de hover.",
+      "Reservar warm-gold (#f7bd4f) exclusivamente para underline de nav ativo/hover no header.",
+      "Manter prefers-reduced-motion em toda animação.",
+      "Usar min-height: 44px em todos os elementos interativos no mobile."
+    ],
+    "donts": [
+      "Não use border-left ou border-right maior que 1px como acento colorido. Side-stripes proibidas.",
+      "Não use backdrop-filter em cards de conteúdo. Reservado ao header sticky exclusivamente.",
+      "Não use background-clip: text com gradiente. Gradient text proibido.",
+      "Não crie grelhas de cards 100% idênticos sem diferenciação visual.",
+      "Não adicione kicker page-kicker a mais de 2 seções por página.",
+      "Não use clamp() com máximo acima de 3.2rem em headings.",
+      "Não crie um terceiro font-family.",
+      "Não imite portais governamentais burocráticos, ONGs da década de 2010, ou crowdfunding comercial."
+    ]
+  }
+}
