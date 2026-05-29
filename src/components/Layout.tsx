@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { FaBars, FaEnvelope, FaMapMarkerAlt, FaPhoneAlt, FaTimes } from 'react-icons/fa'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 
@@ -27,6 +27,10 @@ export default function Layout(): React.ReactElement {
   useEffect(() => {
     setIsMobileMenuOpen(false)
   }, [location.pathname])
+
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+  }, [location.pathname, location.search])
 
   useEffect(() => {
     if (!isMobileMenuOpen) {
