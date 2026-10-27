@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Suspense, lazy } from 'react'
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
 
 import Home from '../pages/Home'
@@ -7,9 +7,19 @@ import CapsPage from '../pages/CapsPage'
 import Donate from '../pages/Donate'
 import YourDonations from '../pages/YourDonations'
 import NotFound from '../pages/NotFound'
-import Login from '../pages/admin/Login'
-import Dashboard from '../pages/admin/Dashboard'
 import Layout from '../components/Layout'
+
+// Área administrativa em arquivos separados: o visitante comum não baixa esse código.
+const Login = lazy(() => import('../pages/admin/Login'))
+const Dashboard = lazy(() => import('../pages/admin/Dashboard'))
+
+function AdminFallback(): React.ReactElement {
+  return (
+    <section className="page-block" aria-busy="true">
+      <p className="home-urgent-empty" role="status">Carregando painel...</p>
+    </section>
+  )
+}
 
 export default function Router(): React.ReactElement {
   return (
@@ -36,10 +46,10 @@ export default function Router(): React.ReactElement {
           <Route path="/suas-doacoes" element={<YourDonations />} />
 
           {/* Entrada da área administrativa */}
-          <Route path="/admin/login" element={<Login />} />
+          <Route path="/admin/login" element={<Suspense fallback={<AdminFallback />}><Login /></Suspense>} />
 
           {/* Área administrativa (telas/tabs internas) */}
-          <Route path="/admin/*" element={<Dashboard />} />
+          <Route path="/admin/*" element={<Suspense fallback={<AdminFallback />}><Dashboard /></Suspense>} />
 
           {/* Fallback para qualquer rota não mapeada */}
           <Route path="*" element={<NotFound />} />

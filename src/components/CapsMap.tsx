@@ -109,12 +109,9 @@ export default function CapsMap(): React.ReactElement {
   const unitsWithCoords = units.filter((unit) => typeof unit.lat === 'number' && typeof unit.lng === 'number')
   const hasTherapeuticResidences = unitsWithCoords.some((unit) => unit.unitType !== 'CAPS')
 
+  // Título e subtítulo ficam em CapsMapSection; este arquivo (com o Leaflet) é carregado sob demanda.
   return (
-    <div className="caps-map-wrapper">
-      <h3 className="caps-map-title">Mapa interativo da Rede de Saúde Mental em Campo Grande (MS)</h3>
-      <p className="caps-map-subtitle">
-        Use os marcadores para localizar unidades, comparar endereços e consultar contatos da rede.
-      </p>
+    <>
       <MapContainer
         center={CAMPO_GRANDE_CENTER}
         zoom={12}
@@ -181,6 +178,6 @@ export default function CapsMap(): React.ReactElement {
         {hasTherapeuticResidences ? <span className="legend-rt">● Residência Terapêutica</span> : null}
         <span className="legend-upa">● UPA</span>
       </p>
-    </div>
+    </>
   )
 }

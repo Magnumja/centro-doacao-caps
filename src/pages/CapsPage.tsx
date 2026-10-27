@@ -157,6 +157,18 @@ export default function CapsPage(): React.ReactElement {
     return () => window.clearTimeout(timeoutId)
   }, [selectedUnit, selectedItems])
 
+  // Esc fecha a confirmação de doação (padrão de diálogo acessível).
+  useEffect(() => {
+    if (!showSuccessOverlay) return undefined
+
+    const handleKeyDown = (event: KeyboardEvent): void => {
+      if (event.key === 'Escape') setShowSuccessOverlay(false)
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [showSuccessOverlay])
+
   const handleSelectDonation = useCallback((unit: Cap): void => {
     if (selectionTimeoutRef.current) {
       clearTimeout(selectionTimeoutRef.current)

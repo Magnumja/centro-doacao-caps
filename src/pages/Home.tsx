@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import CapsMap from '../components/CapsMap'
+import CapsMapSection from '../components/CapsMapSection'
 import DonationRequestCard from '../components/DonationRequestCard'
 import HeroSection from '../components/HeroSection'
 import HowItWorks from '../components/HowItWorks'
@@ -88,7 +88,7 @@ export default function Home(): React.ReactElement {
         </div>
 
         <div className="home-location-map">
-          <CapsMap />
+          <CapsMapSection />
         </div>
       </section>
 
