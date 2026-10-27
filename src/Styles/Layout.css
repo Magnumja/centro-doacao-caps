@@ -126,7 +126,7 @@ textarea {
   display: grid;
 }
 
-.page-block h2 {
+.page-block h2, .page-block h1 {
   margin: 0;
   color: var(--color-text);
   font-family: var(--font-display);
@@ -786,7 +786,7 @@ a:focus-visible {
   animation: appSurfaceEnter 360ms var(--ease-standard) both;
 }
 
-.page-block h2 {
+.page-block h2, .page-block h1 {
   letter-spacing: 0;
 }
 
@@ -938,4 +938,71 @@ a:focus-visible {
   .page-block {
     animation: none;
   }
+}
+
+/* ── Alvos de toque (DESIGN.md: mínimo 44×44px em telas de toque) ──
+   Centralizado aqui (último arquivo da cascata) para valer em todas as páginas.
+   Novo botão/link pequeno em mobile? Adicione o seletor nesta lista. */
+@media (max-width: 860px), (pointer: coarse) {
+  .mobile-nav-toggle,
+  .health-nav__mobile-header button,
+  .health-nav .health-nav__link,
+  .site-footer__column a,
+  .home-urgent-link,
+  .caps-card__actions .unit-secondary-button,
+  .caps-card__actions .unit-donate-button,
+  .unit-secondary-button,
+  .unit-donate-button,
+  .donation-actions .donation-action-button,
+  .donation-form input,
+  .donation-form select,
+  .category-filter .category-filter__button,
+  .donate-priority-filter .category-filter__button,
+  .your-donations-primary,
+  .dashboard-nav .dashboard-nav__item,
+  .leaflet-touch .leaflet-bar a,
+  .news-carousel__controls button,
+  .selected-unit-actions .unit-donate-button,
+  .selected-unit-actions .unit-secondary-button,
+  .donation-summary-panel .unit-secondary-button,
+  .donation-time-chips button,
+  .caps-page .donation-form input:not([type='radio']),
+  .caps-page .donation-form select,
+  .your-donations-next-steps a {
+    min-height: 44px;
+  }
+
+  .mobile-nav-toggle,
+  .health-nav__mobile-header button,
+  .caps-card__actions .unit-icon-link,
+  .leaflet-touch .leaflet-bar a {
+    min-width: 44px;
+  }
+
+  .caps-card__actions .unit-icon-link {
+    min-height: 44px;
+  }
+
+  .leaflet-touch .leaflet-bar a {
+    line-height: 44px;
+  }
+
+  /* Pontos do carrossel: o visual continua pequeno, a área de toque cresce. */
+  .news-carousel__dots .news-carousel__dot {
+    position: relative;
+  }
+
+  .news-carousel__dots .news-carousel__dot::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+  }
+}
+
+/* Botão de mostrar senha: área de toque cheia dentro do campo. */
+.password-field .password-toggle {
+  right: 0.2rem;
+  width: 44px;
+  height: 44px;
+  justify-content: center;
 }

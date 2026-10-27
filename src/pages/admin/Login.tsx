@@ -25,7 +25,7 @@ export default function Login(): React.ReactElement {
             <div className="login-hero">
                 <div className="login-hero__content">
                     <span className="page-kicker">Acesso restrito</span>
-                    <h1>Painel de Gestores</h1>
+                    <p className="login-hero__title">Painel de Gestores</p>
                     <p>
                         Acesso exclusivo para gestores de CAPS. Informe suas credenciais para
                         continuar.
@@ -35,7 +35,7 @@ export default function Login(): React.ReactElement {
 
             <div className="login-form-wrapper">
                 <form className="login-form" onSubmit={handleSubmit}>
-                    <h2>Entrar no Sistema</h2>
+                    <h1>Entrar no Sistema</h1>
 
                     <fieldset className="form-group">
                         <label htmlFor="email">E-mail</label>

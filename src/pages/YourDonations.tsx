@@ -19,7 +19,7 @@ export default function YourDonations(): React.ReactElement {
       <div className="your-donations-header">
         <div>
           <span className="page-kicker">Suas doações</span>
-          <h2>Registros salvos neste aparelho</h2>
+          <h1>Registros salvos neste aparelho</h1>
           <p>
             Consulte ou remova as intenções enviadas por este navegador.
           </p>
@@ -29,7 +29,8 @@ export default function YourDonations(): React.ReactElement {
         </Link>
       </div>
 
-      <section className="your-donations-section" aria-label="Intenções registradas">
+      <section className="your-donations-section" aria-labelledby="your-intentions-title">
+        <h2 id="your-intentions-title" className="sr-only">Intenções registradas</h2>
         <div className="your-donations-section__title">
           <FaGift aria-hidden="true" />
           <h3>Minhas intenções</h3>

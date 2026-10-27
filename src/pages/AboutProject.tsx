@@ -27,7 +27,7 @@ export default function AboutProject(): React.ReactElement {
       <header className="page-block about-hero">
         <div className="about-hero__content">
           <span className="page-kicker">Centro de Doação CAPS</span>
-          <h2>Sobre o projeto</h2>
+          <h1>Sobre o projeto</h1>
           <p>
             O Centro de Doação CAPS organiza necessidades das unidades CAPS e ajuda doadores
             a encontrarem onde sua contribuição pode fazer diferença.
@@ -36,7 +36,8 @@ export default function AboutProject(): React.ReactElement {
 
       </header>
 
-      <section className="page-block about-story-grid">
+      <section className="page-block about-story-grid" aria-labelledby="about-points-title">
+        <h2 id="about-points-title" className="sr-only">O projeto em três pontos</h2>
         {projectPoints.map(({ title, description, icon: PointIcon }) => (
           <article className="about-info-card" key={title}>
             <span className="about-info-card__icon" aria-hidden="true"><PointIcon /></span>

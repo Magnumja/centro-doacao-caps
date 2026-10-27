@@ -302,7 +302,7 @@ export default function CapsPage(): React.ReactElement {
 
       <div className="caps-page__intro">
         <span className="page-kicker">Rede de saúde mental</span>
-        <h2>{selectedUnit ? selectedUnit.title : 'Unidades CAPS de Campo Grande'}</h2>
+        <h1>{selectedUnit ? selectedUnit.title : 'Unidades CAPS de Campo Grande'}</h1>
         <p>
           {selectedUnit
             ? 'Contato, pedidos e registro de doação em uma visão compacta.'
@@ -315,7 +315,9 @@ export default function CapsPage(): React.ReactElement {
           <section
             className={`selected-unit-overview${isEnteringUnit ? ' selected-unit-spotlight--enter' : ''}${selectedUnit.photo ? '' : ' selected-unit-overview--no-photo'}`}
             onAnimationEnd={() => setIsEnteringUnit(false)}
+            aria-labelledby="selected-unit-section-title"
           >
+            <h2 id="selected-unit-section-title" className="sr-only">Informações da unidade</h2>
             {selectedUnit.photo ? (
               <article className="selected-unit-photo-card">
                 <img
@@ -417,6 +419,7 @@ export default function CapsPage(): React.ReactElement {
             <p className="home-urgent-empty" role="status">Carregando unidades...</p>
           ) : (
             <div className="card-grid caps-card-grid">
+              <h2 className="sr-only">Unidades disponíveis para doação</h2>
               {caps.map((c) => (
                 <CapsCard
                   key={c.id}

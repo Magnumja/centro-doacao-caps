@@ -46,7 +46,7 @@ export default function Donate(): React.ReactElement {
       <header className="donate-page__header">
         <div>
           <span className="page-kicker">Necessidades da rede</span>
-          <h2>Pedidos abertos para doação</h2>
+          <h1>Pedidos abertos para doação</h1>
           <p>
             Filtre por categoria, prioridade ou unidade, confira o andamento de cada pedido e escolha onde doar.
           </p>

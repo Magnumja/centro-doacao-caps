@@ -14,7 +14,7 @@ export default function HeroSection({ stats }: HeroSectionProps): React.ReactEle
     <section className="page-block home-institutional-hero" aria-labelledby="home-hero-title">
       <div className="home-institutional-hero__content">
         <span className="page-kicker">Rede solidária de cuidado</span>
-        <h2 id="home-hero-title">Conecte sua doação a uma necessidade real dos CAPS.</h2>
+        <h1 id="home-hero-title">Conecte sua doação a uma necessidade real dos CAPS.</h1>
         <p>
           Veja pedidos atualizados das unidades de Campo Grande/MS, escolha onde contribuir
           e combine a entrega com clareza, segurança e responsabilidade.

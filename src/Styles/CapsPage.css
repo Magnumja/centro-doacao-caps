@@ -983,7 +983,7 @@
     grid-template-columns: minmax(0, 1fr) !important;
   }
 
-  .caps-page__intro h2 {
+  .caps-page__intro h2, .caps-page__intro h1 {
     max-width: 13ch;
     overflow-wrap: normal;
   }
@@ -1287,7 +1287,8 @@
   }
 
   .caps-page__intro h2,
-  .caps-page__intro p {
+  .caps-page__intro p,
+  .caps-page__intro h1 {
     max-width: none;
   }
 
@@ -1349,7 +1350,7 @@
   box-shadow: var(--shadow-soft);
 }
 
-.caps-page__intro h2 {
+.caps-page__intro h2, .caps-page__intro h1 {
   margin-top: 0.25rem;
 }
 
@@ -1694,7 +1695,7 @@
   padding: clamp(0.78rem, 1.7vw, 1.05rem);
 }
 
-.caps-page__intro h2 {
+.caps-page__intro h2, .caps-page__intro h1 {
   font-size: clamp(1.5rem, 2.8vw, 2.12rem);
   text-wrap: balance;
 }

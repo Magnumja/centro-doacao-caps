@@ -56,7 +56,14 @@ export default function DonationRequestCard({
         </div>
       </dl>
 
-      <div className="donation-request-card__progress" aria-label={`${progress}% atendido`}>
+      <div
+        className="donation-request-card__progress"
+        role="progressbar"
+        aria-label={`Andamento do pedido ${need.title}`}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={progress}
+      >
         <span style={{ width: `${progress}%` }} />
       </div>
       <div className="donation-request-card__progress-label">
