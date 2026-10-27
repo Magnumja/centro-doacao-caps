@@ -1,12 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
-  FaCalendarCheck,
-  FaClock,
-  FaGift,
+  FaCheck,
   FaInfoCircle,
   FaMapMarkerAlt,
   FaTimes,
-  FaUser,
   FaWhatsapp,
 } from 'react-icons/fa'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
@@ -16,10 +13,10 @@ import { donationCategories } from '../data/mockData'
 import { useNeeds, useUnits } from '../hooks/usePublicData'
 import { getErrorMessage } from '../lib/api'
 import { getMapsUrl, getWhatsAppUrl } from '../lib/contact'
-import { formatDate, todayISODate } from '../lib/format'
+import { formatDate, formatLongDate, todayISODate } from '../lib/format'
 import { getUnitPath } from '../lib/routes'
 import { isOpen, isUrgent } from '../lib/stats'
-import { registerDonations, validateDonationInput } from '../services/donations-service'
+import { isValidEmail, registerDonations, validateDonationInput } from '../services/donations-service'
 import { saveDonorIntention } from '../services/donor-intentions-service'
 import { Cap, Need } from '../types'
 
@@ -42,7 +39,11 @@ const donationTimeOptions = [
   '16:00',
   '16:30',
 ]
-const suggestedDonationTimes = ['08:00', '09:00', '10:00', '14:00', '15:00', '16:00']
+// Horários agrupados por período para leitura rápida (um único seletor).
+const donationTimeGroups = [
+  { label: 'Manhã', times: donationTimeOptions.filter((time) => time < '12:00') },
+  { label: 'Tarde', times: donationTimeOptions.filter((time) => time >= '12:00') },
+]
 
 // Rotas aceitas:
 //   /caps                     -> lista de unidades
@@ -76,6 +77,8 @@ export default function CapsPage(): React.ReactElement {
   const [isSubmittingDonation, setIsSubmittingDonation] = useState(false)
   const [showSuccessOverlay, setShowSuccessOverlay] = useState(false)
   const [successMessage, setSuccessMessage] = useState<string>('')
+  // Erros por campo só aparecem depois da primeira tentativa de envio.
+  const [showErrors, setShowErrors] = useState(false)
 
   const selectionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const donationFlowRef = useRef<HTMLDivElement | null>(null)
@@ -101,6 +104,7 @@ export default function CapsPage(): React.ReactElement {
     setDonorName('')
     setDonorEmail('')
     setFormMessage('')
+    setShowErrors(false)
   }, [])
 
   // Links antigos (/caps?unit=c1) continuam funcionando.
@@ -233,7 +237,15 @@ export default function CapsPage(): React.ReactElement {
 
     const validationError = validateDonationInput(input)
     if (validationError) {
+      setShowErrors(true)
       setFormMessage(validationError)
+      // Leva a pessoa direto ao primeiro campo com problema (no mobile a mensagem fica longe).
+      const form = event.currentTarget
+      window.requestAnimationFrame(() => {
+        const firstInvalid = form.querySelector<HTMLElement>('[aria-invalid="true"], .donation-step__error')
+        firstInvalid?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        if (firstInvalid instanceof HTMLInputElement) firstInvalid.focus({ preventScroll: true })
+      })
       return
     }
 
@@ -274,13 +286,23 @@ export default function CapsPage(): React.ReactElement {
   const selectedUnitUrgentNeeds = selectedUnitNeeds.filter(isUrgent).length
   const selectedDonationSummary = selectedItems.map((item) => ({
     name: item,
-    quantity: itemQuantities[item]?.trim() || 'Quantidade pendente',
+    quantity: itemQuantities[item]?.trim() ?? '',
   }))
-  const availableDonationOptions = donationCategories.filter((item) => !selectedItems.includes(item))
   const minDonationDate = todayISODate()
+
+  // Cada passo mostra ✓ quando está completo, guiando o preenchimento.
+  const itemsComplete = selectedItems.length > 0 && selectedItems.every((item) => itemQuantities[item]?.trim())
+  const deliveryComplete = Boolean(donationDate && donationTime)
+  const identityComplete = anonymousDonation === 'sim' || (Boolean(donorName.trim()) && isValidEmail(donorEmail))
+
   const donorIdentityLabel = anonymousDonation === 'sim'
     ? 'Doação anônima'
-    : donorName.trim() || 'Nome pendente'
+    : donorName.trim() || 'Falta seu nome'
+  const deliverySummary = donationDate && donationTime
+    ? `${formatLongDate(donationDate)}, às ${donationTime}`
+    : donationDate
+      ? `${formatLongDate(donationDate)}, falta o horário`
+      : 'Falta escolher data e horário'
 
   return (
     <section className="page-block caps-page">
@@ -447,115 +469,128 @@ export default function CapsPage(): React.ReactElement {
       )}
 
       {selectedUnit ? (
-        <div ref={donationFlowRef} className="donation-flow-grid">
-          <article className={`page-card donation-panel donation-guidelines${availableDonationOptions.length === 0 ? ' donation-guidelines--full-form' : ''}`}>
-            <h3>Registrar interesse em doar</h3>
-            <p className="donation-guidelines__unit"><strong>Unidade:</strong> {selectedUnit.title}</p>
-            <div className="donation-flow-steps" aria-label="Etapas do registro">
-              <span className={selectedItems.length > 0 ? 'is-complete' : ''}><FaGift aria-hidden="true" /> Itens</span>
-              <span className={donationDate && donationTime ? 'is-complete' : ''}><FaCalendarCheck aria-hidden="true" /> Entrega</span>
-              <span className={anonymousDonation === 'sim' || (donorName && donorEmail) ? 'is-complete' : ''}><FaUser aria-hidden="true" /> Dados</span>
-            </div>
-            <p className="guideline-warning">Não aceitamos dinheiro pelo site.</p>
+        <div ref={donationFlowRef} className="donation-flow">
+          <form className="page-card donation-form" onSubmit={handleRegisterDonation} noValidate aria-labelledby="donation-form-title">
+            <header className="donation-form__header">
+              <h2 id="donation-form-title">Registrar intenção de doação</h2>
+              <p>Três passos rápidos. A unidade usa essas informações para se preparar para receber você.</p>
+            </header>
 
-            {availableDonationOptions.length > 0 ? (
-              <div className="donation-actions" role="group" aria-label="Categorias de doação">
-                {availableDonationOptions.map((item) => (
-                  <button
-                    key={item}
-                    type="button"
-                    className="donation-action-button"
-                    onClick={() => toggleItem(item)}
-                  >
-                    {item}
-                  </button>
-                ))}
+            {/* Passo 1: itens. As categorias ficam sempre no lugar; clicar marca/desmarca. */}
+            <fieldset className={`donation-step${itemsComplete ? ' is-complete' : ''}`}>
+              <legend className="donation-step__title">
+                <span className="donation-step__number" aria-hidden="true">{itemsComplete ? <FaCheck /> : '1'}</span>
+                O que você vai doar?
+              </legend>
+              <p className="donation-step__hint">Escolha uma ou mais categorias e informe a quantidade de cada uma.</p>
+
+              <div className="donation-choice-grid" role="group" aria-label="Categorias de doação">
+                {donationCategories.map((item) => {
+                  const isSelected = selectedItems.includes(item)
+                  return (
+                    <button
+                      key={item}
+                      type="button"
+                      className={`donation-choice${isSelected ? ' is-selected' : ''}`}
+                      aria-pressed={isSelected}
+                      onClick={() => (isSelected ? removeSelectedItem(item) : toggleItem(item))}
+                    >
+                      <span className="donation-choice__check" aria-hidden="true">{isSelected ? <FaCheck /> : null}</span>
+                      {item}
+                    </button>
+                  )
+                })}
               </div>
-            ) : null}
 
-            <form className="donation-form" onSubmit={handleRegisterDonation} noValidate>
               {selectedItems.length > 0 ? (
-                <fieldset className="donation-form__quantities">
-                  <legend>Quantidade por item</legend>
-                  {selectedItems.map((item) => (
-                    <label key={item}>
-                      <span className="donation-quantity-label">
-                        {item}
+                <div className="donation-quantity-list">
+                  {selectedItems.map((item) => {
+                    const fieldId = `donation-qty-${item.replace(/\W+/g, '-')}`
+                    const missing = showErrors && !itemQuantities[item]?.trim()
+                    return (
+                      <div className="donation-quantity-row" key={item}>
+                        <label htmlFor={fieldId}>Quantidade de {item.toLocaleLowerCase('pt-BR')}</label>
+                        <input
+                          id={fieldId}
+                          type="text"
+                          autoComplete="off"
+                          placeholder="Ex.: 10 unidades, 5 kg, 3 kits"
+                          value={itemQuantities[item] ?? ''}
+                          aria-invalid={missing}
+                          onChange={(event) => handleQuantityChange(item, event.target.value)}
+                        />
                         <button
                           type="button"
-                          className="donation-remove-item"
+                          className="donation-quantity-row__remove"
                           onClick={() => removeSelectedItem(item)}
                           aria-label={`Remover ${item}`}
                         >
                           <FaTimes aria-hidden="true" />
                         </button>
-                      </span>
-                      <input
-                        type="text"
-                        inputMode="text"
-                        autoComplete="off"
-                        placeholder="Ex.: 10 unidades, 5 kg, 3 kits"
-                        value={itemQuantities[item] ?? ''}
-                        onChange={(event) => handleQuantityChange(item, event.target.value)}
-                      />
-                    </label>
-                  ))}
-                </fieldset>
+                      </div>
+                    )
+                  })}
+                </div>
+              ) : showErrors ? (
+                <p className="donation-step__error">Escolha ao menos uma categoria.</p>
+              ) : null}
+            </fieldset>
+
+            {/* Passo 2: entrega. Um único seletor de horário (antes havia lista + atalhos). */}
+            <fieldset className={`donation-step${deliveryComplete ? ' is-complete' : ''}`}>
+              <legend className="donation-step__title">
+                <span className="donation-step__number" aria-hidden="true">{deliveryComplete ? <FaCheck /> : '2'}</span>
+                Quando você vai entregar?
+              </legend>
+              {selectedUnit.operatingHours ? (
+                <p className="donation-step__hint"><FaInfoCircle aria-hidden="true" /> {selectedUnit.operatingHours}</p>
               ) : null}
 
-              <fieldset className="donation-schedule-card">
-                <legend>Entrega</legend>
-                <div className="donation-schedule-grid">
-              <label>
-                Data
+              <div className="donation-field">
+                <label htmlFor="donation-date">Data da entrega</label>
                 <input
+                  id="donation-date"
                   type="date"
                   min={minDonationDate}
                   value={donationDate}
+                  aria-invalid={showErrors && !donationDate}
                   onChange={(event) => setDonationDate(event.target.value)}
                 />
-              </label>
-
-              <label>
-                Horário da entrega
-                <select value={donationTime} onChange={(event) => setDonationTime(event.target.value)}>
-                  <option value="">Selecione um horário</option>
-                  {donationTimeOptions.map((time) => (
-                    <option key={time} value={time}>{time}</option>
-                  ))}
-                </select>
-              </label>
-
-              <div className="donation-time-chips" role="group" aria-label="Horários sugeridos">
-                {suggestedDonationTimes.map((time) => (
-                  <button
-                    key={time}
-                    type="button"
-                    className={donationTime === time ? 'is-active' : ''}
-                    onClick={() => setDonationTime(time)}
-                  >
-                    <FaClock aria-hidden="true" />
-                    {time}
-                  </button>
-                ))}
               </div>
 
-                </div>
-              </fieldset>
+              <div className="donation-field" role="radiogroup" aria-labelledby="donation-time-label">
+                <span id="donation-time-label" className="donation-field__label">Horário</span>
+                {donationTimeGroups.map((group) => (
+                  <div className="donation-time-group" key={group.label}>
+                    <span className="donation-time-group__label">{group.label}</span>
+                    <div className="donation-time-chips">
+                      {group.times.map((time) => (
+                        <button
+                          key={time}
+                          type="button"
+                          role="radio"
+                          aria-checked={donationTime === time}
+                          className={donationTime === time ? 'is-active' : ''}
+                          onClick={() => setDonationTime(time)}
+                        >
+                          {time}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+                {showErrors && !donationTime ? <p className="donation-step__error">Escolha um horário.</p> : null}
+              </div>
+            </fieldset>
 
-              <fieldset className="donation-form__anonymity">
-                <legend>Doador anônimo?</legend>
-                <label className={anonymousDonation === 'sim' ? 'is-selected' : ''}>
-                  <input
-                    type="radio"
-                    name="anonymousDonation"
-                    value="sim"
-                    checked={anonymousDonation === 'sim'}
-                    onChange={() => setAnonymousDonation('sim')}
-                  />
-                  <FaInfoCircle aria-hidden="true" />
-                  Sim
-                </label>
+            {/* Passo 3: identificação. Pergunta direta em vez de "Doador anônimo? Sim/Não". */}
+            <fieldset className={`donation-step${identityComplete ? ' is-complete' : ''}`}>
+              <legend className="donation-step__title">
+                <span className="donation-step__number" aria-hidden="true">{identityComplete ? <FaCheck /> : '3'}</span>
+                Como você quer se identificar?
+              </legend>
+
+              <div className="donation-identity-options">
                 <label className={anonymousDonation === 'nao' ? 'is-selected' : ''}>
                   <input
                     type="radio"
@@ -564,84 +599,107 @@ export default function CapsPage(): React.ReactElement {
                     checked={anonymousDonation === 'nao'}
                     onChange={() => setAnonymousDonation('nao')}
                   />
-                  <FaUser aria-hidden="true" />
-                  Não
+                  <span>
+                    <strong>Com meu nome</strong>
+                    <small>A unidade pode confirmar a entrega com você.</small>
+                  </span>
                 </label>
-              </fieldset>
+                <label className={anonymousDonation === 'sim' ? 'is-selected' : ''}>
+                  <input
+                    type="radio"
+                    name="anonymousDonation"
+                    value="sim"
+                    checked={anonymousDonation === 'sim'}
+                    onChange={() => setAnonymousDonation('sim')}
+                  />
+                  <span>
+                    <strong>Anônimo</strong>
+                    <small>Sem nome nem contato no registro.</small>
+                  </span>
+                </label>
+              </div>
 
               {anonymousDonation === 'nao' ? (
-                <>
-                  <label>
-                    Seu nome
+                <div className="donation-identity-fields">
+                  <div className="donation-field">
+                    <label htmlFor="donor-name">Seu nome</label>
                     <input
+                      id="donor-name"
                       type="text"
                       autoComplete="name"
                       placeholder="Nome completo"
                       value={donorName}
+                      aria-invalid={showErrors && !donorName.trim()}
                       onChange={(event) => setDonorName(event.target.value)}
                     />
-                  </label>
-                  <label>
-                    Seu e-mail
+                  </div>
+                  <div className="donation-field">
+                    <label htmlFor="donor-email">Seu e-mail</label>
                     <input
+                      id="donor-email"
                       type="email"
                       inputMode="email"
                       autoComplete="email"
-                      placeholder="email@exemplo.com"
+                      placeholder="nome@exemplo.com"
                       value={donorEmail}
+                      aria-invalid={showErrors && !isValidEmail(donorEmail)}
                       onChange={(event) => setDonorEmail(event.target.value)}
                     />
-                  </label>
-                </>
+                  </div>
+                </div>
               ) : null}
+            </fieldset>
 
-              <button type="submit" className="unit-donate-button" disabled={isSubmittingDonation}>
+            <div className="donation-form__footer">
+              {formMessage ? <p className="form-feedback" role="alert">{formMessage}</p> : null}
+              <button type="submit" className="unit-donate-button donation-form__submit" disabled={isSubmittingDonation}>
                 {isSubmittingDonation ? 'Registrando...' : 'Registrar intenção de doação'}
               </button>
-              <button type="button" className="unit-secondary-button donation-reset-button" onClick={resetDonationForm}>
-                Limpar formulário
+              <button type="button" className="donation-form__reset" onClick={resetDonationForm}>
+                Limpar e começar de novo
               </button>
-
-              {formMessage ? <p className="form-feedback" role="status" aria-live="polite">{formMessage}</p> : null}
-            </form>
-          </article>
+            </div>
+          </form>
 
           <aside className="page-card donation-summary-panel" aria-label="Resumo da intenção de doação">
-            <span className="page-kicker">Resumo</span>
-            <h3>Antes de registrar</h3>
-
-            <div className="donation-summary-panel__section">
-              <strong>Itens selecionados</strong>
-              {selectedDonationSummary.length > 0 ? (
-                <ul>
-                  {selectedDonationSummary.map((item) => (
-                    <li key={item.name}>
-                      <span>{item.name}</span>
-                      <b>{item.quantity}</b>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p>Escolha ao menos uma categoria para continuar.</p>
-              )}
-            </div>
-
-            <div className="donation-summary-panel__section">
-              <strong>Entrega</strong>
-              <p>{donationDate ? formatDate(donationDate) : 'Data pendente'} às {donationTime || 'horário pendente'}</p>
-            </div>
-
-            <div className="donation-summary-panel__section">
-              <strong>Identificação</strong>
-              <p>{donorIdentityLabel}</p>
-            </div>
+            <h3>Resumo</h3>
+            <dl>
+              <div>
+                <dt>Unidade</dt>
+                <dd>{selectedUnit.title}</dd>
+              </div>
+              <div>
+                <dt>Itens</dt>
+                <dd>
+                  {selectedDonationSummary.length > 0 ? (
+                    <ul>
+                      {selectedDonationSummary.map((item) => (
+                        <li key={item.name}>
+                          <span>{item.name}</span>
+                          <b className={item.quantity ? '' : 'is-pending'}>{item.quantity || 'falta a quantidade'}</b>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : <span className="is-pending">Nenhum item escolhido</span>}
+                </dd>
+              </div>
+              <div>
+                <dt>Entrega</dt>
+                <dd className={donationDate && donationTime ? '' : 'is-pending'}>{deliverySummary}</dd>
+              </div>
+              <div>
+                <dt>Identificação</dt>
+                <dd className={identityComplete ? '' : 'is-pending'}>{donorIdentityLabel}</dd>
+              </div>
+            </dl>
 
             {whatsappUrl ? (
               <a className="unit-secondary-button" href={whatsappUrl} target="_blank" rel="noopener noreferrer">
                 <FaWhatsapp aria-hidden="true" />
-                Combinar entrega
+                Combinar entrega pelo WhatsApp
               </a>
             ) : null}
+            <p className="donation-summary-panel__note">Doações apenas em itens. O site não recebe dinheiro.</p>
           </aside>
         </div>
       ) : null}

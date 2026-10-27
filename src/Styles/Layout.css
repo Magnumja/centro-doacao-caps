@@ -107,18 +107,6 @@ textarea {
 
 /* Page shell */
 
-@keyframes pageFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 .page-block {
   width: var(--layout-width);
   margin: 0 auto;
@@ -431,17 +419,6 @@ textarea {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
 /* PREFCG-inspired institutional navigation */
 .health-header {
   border-bottom: 0;
@@ -683,7 +660,6 @@ body::before {
     linear-gradient(124deg, transparent 0 54%, rgba(15, 143, 121, 0.035) 54.15% 54.55%, transparent 55% 100%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.58), rgba(243, 248, 246, 0.64));
   background-size: 220% 100%, 240% 100%, 100% 100%;
-  animation: appBackgroundFlow 46s ease-in-out infinite alternate;
 }
 
 body::after {
@@ -694,7 +670,6 @@ body::after {
     linear-gradient(90deg, rgba(7, 52, 95, 0.022) 1px, transparent 1px);
   background-size: 64px 64px;
   mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
-  animation: appGridFlow 90s linear infinite;
 }
 
 #root {
@@ -777,13 +752,9 @@ a:focus-visible {
   box-shadow: 0 10px 22px rgba(4, 27, 49, 0.16);
 }
 
-.page-transition {
-  animation: pageFadeIn 320ms var(--ease-standard) both;
-}
 
 .page-block {
   gap: clamp(1rem, 2.4vw, 1.45rem);
-  animation: appSurfaceEnter 360ms var(--ease-standard) both;
 }
 
 .page-block h2, .page-block h1 {
@@ -900,46 +871,6 @@ a:focus-visible {
   }
 }
 
-@keyframes appBackgroundFlow {
-  from {
-    background-position: 0% 0%, 100% 0%, 0 0;
-  }
-
-  to {
-    background-position: 100% 0%, 0% 0%, 0 0;
-  }
-}
-
-@keyframes appGridFlow {
-  from {
-    background-position: 0 0, 0 0;
-  }
-
-  to {
-    background-position: 64px 64px, 64px 64px;
-  }
-}
-
-@keyframes appSurfaceEnter {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  body::before,
-  body::after,
-  .page-block {
-    animation: none;
-  }
-}
-
 /* ── Alvos de toque (DESIGN.md: mínimo 44×44px em telas de toque) ──
    Centralizado aqui (último arquivo da cascata) para valer em todas as páginas.
    Novo botão/link pequeno em mobile? Adicione o seletor nesta lista. */
@@ -953,9 +884,6 @@ a:focus-visible {
   .caps-card__actions .unit-donate-button,
   .unit-secondary-button,
   .unit-donate-button,
-  .donation-actions .donation-action-button,
-  .donation-form input,
-  .donation-form select,
   .category-filter .category-filter__button,
   .donate-priority-filter .category-filter__button,
   .your-donations-primary,
@@ -964,10 +892,6 @@ a:focus-visible {
   .news-carousel__controls button,
   .selected-unit-actions .unit-donate-button,
   .selected-unit-actions .unit-secondary-button,
-  .donation-summary-panel .unit-secondary-button,
-  .donation-time-chips button,
-  .caps-page .donation-form input:not([type='radio']),
-  .caps-page .donation-form select,
   .your-donations-next-steps a {
     min-height: 44px;
   }

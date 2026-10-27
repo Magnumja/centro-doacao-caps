@@ -19,6 +19,12 @@ export function formatDate(value?: string | null, fallback = 'Data não informad
   return date ? date.toLocaleDateString('pt-BR') : value
 }
 
+// "2026-10-28" -> "quarta-feira, 28/10"
+export function formatLongDate(value: string): string {
+  const date = parseCalendarDate(value)
+  return date ? date.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: '2-digit' }) : value
+}
+
 // Data de hoje no fuso do usuário, no formato aceito por <input type="date" min>.
 export function todayISODate(): string {
   const now = new Date()

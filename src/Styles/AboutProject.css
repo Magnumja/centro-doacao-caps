@@ -3,31 +3,31 @@
 }
 
 .about-project-page .page-block {
-  animation: aboutSectionReveal 620ms ease both;
+  animation: motion-rise-in var(--duration-enter) var(--ease-out) both;
 }
 
 .about-project-page .page-block:nth-child(2) {
-  animation-delay: 90ms;
+  animation-delay: calc(var(--stagger-step) * 1);
 }
 
 .about-project-page .page-block:nth-child(3) {
-  animation-delay: 160ms;
+  animation-delay: calc(var(--stagger-step) * 2);
 }
 
 .about-project-page .page-block:nth-child(4) {
-  animation-delay: 230ms;
+  animation-delay: calc(var(--stagger-step) * 3);
 }
 
 .about-project-page .page-block:nth-child(5) {
-  animation-delay: 300ms;
+  animation-delay: calc(var(--stagger-step) * 4);
 }
 
 .about-project-page .page-block:nth-child(6) {
-  animation-delay: 370ms;
+  animation-delay: calc(var(--stagger-step) * 4);
 }
 
 .about-project-page .page-block:nth-child(7) {
-  animation-delay: 440ms;
+  animation-delay: calc(var(--stagger-step) * 4);
 }
 
 .about-hero {
@@ -45,7 +45,7 @@
 .about-hero__content h2,
 .about-hero__content p,
 .about-hero__content h1 {
-  animation: aboutTextRise 680ms ease both;
+  animation: motion-rise-in var(--duration-enter) var(--ease-out) both;
 }
 
 .about-hero__content h2, .about-hero__content h1 {
@@ -152,7 +152,6 @@
   position: absolute;
   background: linear-gradient(110deg, transparent 0%, rgba(255, 255, 255, 0.34) 42%, transparent 68%);
   transform: translateX(-120%);
-  animation: aboutCtaSweep 5.5s ease-in-out infinite;
 }
 
 .about-final-cta > * {
@@ -168,111 +167,6 @@
 }
 
 .about-final-cta__actions .home-hero-button--primary {
-  animation: aboutButtonBreathe 3.2s ease-in-out infinite;
-}
-
-@keyframes aboutSectionReveal {
-  from {
-    opacity: 0;
-    transform: translateY(18px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes aboutTextRise {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes aboutFloatIn {
-  from {
-    opacity: 0;
-    transform: translateY(18px) scale(0.98);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes aboutSoftFloat {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-6px);
-  }
-}
-
-@keyframes aboutCardRise {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes aboutNumberPulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.08);
-  }
-}
-
-@keyframes aboutAvatarGlow {
-  0%,
-  100% {
-    box-shadow: 0 0 0 rgba(10, 53, 98, 0);
-  }
-
-  50% {
-    box-shadow: 0 0 0 8px rgba(10, 53, 98, 0.09);
-  }
-}
-
-@keyframes aboutCtaSweep {
-  0%,
-  35% {
-    transform: translateX(-120%);
-  }
-
-  65%,
-  100% {
-    transform: translateX(120%);
-  }
-}
-
-@keyframes aboutButtonBreathe {
-  0%,
-  100% {
-    box-shadow: 0 12px 24px rgba(10, 53, 98, 0.15);
-  }
-
-  50% {
-    box-shadow: 0 16px 30px rgba(10, 53, 98, 0.25);
-  }
 }
 
 @media (max-width: 980px) {
@@ -392,7 +286,7 @@
 
 /* Re-enable only the hero entrance */
 .about-project-page header.page-block {
-  animation: aboutHeroEnter 380ms var(--ease-standard) both;
+  animation: aboutHeroEnter var(--duration-emphasis) var(--ease-out) both;
 }
 
 @keyframes aboutHeroEnter {

@@ -34,7 +34,7 @@
   padding: 0.6rem 1.5rem;
   cursor: pointer;
   font-weight: 600;
-  transition: all 160ms ease;
+  transition: transform var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);
 }
 
 .admin-summary-panel {
@@ -135,7 +135,7 @@
   padding: 0.8rem 1.5rem;
   cursor: pointer;
   font-weight: 600;
-  transition: all 160ms ease;
+  transition: transform var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);
   font-size: 0.95rem;
 }
 
@@ -172,17 +172,6 @@
   line-height: 1.6;
 }
 
-@keyframes tab-enter {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 /* Dashboard Cards */
 .dashboard-cards {
   display: grid;
@@ -196,7 +185,7 @@
   border: 1px solid rgba(10, 53, 98, 0.08);
   border-radius: 12px;
   padding: 1.8rem;
-  transition: all 160ms ease;
+  transition: transform var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);
 }
 
 .dashboard-card:hover {
@@ -252,7 +241,7 @@
   color: #b42318;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);
 }
 
 .dashboard-card__delete:hover:not(:disabled) {
@@ -293,7 +282,7 @@
   cursor: pointer;
   font-weight: 600;
   font-size: 0.95rem;
-  transition: all 160ms ease;
+  transition: transform var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);
 }
 
 .dashboard-action-btn:hover {
@@ -347,7 +336,7 @@
   cursor: pointer;
   font-weight: 600;
   font-size: 0.95rem;
-  transition: all 160ms ease;
+  transition: transform var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);
 }
 
 .donation-request-form .btn-primary {
@@ -369,7 +358,7 @@
   cursor: pointer;
   font-weight: 600;
   font-size: 0.9rem;
-  transition: all 160ms ease;
+  transition: transform var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);
 }
 
 .btn-secondary:hover {
@@ -1035,7 +1024,7 @@
 }
 
 .dashboard-header {
-  animation: healthSectionReveal 560ms ease both;
+  animation: motion-rise-in var(--duration-enter) var(--ease-out) both;
   position: relative;
   overflow: hidden;
   background:
@@ -1107,7 +1096,6 @@
 }
 
 .dashboard-tab {
-  animation: tab-enter 200ms ease;
   border-color: rgba(16, 42, 54, 0.12);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(247, 251, 250, 0.9));

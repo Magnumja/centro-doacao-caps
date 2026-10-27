@@ -23,6 +23,10 @@ const categoryMap: Record<string, 'roupa' | 'comida' | 'utensilios'> = {
   Outros: 'utensilios',
 }
 
+export function isValidEmail(value: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
+}
+
 export function validateDonationInput(input: DonationFormInput): string | null {
   if (!input.unitSlug || input.selectedItems.length === 0 || !input.donationDate || !input.donationTime) {
     return 'Preencha dia, horário e selecione ao menos um tipo de doação.'
@@ -37,7 +41,7 @@ export function validateDonationInput(input: DonationFormInput): string | null {
     return 'Preencha seu nome e e-mail para continuar.'
   }
 
-  if (input.anonymousDonation !== 'sim' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.donorEmail.trim())) {
+  if (input.anonymousDonation !== 'sim' && !isValidEmail(input.donorEmail)) {
     return 'Informe um e-mail válido, por exemplo nome@exemplo.com.'
   }
 

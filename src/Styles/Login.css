@@ -108,7 +108,7 @@
   border-radius: 8px;
   font-size: 1rem;
   font-family: inherit;
-  transition: all 160ms ease;
+  transition: transform var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);
 }
 
 .login-form .form-group input:disabled {
@@ -182,7 +182,7 @@
   font-weight: 600;
   font-size: 0.95rem;
   cursor: pointer;
-  transition: all 160ms ease;
+  transition: transform var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);
 }
 
 .login-submit:hover:not(:disabled) {
@@ -321,7 +321,7 @@
 }
 
 .login-form {
-  animation: form-enter 400ms ease;
+  animation: form-enter var(--duration-emphasis) var(--ease-out);
   border: 1px solid rgba(16, 42, 54, 0.12);
   border-radius: var(--radius-card);
   background:

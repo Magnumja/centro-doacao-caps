@@ -24,6 +24,10 @@ export default function NewsCarousel({ items, autoPlayMs = 5500 }: Props): React
     return !document.hidden
   })
   const touchStartX = useRef<number | null>(null)
+  // Quem pede menos movimento no sistema não recebe troca automática de slides.
+  const [prefersReducedMotion] = useState(() => (
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  ))
 
   const total = items.length
   const activeItem = useMemo(() => items[activeIndex], [activeIndex, items])
@@ -49,7 +53,7 @@ export default function NewsCarousel({ items, autoPlayMs = 5500 }: Props): React
   }, [])
 
   useEffect(() => {
-    if (total <= 1 || isPaused || !isPageVisible) {
+    if (total <= 1 || isPaused || !isPageVisible || prefersReducedMotion) {
       return
     }
 
@@ -68,7 +72,7 @@ export default function NewsCarousel({ items, autoPlayMs = 5500 }: Props): React
     return () => {
       window.clearInterval(timer)
     }
-  }, [activeIndex, autoPlayMs, isPageVisible, isPaused, total])
+  }, [activeIndex, autoPlayMs, isPageVisible, isPaused, prefersReducedMotion, total])
 
   useEffect(() => {
     if (!activeItem) return
@@ -172,7 +176,8 @@ export default function NewsCarousel({ items, autoPlayMs = 5500 }: Props): React
         <span className="news-carousel__progress-value" style={{ transform: `scaleX(${progress})` }} />
       </div>
 
-      <article className="news-carousel__slide">
+      {/* key: cada slide novo remonta e toca a entrada em fade (motion.css). */}
+      <article key={activeItem.id} className="news-carousel__slide">
         {renderSlideLink(
           'news-carousel__media-link',
           <img

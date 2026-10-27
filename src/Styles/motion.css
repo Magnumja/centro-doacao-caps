@@ -1,0 +1,157 @@
+/*
+ * MOTION — sistema único de animação do site.
+ *
+ * Regras (DESIGN.md: "animações só onde esclarecem mudança de estado"):
+ * 1. Anime só transform e opacity (não causam repaint/reflow).
+ * 2. Entradas usam --ease-out e duram no máximo --duration-emphasis (320ms).
+ * 3. Nada de animação infinita decorativa: ela compete com o conteúdo, gasta
+ *    bateria e lembra plataformas de crowdfunding (anti-referência do projeto).
+ *    Exceção: skeleton de carregamento, que comunica estado.
+ * 4. Listas podem escalonar entradas com --stagger-step, até ~5 itens.
+ * 5. Tudo respeita prefers-reduced-motion (bloco no fim deste arquivo).
+ *
+ * Este arquivo carrega por último (src/Styles/index.css) para valer em todas as páginas.
+ */
+
+/* ── Keyframes reutilizáveis ── */
+@keyframes motion-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--motion-rise));
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes motion-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes motion-pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ── Troca de página: uma única entrada por seção do site ── */
+.page-transition {
+  animation: motion-rise-in var(--duration-enter) var(--ease-out) both;
+}
+
+/* ── Feedback de toque/clique ──
+   Usa a propriedade `scale` (independente de `transform`), então não conflita
+   com o "lift" de hover dos botões. */
+:is(
+  .unit-donate-button,
+  .unit-secondary-button,
+  .unit-icon-link,
+  .home-hero-button,
+  .home-urgent-link,
+  .btn-primary,
+  .btn-secondary,
+  .inline-link,
+  .your-donations-primary,
+  .category-filter__button,
+  .donation-action-button,
+  .donation-time-chips button,
+  .selected-unit-compact-need,
+  .news-carousel__controls button,
+  .dashboard-action-btn,
+  .dashboard-nav__item,
+  .request-category-chip,
+  .request-priority-card,
+  .login-submit,
+  .mobile-nav-toggle
+):active:not(:disabled) {
+  scale: 0.97;
+}
+
+/* ── Carrossel: o slide novo entra em fade (antes trocava de forma abrupta) ── */
+.news-carousel__slide {
+  animation: motion-fade-in var(--duration-emphasis) var(--ease-out) both;
+}
+
+/* ── Formulário de doação: o que é adicionado aparece, não "pisca" ── */
+.donation-quantity-row,
+.donation-summary-panel li {
+  animation: motion-rise-in var(--duration-enter) var(--ease-out) both;
+}
+
+.form-feedback,
+.request-feedback {
+  animation: motion-fade-in var(--duration-enter) var(--ease-out) both;
+}
+
+/* ── Cards de pedido: entrada escalonada curta (máx. ~5 itens) ── */
+.donate-requests-grid .donation-request-card {
+  animation: motion-rise-in var(--duration-enter) var(--ease-out) both;
+}
+
+.donate-requests-grid .donation-request-card:nth-child(2) { animation-delay: calc(var(--stagger-step) * 1); }
+.donate-requests-grid .donation-request-card:nth-child(3) { animation-delay: calc(var(--stagger-step) * 2); }
+.donate-requests-grid .donation-request-card:nth-child(4) { animation-delay: calc(var(--stagger-step) * 3); }
+.donate-requests-grid .donation-request-card:nth-child(n + 5) { animation-delay: calc(var(--stagger-step) * 4); }
+
+/* ── Cards de unidade: mesma entrada escalonada ── */
+.caps-card-grid .donation-unit-card {
+  animation: motion-rise-in var(--duration-enter) var(--ease-out) both;
+}
+
+.caps-card-grid .donation-unit-card:nth-of-type(2) { animation-delay: calc(var(--stagger-step) * 1); }
+.caps-card-grid .donation-unit-card:nth-of-type(3) { animation-delay: calc(var(--stagger-step) * 2); }
+.caps-card-grid .donation-unit-card:nth-of-type(4) { animation-delay: calc(var(--stagger-step) * 3); }
+.caps-card-grid .donation-unit-card:nth-of-type(n + 5) { animation-delay: calc(var(--stagger-step) * 4); }
+
+/* ── Diálogo de confirmação ── */
+.donation-success-overlay {
+  animation: motion-fade-in var(--duration-base) var(--ease-out) both;
+}
+
+.donation-success-card {
+  animation: motion-pop-in var(--duration-emphasis) var(--ease-out) both;
+}
+
+/* ── Abas do painel administrativo ── */
+.dashboard-tab {
+  animation: motion-fade-in var(--duration-enter) var(--ease-out) both;
+}
+
+/* ── Menu mobile: desliza com a mesma curva de entrada do sistema ── */
+@media (max-width: 860px) {
+  .health-nav {
+    transition: transform var(--duration-emphasis) var(--ease-out), box-shadow var(--duration-emphasis) var(--ease-out);
+  }
+}
+
+/* ── Movimento reduzido: um único lugar para o site inteiro ──
+   Sem deslocamentos nem escalas; mudanças acontecem na hora. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  :is(button, a):active {
+    scale: none !important;
+  }
+}

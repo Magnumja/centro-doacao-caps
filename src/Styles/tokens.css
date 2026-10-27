@@ -57,10 +57,16 @@
   /* ── Layout ── */
   --layout-width: min(1180px, 94vw); /* largura padrão de todo bloco de página */
 
-  /* ── Movimento ── */
-  --ease-standard: cubic-bezier(0.2, 0.7, 0.2, 1);
-  --duration-fast: 160ms;
+  /* ── Movimento (regras de uso em motion.css) ── */
+  --ease-standard: cubic-bezier(0.2, 0.7, 0.2, 1); /* mudanças de estado: hover, foco, cor */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);      /* entradas: começa rápido, assenta suave */
+  --duration-press: 100ms;    /* resposta ao toque/clique */
+  --duration-fast: 160ms;     /* hover, foco, cor */
   --duration-base: 180ms;
+  --duration-enter: 240ms;    /* elementos que aparecem */
+  --duration-emphasis: 320ms; /* diálogos e destaques (teto do sistema) */
+  --stagger-step: 45ms;       /* atraso entre itens de uma mesma lista */
+  --motion-rise: 8px;         /* deslocamento vertical das entradas */
 
   /* ── Camadas ── */
   --z-header: 30;
