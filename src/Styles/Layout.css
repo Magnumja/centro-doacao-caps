@@ -69,8 +69,12 @@ html {
 
 .health-header {
   position: sticky;
-  top: 0;
-  z-index: 30;
+  /* -1px + padding-top 1px: com escala de tela fracionária (Windows 125%/175%) a navbar
+     era desenhada em meio pixel e o conteúdo vazava numa fresta no topo ao rolar.
+     Subir 1px elimina a fresta; o padding compensa, então a altura visível não muda. */
+  top: -1px;
+  padding-top: 1px;
+  z-index: var(--z-header);
 }
 
 .health-header__inner {
