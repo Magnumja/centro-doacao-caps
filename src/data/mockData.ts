@@ -1,11 +1,7 @@
-import { Cap, Donation, DonationCategoryName, Host, Need, ProjectStats, Resident } from '../types'
+// Catálogo local: usado como fallback quando a API está fora do ar e para completar
+// dados que a API ainda não guarda (WhatsApp, horário, resumo de necessidades, fotos).
+import { Cap, DonationCategoryName, Need } from '../types'
 
-import capMargarida from '../public/capsmargarida.jpg'
-import capVilaAlmeida from '../public/capsvilaalmeida.jpeg'
-import capAfrodite from '../public/capsafrodite.jpeg'
-import capAeroRancho from '../public/capsaerorancho.jpeg'
-import capDraFatima from '../public/capsdrafatima.jpg'
-import capMarciaZen from '../public/capsmarciazen.jpg'
 
 export const donationCategories: DonationCategoryName[] = [
   'Alimentos',
@@ -30,7 +26,7 @@ export const caps: Cap[] = [
     description: 'Unidade de cuidado territorial que acolhe pessoas em sofrimento psíquico intenso e suas famílias.',
     lat: -20.4810,
     lng: -54.6660,
-    photo: capMargarida,
+    photo: '/capsmargarida.jpg',
   },
   {
     id: 'c2',
@@ -43,7 +39,7 @@ export const caps: Cap[] = [
     description: 'Atua no cuidado comunitário e em atividades de convivência, oficinas e reinserção social.',
     lat: -20.4560,
     lng: -54.6200,
-    photo: capVilaAlmeida,
+    photo: '/capsvilaalmeida.jpeg',
   },
   {
     id: 'c3',
@@ -57,7 +53,7 @@ export const caps: Cap[] = [
     description: 'Referência de cuidado psicossocial com atividades individuais, familiares e em grupo.',
     lat: -20.4660,
     lng: -54.6135,
-    photo: capAfrodite,
+    photo: '/capsafrodite.jpeg',
   },
   {
     id: 'c4',
@@ -70,7 +66,7 @@ export const caps: Cap[] = [
     description: 'Unidade voltada ao acompanhamento de usuários e suporte às famílias no território.',
     lat: -20.5020,
     lng: -54.6350,
-    photo: capAeroRancho,
+    photo: '/capsaerorancho.jpeg',
   },
   {
     id: 'c5',
@@ -83,7 +79,7 @@ export const caps: Cap[] = [
     description: 'Serviço especializado em cuidado psicossocial para pessoas com necessidades decorrentes do uso de álcool e outras drogas.',
     lat: -20.4500,
     lng: -54.6380,
-    photo: capDraFatima,
+    photo: '/capsdrafatima.jpg',
   },
   {
     id: 'c6',
@@ -96,7 +92,7 @@ export const caps: Cap[] = [
     description: 'Unidade de apoio ao cuidado em álcool e outras drogas, com foco em vínculo, redução de danos e continuidade de cuidado.',
     lat: -20.5025,
     lng: -54.6355,
-    photo: capMarciaZen,
+    photo: '/capsmarciazen.jpg',
   },
 ]
 
@@ -180,190 +176,3 @@ export const needs: Need[] = [
     status: 'Pendente',
   },
 ]
-
-export const hosts: Host[] = [
-  {
-    id: 'host1',
-    name: 'Gestor CAPS',
-    email: 'teste@caps.br',
-    password: 'senha123',
-    capId: 'c1',
-    contact: '(67) 99999-0001',
-    role: 'host',
-  },
-]
-
-export const donations: Donation[] = [
-  {
-    id: 'd1',
-    capId: 'c1',
-    category: 'roupa',
-    quantity: '20 pecas',
-    donorName: 'Joao Silva',
-    donorEmail: 'joao@email.com',
-    isAnonymous: false,
-    date: '2026-03-10',
-    time: '14:30',
-    registeredAt: '2026-03-10T14:35:00',
-  },
-  {
-    id: 'd2',
-    capId: 'c1',
-    category: 'comida',
-    quantity: '50 kg',
-    donorEmail: undefined,
-    donorName: undefined,
-    isAnonymous: true,
-    date: '2026-03-09',
-    time: '10:00',
-    registeredAt: '2026-03-09T10:05:00',
-  },
-  {
-    id: 'd3',
-    capId: 'c1',
-    category: 'utensilios',
-    quantity: '15 unidades',
-    donorName: 'Maria Oliveira',
-    donorEmail: 'maria@email.com',
-    isAnonymous: false,
-    date: '2026-03-08',
-    time: '16:00',
-    registeredAt: '2026-03-08T16:10:00',
-  },
-  {
-    id: 'd4',
-    capId: 'c1',
-    category: 'roupa',
-    quantity: '30 pecas',
-    isAnonymous: true,
-    donorName: undefined,
-    donorEmail: undefined,
-    date: '2026-03-07',
-    time: '11:30',
-    registeredAt: '2026-03-07T11:35:00',
-  },
-  {
-    id: 'd5',
-    capId: 'c1',
-    category: 'comida',
-    quantity: '100 kg',
-    donorName: 'Empresa ABC Alimentos',
-    donorEmail: 'contato@abcalimentos.com',
-    isAnonymous: false,
-    date: '2026-03-06',
-    time: '09:00',
-    registeredAt: '2026-03-06T09:10:00',
-  },
-  {
-    id: 'd6',
-    capId: 'c2',
-    category: 'roupa',
-    quantity: '25 pecas',
-    isAnonymous: true,
-    donorName: undefined,
-    donorEmail: undefined,
-    date: '2026-03-09',
-    time: '13:00',
-    registeredAt: '2026-03-09T13:05:00',
-  },
-  {
-    id: 'd7',
-    capId: 'c2',
-    category: 'utensilios',
-    quantity: '10 unidades',
-    donorName: 'Pedro Costa',
-    donorEmail: 'pedro@email.com',
-    isAnonymous: false,
-    date: '2026-03-05',
-    time: '15:30',
-    registeredAt: '2026-03-05T15:35:00',
-  },
-  {
-    id: 'd8',
-    capId: 'c3',
-    category: 'comida',
-    quantity: '80 kg',
-    isAnonymous: true,
-    donorName: undefined,
-    donorEmail: undefined,
-    date: '2026-03-10',
-    time: '12:00',
-    registeredAt: '2026-03-10T12:05:00',
-  },
-]
-
-export const residents: Resident[] = [
-  {
-    id: 'res1',
-    name: 'Luis Fernando Pereira',
-    capId: 'c2',
-    capName: 'CAPS III Vila Almeida',
-    emergencyContact: '(67) 98888-1111',
-    entryDate: '2025-06-15',
-    status: 'ativo',
-  },
-  {
-    id: 'res2',
-    name: 'Paula Rocha',
-    capId: 'c3',
-    capName: 'CAPS III Afrodite Doris Contis',
-    emergencyContact: '(67) 98888-2222',
-    entryDate: '2025-08-20',
-    status: 'ativo',
-  },
-  {
-    id: 'res3',
-    name: 'Marcelo Torres',
-    capId: 'c4',
-    capName: 'CAPS III Aero Rancho',
-    emergencyContact: '(67) 98888-3333',
-    entryDate: '2025-11-10',
-    status: 'ativo',
-  },
-  {
-    id: 'res4',
-    name: 'Cristina Gomes',
-    capId: 'c5',
-    capName: 'CAPS AD IV - Álcool e Drogas',
-    emergencyContact: '(67) 98888-4444',
-    entryDate: '2025-09-05',
-    status: 'ativo',
-  },
-]
-
-function countBy<T extends string>(values: T[]): Array<{ category: T, total: number }> {
-  return Object.entries(values.reduce<Record<string, number>>((accumulator, value) => {
-    accumulator[value] = (accumulator[value] ?? 0) + 1
-    return accumulator
-  }, {}))
-    .map(([category, total]) => ({ category: category as T, total }))
-    .sort((a, b) => b.total - a.total)
-}
-
-export const neededItemsRanking = [...needs]
-  .filter((need) => need.status !== 'Concluido')
-  .sort((a, b) => b.amount - a.amount)
-  .slice(0, 5)
-  .map((need) => ({
-    item: need.title,
-    total: need.amount,
-    category: need.category,
-    unitName: need.unitName,
-  }))
-
-export const projectStats: ProjectStats = {
-  capsCount: caps.filter((unit) => unit.unitType === 'CAPS').length,
-  activeRequests: needs.filter((need) => need.status !== 'Concluido').length,
-  completedRequests: needs.filter((need) => need.status === 'Concluido').length,
-  registeredDonations: donations.length,
-  urgentRequests: needs.filter((need) => need.urgency === 'Urgente').length,
-  topCategories: countBy(needs.map((need) => need.category)),
-  topCapsDemands: caps
-    .map((unit) => ({
-      unitId: unit.id,
-      unitName: unit.title,
-      total: needs.filter((need) => need.unitId === unit.id && need.status !== 'Concluido').length,
-    }))
-    .filter((unit) => unit.total > 0)
-    .sort((a, b) => b.total - a.total),
-}

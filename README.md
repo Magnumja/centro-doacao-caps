@@ -41,7 +41,7 @@ Este projeto usa uma navbar global para manter o menu padrão em todas as págin
 Regras do layout:
 - A navbar está em `src/components/Layout.tsx`.
 - O estilo da navbar está em `src/Styles/Layout.css`.
-- A imagem da marca usada na navbar está em `public/SESAU.png` (acesso via `"/SESAU.png"`).
+- As imagens ficam em `public/` e são referenciadas pela raiz (ex.: `"/sesau-navbar-white.png"`).
 - As rotas que devem exibir o menu ficam dentro do bloco `Route element={<Layout />}` em `src/app/router.tsx`.
 - A rota de login administrativo (`/admin/login`) também fica dentro do layout global para manter a navbar.
 
@@ -51,6 +51,15 @@ Como criar uma nova página com o menu geral:
 3. Adicione a rota da página dentro do bloco que usa `<Layout />` em `src/app/router.tsx`.
 4. Se quiser que apareça no menu, inclua o item no array `navigationItems` em `src/components/Layout.tsx`.
 
+Onde mexer em cada coisa:
+- Cor, fonte, sombra, raio, animação: `src/Styles/tokens.css` (vale para o site inteiro).
+- Ordem dos arquivos CSS: `src/Styles/index.css`.
+- Dados das unidades/pedidos nas telas: `useUnits()` e `useNeeds()` em `src/hooks/usePublicData.ts`.
+- Links para unidades e pedidos: `src/lib/routes.ts`.
+- Formatação de datas: `src/lib/format.ts`.
+
 Boas práticas:
 - Não encapsule páginas manualmente com `<Layout />`; o roteador já faz isso.
+- Não importe CSS dentro de componentes; adicione o arquivo em `src/Styles/index.css`.
+- Não escreva cores/fontes literais: use os tokens de `src/Styles/tokens.css`.
 - Use labels com acentuação correta no menu para manter consistência de idioma.

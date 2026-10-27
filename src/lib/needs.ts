@@ -1,5 +1,5 @@
 import { Need } from '../types'
-import { needs as mockNeeds } from '../data/mock'
+import { needs as mockNeeds } from '../data/mockData'
 import { fetchNeeds, normalizeNeed } from '../services/needs-service'
 
 export async function fetchPublicNeeds(): Promise<Need[]> {

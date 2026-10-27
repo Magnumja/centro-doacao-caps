@@ -3,17 +3,22 @@ import { FaBars, FaEnvelope, FaMapMarkerAlt, FaPhoneAlt, FaTimes } from 'react-i
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 
 import { isLocalAuthBypassEnabled } from '../lib/auth'
-import logo from '../public/logosesau.png'
-import navbarLogoWhite from '../../public/sesau-navbar-white.png'
+import { hasStoredHostSession } from '../lib/session'
+
+// Imagens servidas da pasta /public (mesmo caminho em dev e produção).
+const logo = '/logosesau.png'
+const navbarLogoWhite = '/sesau-navbar-white.png'
 
 export default function Layout(): React.ReactElement {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const location = useLocation()
-  const hasAdminSession = typeof window !== 'undefined' && !!localStorage.getItem('loggedHost')
-  const canOpenAdminDirectly = hasAdminSession || isLocalAuthBypassEnabled()
+  const canOpenAdminDirectly = hasStoredHostSession() || isLocalAuthBypassEnabled()
+  // A animação de entrada roda só ao trocar de seção (ex.: /caps -> /donate). Dentro da
+  // mesma seção (/caps -> /caps/c1) a página continua montada e mantém seus dados.
+  const sectionKey = location.pathname.split('/')[1] || 'home'
 
   const navigationItems = [
-    { to: '/', label: 'Inicio' },
+    { to: '/', label: 'Início' },
     { to: '/caps', label: 'CAPS' },
     { to: '/donate', label: 'Necessidades' },
     { to: '/sobre-o-projeto', label: 'Sobre' },
@@ -86,7 +91,7 @@ export default function Layout(): React.ReactElement {
             <span>Menu</span>
           </button>
 
-          <Link className="mobile-header-brand" to="/" aria-label="Pagina inicial - SESAU">
+          <Link className="mobile-header-brand" to="/" aria-label="Página inicial - SESAU">
             <img src={navbarLogoWhite} alt="SESAU Secretaria Municipal de Saúde" />
           </Link>
 
@@ -132,7 +137,7 @@ export default function Layout(): React.ReactElement {
       </header>
 
       <main id="main-content" tabIndex={-1}>
-        <div key={location.key} className="page-transition">
+        <div key={sectionKey} className="page-transition">
           <Outlet />
         </div>
       </main>

@@ -1,4 +1,5 @@
 import api from '../lib/api'
+import { ApiNeed } from './needs-service'
 import { DashboardDonation, DashboardResident, NeedCardItem } from '../types/dashboard'
 
 export async function fetchDashboardCollections(unitId: string): Promise<{
@@ -7,14 +8,14 @@ export async function fetchDashboardCollections(unitId: string): Promise<{
   residents: DashboardResident[]
 }> {
   const [allNeeds, donationsResponse, residentsResponse] = await Promise.all([
-    api.get<any[]>('/api/needs'),
+    api.get<ApiNeed[]>('/api/needs'),
     api.get<{ data: DashboardDonation[] }>('/api/donations'),
     api.get<DashboardResident[]>('/api/residents'),
   ])
 
   const normalizedNeeds: NeedCardItem[] = (Array.isArray(allNeeds) ? allNeeds : [])
-    .filter((need: any) => (need.unitId ?? need.unit?.id) === unitId)
-    .map((need: any) => ({
+    .filter((need) => (need.unitId ?? need.unit?.id) === unitId)
+    .map((need) => ({
       id: need.id,
       title: need.title,
       amount: need.amount,

@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { getErrorMessage } from '../lib/api'
 import { isLocalAuthBypassEnabled } from '../lib/auth'
+import { storeHostSession } from '../lib/session'
 import { fetchCurrentHost, getLocalDemoHost, loginWithEmail } from '../services/auth-service'
 
 export function useAdminLogin() {
@@ -10,7 +12,7 @@ export function useAdminLogin() {
   const localAuthBypassEnabled = isLocalAuthBypassEnabled()
 
   const persistAndNavigate = (host: unknown) => {
-    localStorage.setItem('loggedHost', JSON.stringify(host))
+    storeHostSession(host)
     navigate('/admin/dashboard')
   }
 
@@ -25,13 +27,13 @@ export function useAdminLogin() {
     try {
       const host = await fetchCurrentHost()
       persistAndNavigate(host)
-    } catch (err: any) {
+    } catch (err) {
       if (localAuthBypassEnabled) {
         fallbackToLocal()
         return
       }
 
-      setErrorMessage(err?.message || 'Nao foi possivel acessar o painel local.')
+      setErrorMessage(getErrorMessage(err, 'Não foi possível acessar o painel local.'))
     } finally {
       setIsLoading(false)
     }
@@ -45,13 +47,13 @@ export function useAdminLogin() {
       await loginWithEmail(email, password)
       const host = await fetchCurrentHost()
       persistAndNavigate(host)
-    } catch (err: any) {
+    } catch (err) {
       if (localAuthBypassEnabled) {
         fallbackToLocal()
         return
       }
 
-      setErrorMessage(err?.message || 'Erro ao autenticar.')
+      setErrorMessage(getErrorMessage(err, 'Erro ao autenticar.'))
     } finally {
       setIsLoading(false)
     }

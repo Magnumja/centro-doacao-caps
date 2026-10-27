@@ -6,6 +6,7 @@ import AboutProject from '../pages/AboutProject'
 import CapsPage from '../pages/CapsPage'
 import Donate from '../pages/Donate'
 import YourDonations from '../pages/YourDonations'
+import NotFound from '../pages/NotFound'
 import Login from '../pages/admin/Login'
 import Dashboard from '../pages/admin/Dashboard'
 import Layout from '../components/Layout'
@@ -27,7 +28,7 @@ export default function Router(): React.ReactElement {
           <Route path="/home" element={<Navigate to="/" replace />} />
           <Route path="/sobre-o-projeto" element={<AboutProject />} />
 
-          {/* Fluxo de doação por unidade (aceita query string como ?unit=c1) */}
+          {/* Fluxo de doação: /caps (lista), /caps/:unidade e /caps/:unidade?pedido=ID */}
           <Route path="/caps/*" element={<CapsPage />} />
 
           {/* Vitrine pública de necessidades */}
@@ -41,7 +42,7 @@ export default function Router(): React.ReactElement {
           <Route path="/admin/*" element={<Dashboard />} />
 
           {/* Fallback para qualquer rota não mapeada */}
-          <Route path="*" element={<div className="page-block"><h2>Rota não encontrada</h2></div>} />
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </HashRouter>

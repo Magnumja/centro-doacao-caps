@@ -1,8 +1,8 @@
 import api from '../lib/api'
 
 type TelemetryCategory = 'carousel' | 'scroll' | 'navigation' | 'theme' | 'interaction' | 'performance'
-const env = (import.meta as any).env
-const telemetryEnabled = env?.DEV ? env?.VITE_ENABLE_TELEMETRY === 'true' : env?.VITE_ENABLE_TELEMETRY !== 'false'
+const env = import.meta.env
+const telemetryEnabled = env.DEV ? env.VITE_ENABLE_TELEMETRY === 'true' : env.VITE_ENABLE_TELEMETRY !== 'false'
 
 export async function trackEvent(payload: {
   eventName: string

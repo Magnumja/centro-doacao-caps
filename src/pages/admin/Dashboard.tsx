@@ -3,11 +3,16 @@ import { IconType } from 'react-icons'
 import { FaBoxOpen, FaChartLine, FaChartPie, FaGift, FaHospital, FaPlus, FaSignOutAlt, FaTrash, FaUser, FaUsers } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import AdminDashboardSummary from '../../components/AdminDashboard'
-import { Cap, Donation } from '../../types'
-import { caps, donationCategories, needs as mockNeeds, projectStats } from '../../data/mock'
+import { donationCategories } from '../../data/mockData'
 import { useDashboardData } from '../../hooks/useDashboardData'
+import { invalidatePublicNeeds, useNeeds, useUnits } from '../../hooks/usePublicData'
+import { getErrorMessage } from '../../lib/api'
+import { formatDate } from '../../lib/format'
+import { clearHostSession } from '../../lib/session'
+import { buildProjectStats } from '../../lib/stats'
 import { logoutHost } from '../../services/auth-service'
 import { createNeed, deleteNeed } from '../../services/needs-service'
+import { DashboardDonation } from '../../types/dashboard'
 
 
 // Abas disponíveis na área administrativa.
@@ -23,7 +28,7 @@ const dashboardTabs: Array<{ key: TabType, label: string, icon: IconType }> = [
 
 // Configuração de categorias usada no resumo e gráfico de analytics.
 const analyticsCategories: Array<{
-  key: Donation['category']
+  key: DashboardDonation['category']
   label: string
   color: string
 }> = [
@@ -55,6 +60,8 @@ export default function Dashboard(): React.ReactElement {
   const [residentSearch, setResidentSearch] = useState('')
 
   const { loggedHost, publishedNeeds, hostDonations, residents, setPublishedNeeds } = useDashboardData()
+  const { units } = useUnits()
+  const { needs: networkNeeds } = useNeeds()
   const navigate = useNavigate()
   // Encerra sessão local e redireciona para o login.
   const handleLogout = async () => {
@@ -63,7 +70,7 @@ export default function Dashboard(): React.ReactElement {
     } catch {
       // Mesmo se o backend já tiver perdido a sessão, limpamos o estado local.
     } finally {
-      localStorage.removeItem('loggedHost')
+      clearHostSession()
       navigate('/admin/login')
     }
   }
@@ -105,8 +112,9 @@ export default function Dashboard(): React.ReactElement {
       setRequestAmount('')
       setRequestPriority('media')
       setRequestFeedback('Solicitação publicada com sucesso.')
-    } catch (error: any) {
-      setRequestFeedback(error?.message || 'Não foi possível publicar a solicitação.')
+      invalidatePublicNeeds()
+    } catch (error) {
+      setRequestFeedback(getErrorMessage(error, 'Não foi possível publicar a solicitação.'))
     } finally {
       setIsPublishingRequest(false)
     }
@@ -125,8 +133,9 @@ export default function Dashboard(): React.ReactElement {
       await deleteNeed(needId)
       setPublishedNeeds((current) => current.filter((need) => need.id !== needId))
       setRequestFeedback('Solicitação apagada com sucesso.')
-    } catch (error: any) {
-      setRequestFeedback(error?.message || 'Não foi possível apagar a solicitação.')
+      invalidatePublicNeeds()
+    } catch (error) {
+      setRequestFeedback(getErrorMessage(error, 'Não foi possível apagar a solicitação.'))
     } finally {
       setDeletingNeedIds((current) => {
         const next = new Set(current)
@@ -138,11 +147,16 @@ export default function Dashboard(): React.ReactElement {
 
   // Enquanto o host não foi carregado do storage, mantém estado de espera.
   if (!loggedHost) {
-    return <div>Carregando...</div>
+    return (
+      <section className="page-block" aria-busy="true">
+        <p className="home-urgent-empty" role="status">Carregando painel...</p>
+      </section>
+    )
   }
 
   // Dados derivados para o host logado (unidade, doações e agregações).
-  const hostCaps: Cap | undefined = caps.find(c => c.id === loggedHost.capId)
+  const hostCaps = units.find((unit) => unit.id === loggedHost.capId)
+  const networkStats = buildProjectStats(units, networkNeeds)
   const normalizedResidentSearch = residentSearch.trim().toLowerCase()
   const filteredResidents = residents.filter((resident) => {
     if (!normalizedResidentSearch) {
@@ -153,9 +167,10 @@ export default function Dashboard(): React.ReactElement {
   })
 
   // Conta quantas doações existem em cada categoria.
-  const donationCategoryCounts = hostDonations.reduce<Record<Donation['category'], number>>(
+  const donationCategoryCounts = hostDonations.reduce<Record<DashboardDonation['category'], number>>(
     (accumulator, donation) => {
-      accumulator[donation.category] += 1
+      // Ignora categorias desconhecidas em vez de gerar NaN no gráfico.
+      if (donation.category in accumulator) accumulator[donation.category] += 1
       return accumulator
     },
     { roupa: 0, comida: 0, utensilios: 0 }
@@ -213,7 +228,7 @@ export default function Dashboard(): React.ReactElement {
             <h1>Bem-vindo, {loggedHost.name}</h1>
             <p className="dashboard-subtitle">{hostCaps?.title}</p>
           </div>
-          <button className="dashboard-logout" onClick={handleLogout}>
+          <button type="button" className="dashboard-logout" onClick={handleLogout}>
             <FaSignOutAlt aria-hidden="true" />
             Sair
           </button>
@@ -226,6 +241,7 @@ export default function Dashboard(): React.ReactElement {
           <button
             key={key}
             className={`dashboard-nav__item ${activeTab === key ? 'active' : ''}`}
+            aria-pressed={activeTab === key}
             onClick={() => setActiveTab(key)}
             type="button"
           >
@@ -235,14 +251,15 @@ export default function Dashboard(): React.ReactElement {
         ))}
       </nav>
 
-      <main className="dashboard-main">
+      {/* O <main> da página já vem do Layout; aqui é só o conteúdo das abas. */}
+      <div className="dashboard-main">
         {/* TAB: OVERVIEW - visão rápida de indicadores e atalhos */}
         {activeTab === 'overview' && (
           <section className="dashboard-tab">
             <h2>Visão Geral</h2>
             <p>Bem-vindo ao painel de gestão. Você gerencia <strong>{hostCaps?.title}</strong>.</p>
 
-            <AdminDashboardSummary stats={projectStats} needs={mockNeeds} />
+            <AdminDashboardSummary stats={networkStats} needs={networkNeeds} />
 
             <div className="dashboard-cards">
               <article className="dashboard-card">
@@ -263,7 +280,7 @@ export default function Dashboard(): React.ReactElement {
                 <h3>Última Doação</h3>
                 <p className="dashboard-card__value">
                   {hostDonations.length > 0
-                    ? new Date(hostDonations[0].registeredAt).toLocaleDateString('pt-BR')
+                    ? formatDate(hostDonations[0].registeredAt)
                     : 'N/A'}
                 </p>
                 <p className="dashboard-card__label">registrada</p>
@@ -273,11 +290,11 @@ export default function Dashboard(): React.ReactElement {
             <div className="dashboard-section">
               <h3>Ações Rápidas</h3>
               <div className="dashboard-actions">
-                <button className="dashboard-action-btn" onClick={() => setActiveTab('donations')}>
+                <button type="button" className="dashboard-action-btn" onClick={() => setActiveTab('donations')}>
                   <FaPlus aria-hidden="true" />
                   Nova solicitação
                 </button>
-                <button className="dashboard-action-btn" onClick={() => navigate('/caps')}>
+                <button type="button" className="dashboard-action-btn" onClick={() => navigate('/caps')}>
                   <FaHospital aria-hidden="true" />
                   Ver página pública
                 </button>
@@ -517,7 +534,7 @@ export default function Dashboard(): React.ReactElement {
                   <tbody>
                     {hostDonations.slice(0, 10).map(donation => (
                       <tr key={donation.id}>
-                        <td>{new Date(donation.date).toLocaleDateString('pt-BR')}</td>
+                        <td>{formatDate(donation.date)}</td>
                         <td>{donation.time}</td>
                         <td className={`category-badge category-${donation.category}`}>
                           {donation.category}
@@ -581,8 +598,8 @@ export default function Dashboard(): React.ReactElement {
             </div>
 
             <div className="profile-actions">
-              <button className="btn-secondary">Editar perfil</button>
-              <button className="btn-secondary">Alterar senha</button>
+              <button type="button" className="btn-secondary" disabled title="Em breve">Editar perfil (em breve)</button>
+              <button type="button" className="btn-secondary" disabled title="Em breve">Alterar senha (em breve)</button>
             </div>
           </section>
         )}
@@ -595,7 +612,8 @@ export default function Dashboard(): React.ReactElement {
 
             <div className="residents-filter">
               <input
-                type="text"
+                type="search"
+                aria-label="Buscar residente por nome"
                 placeholder="Buscar por nome..."
                 className="residents-search"
                 value={residentSearch}
@@ -618,7 +636,7 @@ export default function Dashboard(): React.ReactElement {
                       <tr key={resident.id}>
                         <td>{resident.name}</td>
                         <td>{resident.emergencyContact || 'Não informado'}</td>
-                        <td>{new Date(resident.entryDate).toLocaleDateString('pt-BR')}</td>
+                        <td>{formatDate(resident.entryDate)}</td>
                         <td>
                           <span className={`status-badge status-${resident.status}`}>
                             {resident.status === 'ativo'
@@ -634,13 +652,13 @@ export default function Dashboard(): React.ReactElement {
               </table>
             </div>
             {filteredResidents.length === 0 && (
-              <p style={{ color: '#666', fontSize: '0.9rem' }}>
+              <p className="dashboard-empty-state">
                 Nenhum residente encontrado para o filtro informado.
               </p>
             )}
           </section>
         )}
-      </main>
+      </div>
     </section>
   )
 }

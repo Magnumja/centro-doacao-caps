@@ -1,41 +1,24 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { FaBoxes, FaFilter, FaHospital, FaRegClock, FaSearch } from 'react-icons/fa'
 
 import CategoryFilter from '../components/CategoryFilter'
 import DonationRequestCard from '../components/DonationRequestCard'
 import { donationCategories } from '../data/mockData'
-import { fetchPublicNeeds } from '../lib/needs'
+import { useNeeds } from '../hooks/usePublicData'
+import { getNeedDonationPath } from '../lib/routes'
+import { isOpen, isUrgent } from '../lib/stats'
 import { DonationCategoryName, Need } from '../types'
 
 export default function Donate(): React.ReactElement {
-  const [needs, setNeeds] = useState<Need[]>([])
+  const { needs, isLoading } = useNeeds()
   const [activeCategory, setActiveCategory] = useState<DonationCategoryName | 'Todas'>('Todas')
   const [activePriority, setActivePriority] = useState<'Todas' | Need['priority']>('Todas')
   const [searchTerm, setSearchTerm] = useState('')
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    let mounted = true
-
-    ;(async () => {
-      setIsLoading(true)
-      const loadedNeeds = await fetchPublicNeeds()
-
-      if (mounted) {
-        setNeeds(loadedNeeds)
-        setIsLoading(false)
-      }
-    })()
-
-    return () => {
-      mounted = false
-    }
-  }, [])
 
   const visibleNeeds = useMemo(() => {
     const normalizedSearch = searchTerm.trim().toLocaleLowerCase('pt-BR')
 
-    return needs.filter((need) => {
+    return needs.filter(isOpen).filter((need) => {
       const matchesCategory = activeCategory === 'Todas' || need.category === activeCategory
       const matchesPriority = activePriority === 'Todas' || need.priority === activePriority
       const matchesSearch = !normalizedSearch
@@ -47,8 +30,8 @@ export default function Donate(): React.ReactElement {
     })
   }, [activeCategory, activePriority, needs, searchTerm])
 
-  const urgentNeeds = visibleNeeds.filter((need) => need.priority === 'alta')
-  const otherNeeds = visibleNeeds.filter((need) => need.priority !== 'alta')
+  const urgentNeeds = visibleNeeds.filter(isUrgent)
+  const otherNeeds = visibleNeeds.filter((need) => !isUrgent(need))
   const unitsCount = new Set(visibleNeeds.map((need) => need.unitId)).size
   const hasActiveFilters = activeCategory !== 'Todas' || activePriority !== 'Todas' || searchTerm.trim().length > 0
 
@@ -152,7 +135,7 @@ export default function Donate(): React.ReactElement {
               <DonationRequestCard
                 key={need.id}
                 need={need}
-                actionTo={`/caps?unit=${need.unitId}`}
+                actionTo={getNeedDonationPath(need)}
                 actionLabel="Doar este pedido"
               />
             ))}
@@ -178,7 +161,7 @@ export default function Donate(): React.ReactElement {
               <DonationRequestCard
                 key={need.id}
                 need={need}
-                actionTo={`/caps?unit=${need.unitId}`}
+                actionTo={getNeedDonationPath(need)}
                 actionLabel="Ver e doar"
               />
             ))}

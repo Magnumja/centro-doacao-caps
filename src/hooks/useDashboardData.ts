@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { isLocalAuthBypassEnabled } from '../lib/auth'
+import { clearHostSession, storeHostSession } from '../lib/session'
 import { fetchCurrentHost, getLocalDemoHost } from '../services/auth-service'
 import { fetchDashboardCollections } from '../services/dashboard-service'
 import { DashboardDonation, DashboardHost, DashboardResident, NeedCardItem } from '../types/dashboard'
@@ -29,7 +30,7 @@ export function useDashboardData(): UseDashboardDataResult {
         const host = await fetchCurrentHost()
         if (!mounted) return
 
-        localStorage.setItem('loggedHost', JSON.stringify(host))
+        storeHostSession(host)
         setLoggedHost(host)
 
         try {
@@ -49,7 +50,7 @@ export function useDashboardData(): UseDashboardDataResult {
       } catch {
         if (localAuthBypassEnabled && mounted) {
           const demoHost = getLocalDemoHost()
-          localStorage.setItem('loggedHost', JSON.stringify(demoHost))
+          storeHostSession(demoHost)
           setLoggedHost(demoHost)
           setPublishedNeeds([])
           setHostDonations([])
@@ -57,7 +58,7 @@ export function useDashboardData(): UseDashboardDataResult {
           return
         }
 
-        localStorage.removeItem('loggedHost')
+        clearHostSession()
         if (mounted) {
           navigate('/admin/login')
         }

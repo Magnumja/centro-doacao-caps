@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import CapsMap from '../components/CapsMap'
@@ -7,19 +7,21 @@ import HeroSection from '../components/HeroSection'
 import HowItWorks from '../components/HowItWorks'
 import NewsCarousel from '../components/ui/NewsCarousel'
 import { UrgentCarouselSkeleton } from '../components/ui/Skeletons'
-import { projectStats } from '../data/mockData'
 import { HighlightItem } from '../data/highlights'
-import { fetchPublicNeeds } from '../lib/needs'
+import { useNeeds, useUnits } from '../hooks/usePublicData'
+import { buildProjectStats, isOpen, isUrgent } from '../lib/stats'
+import { getNeedDonationPath } from '../lib/routes'
 import { fetchHighlights } from '../services/highlights-service'
-import { fetchNeedsPage, normalizeNeed } from '../services/needs-service'
 import { trackEvent } from '../services/telemetry-service'
-import { Need } from '../types'
 
 export default function Home(): React.ReactElement {
-  const [urgentNeeds, setUrgentNeeds] = useState<Need[]>([])
   const [highlights, setHighlights] = useState<HighlightItem[]>([])
-  const [isLoadingUrgent, setIsLoadingUrgent] = useState(true)
+  const { units } = useUnits()
+  const { needs, isLoading: isLoadingUrgent } = useNeeds()
   const milestonesRef = useRef(new Set<number>())
+
+  const stats = useMemo(() => buildProjectStats(units, needs), [units, needs])
+  const urgentNeeds = useMemo(() => needs.filter((need) => isOpen(need) && isUrgent(need)).slice(0, 6), [needs])
 
   useEffect(() => {
     let mounted = true
@@ -27,31 +29,6 @@ export default function Home(): React.ReactElement {
     ;(async () => {
       const loadedHighlights = await fetchHighlights()
       if (mounted) setHighlights(loadedHighlights)
-    })()
-
-    return () => {
-      mounted = false
-    }
-  }, [])
-
-  useEffect(() => {
-    let mounted = true
-
-    ;(async () => {
-      setIsLoadingUrgent(true)
-
-      try {
-        const urgentResponse = await fetchNeedsPage({ page: 1, limit: 9, priority: 'alta' })
-        if (!mounted) return
-
-        setUrgentNeeds((urgentResponse.data || []).map(normalizeNeed))
-      } catch {
-        const fallback = await fetchPublicNeeds()
-        if (!mounted) return
-        setUrgentNeeds(fallback.filter((need) => need.priority === 'alta').slice(0, 9))
-      } finally {
-        if (mounted) setIsLoadingUrgent(false)
-      }
     })()
 
     return () => {
@@ -87,7 +64,7 @@ export default function Home(): React.ReactElement {
 
   return (
     <>
-      <HeroSection stats={projectStats} />
+      <HeroSection stats={stats} />
 
       <section className="page-block home-highlights-section home-highlights-section--featured">
         <div className="home-urgent-header">
@@ -130,12 +107,12 @@ export default function Home(): React.ReactElement {
           <UrgentCarouselSkeleton />
         ) : urgentNeeds.length > 0 ? (
           <div className="donate-requests-grid">
-            {urgentNeeds.slice(0, 6).map((need) => (
+            {urgentNeeds.map((need) => (
               <DonationRequestCard
                 key={need.id}
                 need={need}
                 compact
-                actionTo={`/caps?unit=${need.unitId}`}
+                actionTo={getNeedDonationPath(need)}
                 actionLabel="Quero doar"
               />
             ))}

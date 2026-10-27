@@ -870,6 +870,38 @@
   color: #2d8a3f;
 }
 
+/* Marcadores: o ícone padrão do Leaflet é azul; o filtro recolore por tipo de unidade
+   para combinar com a legenda acima. */
+.leaflet-marker-icon.caps-marker {
+  filter: hue-rotate(10deg) saturate(1.6) brightness(0.62);
+}
+
+.leaflet-marker-icon.rt-marker {
+  filter: hue-rotate(-50deg) saturate(1.2);
+}
+
+.leaflet-marker-icon.upa-marker {
+  filter: hue-rotate(-95deg) saturate(1.1) brightness(0.9);
+}
+
+.caps-map-popup__type {
+  font-size: 0.8rem;
+  color: var(--color-secondary);
+}
+
+.caps-map-popup__type--upa {
+  color: #2d8a3f;
+}
+
+.caps-map-popup__link {
+  display: inline-block;
+  margin-top: 0.4rem;
+  color: var(--color-primary);
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
 .leaflet-container {
   font-family: var(--font-body);
 }
@@ -1390,8 +1422,7 @@
   min-height: 48px;
 }
 
-.category-filter__button--active,
-.donate-time-chips button.is-active {
+.category-filter__button--active {
   border-color: rgba(15, 143, 121, 0.35);
   background: linear-gradient(135deg, rgba(15, 143, 121, 0.14), rgba(7, 52, 95, 0.08));
   color: var(--color-primary);

@@ -55,7 +55,7 @@ export default function AboutProject(): React.ReactElement {
         <article className="about-creator-card about-creator-card--with-photo">
           <img
             className="about-creator-card__photo"
-            src="/magnum-johanson.png"
+            src="/magnum-johanson.jpg"
             alt="Magnum Johanson de Abreu"
             loading="lazy"
           />

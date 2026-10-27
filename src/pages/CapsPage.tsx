@@ -1,8 +1,7 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   FaCalendarCheck,
   FaClock,
-  FaEnvelope,
   FaGift,
   FaInfoCircle,
   FaMapMarkerAlt,
@@ -13,16 +12,17 @@ import {
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 import CapsCard from '../components/CapsCard'
+import { donationCategories } from '../data/mockData'
+import { useNeeds, useUnits } from '../hooks/usePublicData'
+import { getErrorMessage } from '../lib/api'
 import { getMapsUrl, getWhatsAppUrl } from '../lib/contact'
-import { fetchPublicNeeds } from '../lib/needs'
-import { Cap, Need } from '../types'
+import { formatDate, todayISODate } from '../lib/format'
+import { getUnitPath } from '../lib/routes'
+import { isOpen, isUrgent } from '../lib/stats'
 import { registerDonations, validateDonationInput } from '../services/donations-service'
 import { saveDonorIntention } from '../services/donor-intentions-service'
-import { fetchUnits } from '../services/units-service'
-import { caps as mockCaps, donationCategories, needs as mockNeeds } from '../data/mockData'
+import { Cap, Need } from '../types'
 
-
-const donationOptions = donationCategories
 const selectionAnimationDurationMs = 260
 const donationTimeOptions = [
   '08:00',
@@ -44,24 +44,25 @@ const donationTimeOptions = [
 ]
 const suggestedDonationTimes = ['08:00', '09:00', '10:00', '14:00', '15:00', '16:00']
 
-function resolveUnitPhotoPath(photo?: string): string | undefined {
-  if (!photo) return undefined
-  return photo
-}
-
+// Rotas aceitas:
+//   /caps                     -> lista de unidades
+//   /caps/:unidade            -> unidade selecionada + formulário
+//   /caps/:unidade?pedido=ID  -> idem, já com o item do pedido preenchido
+//   /caps?unit=:unidade       -> formato antigo, redirecionado para /caps/:unidade
 export default function CapsPage(): React.ReactElement {
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
   const params = useParams()
   const navigate = useNavigate()
 
-  const routeUnitId = params['*']?.split('/').filter(Boolean)[0]
-  const selectedUnitParam = searchParams.get('unit') ?? routeUnitId ?? null
+  // A URL é a fonte única de verdade da unidade selecionada.
+  const routeUnitId = params['*']?.split('/').filter(Boolean)[0] ?? null
+  const legacyUnitParam = searchParams.get('unit')
+  const requestedNeedId = searchParams.get('pedido')
 
-  const [selectedUnitId, setSelectedUnitId] = useState<string | null>(null)
-  const [caps, setCaps] = useState<Cap[]>([])
-  const [allNeeds, setAllNeeds] = useState<Need[]>(mockNeeds)
+  const { units: caps, isLoading: isLoadingUnits } = useUnits()
+  const { needs: allNeeds } = useNeeds()
+
   const [selectionPreviewId, setSelectionPreviewId] = useState<string | null>(null)
-  const [showUnitChooser, setShowUnitChooser] = useState(true)
   const [isEnteringUnit, setIsEnteringUnit] = useState(false)
 
   const [selectedItems, setSelectedItems] = useState<string[]>([])
@@ -80,44 +81,34 @@ export default function CapsPage(): React.ReactElement {
   const donationFlowRef = useRef<HTMLDivElement | null>(null)
   const shouldScrollToDonationRef = useRef(false)
 
-  useEffect(() => {
-    let mounted = true
-
-    async function loadUnits() {
-      try {
-        const mapped = await fetchUnits(resolveUnitPhotoPath)
-        if (mounted) setCaps(mapped && mapped.length > 0 ? mapped : mockCaps)
-      } catch {
-        if (mounted) setCaps(mockCaps)
-      }
-    }
-
-    async function loadNeeds() {
-      try {
-        const loadedNeeds = await fetchPublicNeeds()
-        if (mounted) setAllNeeds(loadedNeeds.length > 0 ? loadedNeeds : mockNeeds)
-      } catch {
-        if (mounted) setAllNeeds(mockNeeds)
-      }
-    }
-
-    void loadUnits()
-    void loadNeeds()
-
-    return () => {
-      mounted = false
-    }
-  }, [])
-
   const selectedUnit = useMemo(
-    () => caps.find((unit) => unit.id === selectedUnitId),
-    [caps, selectedUnitId],
+    () => (routeUnitId ? caps.find((unit) => unit.id === routeUnitId) : undefined),
+    [caps, routeUnitId],
   )
+  const unitNotFound = Boolean(routeUnitId) && !isLoadingUnits && !selectedUnit
 
   const selectedUnitNeeds = useMemo(
-    () => allNeeds.filter((need) => need.unitId === selectedUnit?.id),
-    [allNeeds, selectedUnit?.id],
+    () => (selectedUnit ? allNeeds.filter((need) => need.unitId === selectedUnit.id) : []),
+    [allNeeds, selectedUnit],
   )
+
+  const resetDonationForm = useCallback((): void => {
+    setSelectedItems([])
+    setItemQuantities({})
+    setDonationDate('')
+    setDonationTime('')
+    setAnonymousDonation('nao')
+    setDonorName('')
+    setDonorEmail('')
+    setFormMessage('')
+  }, [])
+
+  // Links antigos (/caps?unit=c1) continuam funcionando.
+  useEffect(() => {
+    if (!legacyUnitParam) return
+    const query = requestedNeedId ? `?pedido=${encodeURIComponent(requestedNeedId)}` : ''
+    navigate(`${getUnitPath(legacyUnitParam)}${query}`, { replace: true })
+  }, [legacyUnitParam, navigate, requestedNeedId])
 
   useEffect(() => {
     return () => {
@@ -125,25 +116,36 @@ export default function CapsPage(): React.ReactElement {
     }
   }, [])
 
+  // Ao trocar de unidade: formulário limpo e animação de entrada.
   useEffect(() => {
-    if (!selectedUnitParam) {
-      return
-    }
-
-    const matchedUnit = caps.find((unit) => unit.id === selectedUnitParam)
-    if (!matchedUnit) {
-      return
-    }
-
-    setSelectedUnitId(matchedUnit.id)
     setSelectionPreviewId(null)
-    setIsEnteringUnit(true)
+    setShowSuccessOverlay(false)
     resetDonationForm()
-    setShowUnitChooser(false)
-  }, [selectedUnitParam, caps])
+    if (routeUnitId) setIsEnteringUnit(true)
+  }, [routeUnitId, resetDonationForm])
+
+  const handleDonateFromRequest = useCallback((need: Need): void => {
+    const category = String(need.category)
+    const remaining = Math.max(need.amount - (need.donatedAmount ?? 0), 1)
+
+    setSelectedItems((current) => (current.includes(category) ? current : [...current, category]))
+    setItemQuantities((current) => ({ ...current, [category]: String(remaining) }))
+    setFormMessage('')
+    shouldScrollToDonationRef.current = true
+  }, [])
+
+  // Chegou por "Doar este pedido" (?pedido=ID): preenche o item e leva ao formulário.
+  useEffect(() => {
+    if (!requestedNeedId || !selectedUnit) return
+    const need = selectedUnitNeeds.find((candidate) => candidate.id === requestedNeedId)
+    if (!need) return
+
+    handleDonateFromRequest(need)
+    navigate(getUnitPath(selectedUnit.id), { replace: true })
+  }, [handleDonateFromRequest, navigate, requestedNeedId, selectedUnit, selectedUnitNeeds])
 
   useEffect(() => {
-    if (!shouldScrollToDonationRef.current || !selectedUnit || showUnitChooser) {
+    if (!shouldScrollToDonationRef.current || !selectedUnit) {
       return
     }
 
@@ -153,64 +155,22 @@ export default function CapsPage(): React.ReactElement {
     }, 120)
 
     return () => window.clearTimeout(timeoutId)
-  }, [selectedUnit, showUnitChooser, selectedItems])
+  }, [selectedUnit, selectedItems])
 
-  const resetDonationForm = (): void => {
-    setSelectedItems([])
-    setItemQuantities({})
-    setDonationDate('')
-    setDonationTime('')
-    setAnonymousDonation('nao')
-    setDonorName('')
-    setDonorEmail('')
-    setFormMessage('')
-  }
-
-  const handleSelectDonation = (unit: Cap): void => {
+  const handleSelectDonation = useCallback((unit: Cap): void => {
     if (selectionTimeoutRef.current) {
       clearTimeout(selectionTimeoutRef.current)
     }
 
-    if (selectedUnitId === unit.id && showUnitChooser) {
-      setSelectionPreviewId(null)
-      setShowUnitChooser(false)
-      navigate(`/caps/${unit.id}`)
-      return
-    }
-
+    // Pequeno destaque visual no card antes de abrir a unidade.
     setSelectionPreviewId(unit.id)
-
     selectionTimeoutRef.current = setTimeout(() => {
-      setSelectedUnitId(unit.id)
-      setIsEnteringUnit(true)
-      resetDonationForm()
-      setSelectionPreviewId(null)
-      setShowUnitChooser(false)
-      navigate(`/caps/${unit.id}`)
       selectionTimeoutRef.current = null
+      navigate(getUnitPath(unit.id))
     }, selectionAnimationDurationMs)
-  }
+  }, [navigate])
 
   const handleShowUnitChooser = (): void => {
-    if (selectionTimeoutRef.current) {
-      clearTimeout(selectionTimeoutRef.current)
-      selectionTimeoutRef.current = null
-    }
-
-    setSelectionPreviewId(null)
-    resetDonationForm()
-    setShowUnitChooser(true)
-    setShowSuccessOverlay(false)
-    setSelectedUnitId(null)
-    setSearchParams({})
-    navigate('/caps')
-  }
-
-  const handleCloseDonationSuccess = (): void => {
-    setShowSuccessOverlay(false)
-    setSelectedUnitId(null)
-    setShowUnitChooser(true)
-    resetDonationForm()
     navigate('/caps')
   }
 
@@ -221,18 +181,7 @@ export default function CapsPage(): React.ReactElement {
 
   const toggleItem = (item: string): void => {
     setFormMessage('')
-    setSelectedItems((prevItems) => {
-      if (prevItems.includes(item)) {
-        setItemQuantities((prev) => {
-          const next = { ...prev }
-          delete next[item]
-          return next
-        })
-        return prevItems.filter((existingItem) => existingItem !== item)
-      }
-
-      return [...prevItems, item]
-    })
+    setSelectedItems((prevItems) => (prevItems.includes(item) ? prevItems : [...prevItems, item]))
   }
 
   const removeSelectedItem = (item: string): void => {
@@ -249,35 +198,9 @@ export default function CapsPage(): React.ReactElement {
     setItemQuantities((prev) => ({ ...prev, [item]: value }))
   }
 
-  const handleDonateFromRequest = (need: Need): void => {
-    const category = String(need.category)
-    const remaining = Math.max(need.amount - (need.donatedAmount ?? 0), 1)
-
-    setSelectedItems((current) => current.includes(category) ? current : [...current, category])
-    setItemQuantities((current) => ({ ...current, [category]: String(remaining) }))
-    setFormMessage('')
-    shouldScrollToDonationRef.current = true
-  }
-
-  const handleRegisterDonation = (event: React.FormEvent<HTMLFormElement>): void => {
+  const handleRegisterDonation = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault()
     if (isSubmittingDonation) return
-
-    const validationError = validateDonationInput({
-      unitSlug: selectedUnit?.id ?? '',
-      selectedItems,
-      itemQuantities,
-      donationDate,
-      donationTime,
-      anonymousDonation,
-      donorName,
-      donorEmail,
-    })
-
-    if (validationError) {
-      setFormMessage(validationError)
-      return
-    }
 
     const unit = selectedUnit
     if (!unit) {
@@ -285,62 +208,64 @@ export default function CapsPage(): React.ReactElement {
       return
     }
 
+    const input = {
+      unitSlug: unit.id,
+      selectedItems,
+      itemQuantities,
+      donationDate,
+      donationTime,
+      anonymousDonation,
+      donorName: donorName.trim(),
+      donorEmail: donorEmail.trim(),
+    }
+
+    const validationError = validateDonationInput(input)
+    if (validationError) {
+      setFormMessage(validationError)
+      return
+    }
+
     setIsSubmittingDonation(true)
 
-    ;(async () => {
-      try {
-        await registerDonations({
-          unitSlug: unit.id,
-          selectedItems,
-          itemQuantities,
-          donationDate,
-          donationTime,
-          anonymousDonation,
-          donorName,
-          donorEmail,
-        })
+    try {
+      await registerDonations(input)
 
-        saveDonorIntention({
-          unitSlug: unit.id,
-          unitName: unit.title,
-          items: selectedItems.map((item) => ({
-            name: item,
-            quantity: itemQuantities[item],
-          })),
-          donationDate,
-          donationTime,
-          isAnonymous: anonymousDonation === 'sim',
-          donorName: anonymousDonation === 'sim' ? undefined : donorName,
-          donorEmail: anonymousDonation === 'sim' ? undefined : donorEmail,
-        })
+      saveDonorIntention({
+        unitSlug: unit.id,
+        unitName: unit.title,
+        items: selectedItems.map((item) => ({
+          name: item,
+          quantity: itemQuantities[item],
+        })),
+        donationDate,
+        donationTime,
+        isAnonymous: anonymousDonation === 'sim',
+        donorName: anonymousDonation === 'sim' ? undefined : input.donorName,
+        donorEmail: anonymousDonation === 'sim' ? undefined : input.donorEmail,
+      })
 
-        const itensList = selectedItems.map((it) => `${it}: ${itemQuantities[it]}`).join(', ')
-        const identidade = anonymousDonation === 'sim' ? 'Doador anônimo' : `Doador: ${donorName} (${donorEmail})`
-        const successMsg = `Registro salvo para ${unit.title}. Dia: ${donationDate}, horário: ${donationTime}. Itens: ${itensList}. ${identidade}.`
-
-        setSuccessMessage(successMsg)
-        setShowSuccessOverlay(true)
-        setFormMessage('')
-      } catch (err: any) {
-        setFormMessage(err?.message || 'Não foi possível registrar a doação agora. Tente novamente em instantes.')
-      } finally {
-        setIsSubmittingDonation(false)
-      }
-    })()
+      const itemsList = selectedItems.map((item) => `${item}: ${itemQuantities[item]}`).join(', ')
+      const identity = anonymousDonation === 'sim' ? 'Doador anônimo' : `Doador: ${input.donorName} (${input.donorEmail})`
+      setSuccessMessage(`Registro salvo para ${unit.title}. Dia: ${formatDate(donationDate)}, horário: ${donationTime}. Itens: ${itemsList}. ${identity}.`)
+      setShowSuccessOverlay(true)
+      setFormMessage('')
+    } catch (error) {
+      setFormMessage(getErrorMessage(error, 'Não foi possível registrar a doação agora. Tente novamente em instantes.'))
+    } finally {
+      setIsSubmittingDonation(false)
+    }
   }
 
   const whatsappUrl = selectedUnit ? getWhatsAppUrl(selectedUnit) : undefined
   const mapsUrl = selectedUnit ? getMapsUrl(selectedUnit.address) : undefined
-  const selectedUnitOpenNeeds = selectedUnitNeeds.filter((need) => need.status !== 'Concluido').length
-  const selectedUnitUrgentNeeds = selectedUnitNeeds.filter(
-    (need) => need.priority === 'alta' || need.urgency === 'Urgente',
-  ).length
+  const selectedUnitOpenNeeds = selectedUnitNeeds.filter(isOpen).length
+  const selectedUnitUrgentNeeds = selectedUnitNeeds.filter(isUrgent).length
   const selectedDonationSummary = selectedItems.map((item) => ({
     name: item,
     quantity: itemQuantities[item]?.trim() || 'Quantidade pendente',
   }))
-  const availableDonationOptions = donationOptions.filter((item) => !selectedItems.includes(item))
-  const minDonationDate = new Date().toISOString().slice(0, 10)
+  const availableDonationOptions = donationCategories.filter((item) => !selectedItems.includes(item))
+  const minDonationDate = todayISODate()
   const donorIdentityLabel = anonymousDonation === 'sim'
     ? 'Doação anônima'
     : donorName.trim() || 'Nome pendente'
@@ -349,17 +274,22 @@ export default function CapsPage(): React.ReactElement {
     <section className="page-block caps-page">
       {showSuccessOverlay ? (
         <div className="donation-success-overlay">
-          <article className="donation-success-card">
+          <article
+            className="donation-success-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="donation-success-title"
+          >
             <span className="page-kicker">Contribuição registrada</span>
-            <h2>Obrigado por apoiar o cuidado em saúde mental.</h2>
+            <h2 id="donation-success-title">Obrigado por apoiar o cuidado em saúde mental.</h2>
             <p>Sua doação foi registrada e ajudará a rede CAPS a acompanhar os apoios recebidos.</p>
             <p className="donation-success-details">{successMessage}</p>
 
             <div className="donation-success-actions">
-              <button type="button" className="unit-donate-button" onClick={handleRegisterAnotherDonation}>
+              <button type="button" className="unit-donate-button" onClick={handleRegisterAnotherDonation} autoFocus>
                 Fazer nova doação
               </button>
-              <button type="button" className="donation-success-close" onClick={handleCloseDonationSuccess}>
+              <button type="button" className="donation-success-close" onClick={handleShowUnitChooser}>
                 Voltar à seleção de unidades
               </button>
               <Link className="donation-success-link" to="/suas-doacoes">
@@ -372,15 +302,15 @@ export default function CapsPage(): React.ReactElement {
 
       <div className="caps-page__intro">
         <span className="page-kicker">Rede de saúde mental</span>
-        <h2>{selectedUnit && !showUnitChooser ? selectedUnit.title : 'Unidades CAPS de Campo Grande'}</h2>
+        <h2>{selectedUnit ? selectedUnit.title : 'Unidades CAPS de Campo Grande'}</h2>
         <p>
-          {selectedUnit && !showUnitChooser
+          {selectedUnit
             ? 'Contato, pedidos e registro de doação em uma visão compacta.'
             : 'Consulte dados de contato, pedidos abertos e prioridades de cada unidade. Ao encontrar um item que você pode doar, combine a entrega com o CAPS e registre sua intenção para facilitar o acompanhamento.'}
         </p>
       </div>
 
-      {selectedUnit && !showUnitChooser ? (
+      {selectedUnit ? (
         <>
           <section
             className={`selected-unit-overview${isEnteringUnit ? ' selected-unit-spotlight--enter' : ''}${selectedUnit.photo ? '' : ' selected-unit-overview--no-photo'}`}
@@ -415,7 +345,7 @@ export default function CapsPage(): React.ReactElement {
 
               <div className="selected-unit-actions">
                 {whatsappUrl ? (
-                  <a className="unit-donate-button" href={whatsappUrl} target="_blank" rel="noreferrer">
+                  <a className="unit-donate-button" href={whatsappUrl} target="_blank" rel="noopener noreferrer">
                     <FaWhatsapp aria-hidden="true" />
                     Falar pelo WhatsApp
                   </a>
@@ -423,7 +353,7 @@ export default function CapsPage(): React.ReactElement {
                   <span className="unit-disabled-action">WhatsApp não informado</span>
                 )}
                 {mapsUrl ? (
-                  <a className="unit-secondary-button" href={mapsUrl} target="_blank" rel="noreferrer">
+                  <a className="unit-secondary-button" href={mapsUrl} target="_blank" rel="noopener noreferrer">
                     <FaMapMarkerAlt aria-hidden="true" />
                     Ver no mapa
                   </a>
@@ -476,20 +406,32 @@ export default function CapsPage(): React.ReactElement {
 
         </>
       ) : (
-        <div className="card-grid caps-card-grid">
-          {caps.map((c) => (
-            <CapsCard
-              key={c.id}
-              cap={c}
-              isSelected={selectedUnitId === c.id}
-              isAnimatingSelection={selectionPreviewId === c.id}
-              onSelectDonation={handleSelectDonation}
-            />
-          ))}
-        </div>
+        <>
+          {unitNotFound ? (
+            <p className="form-feedback" role="status">
+              Não encontramos essa unidade. Escolha uma das unidades CAPS abaixo.
+            </p>
+          ) : null}
+
+          {isLoadingUnits ? (
+            <p className="home-urgent-empty" role="status">Carregando unidades...</p>
+          ) : (
+            <div className="card-grid caps-card-grid">
+              {caps.map((c) => (
+                <CapsCard
+                  key={c.id}
+                  cap={c}
+                  isSelected={false}
+                  isAnimatingSelection={selectionPreviewId === c.id}
+                  onSelectDonation={handleSelectDonation}
+                />
+              ))}
+            </div>
+          )}
+        </>
       )}
 
-      {selectedUnit && !showUnitChooser ? (
+      {selectedUnit ? (
         <div ref={donationFlowRef} className="donation-flow-grid">
           <article className={`page-card donation-panel donation-guidelines${availableDonationOptions.length === 0 ? ' donation-guidelines--full-form' : ''}`}>
             <h3>Registrar interesse em doar</h3>
@@ -516,7 +458,7 @@ export default function CapsPage(): React.ReactElement {
               </div>
             ) : null}
 
-            <form className="donation-form" onSubmit={handleRegisterDonation}>
+            <form className="donation-form" onSubmit={handleRegisterDonation} noValidate>
               {selectedItems.length > 0 ? (
                 <fieldset className="donation-form__quantities">
                   <legend>Quantidade por item</legend>
@@ -671,7 +613,7 @@ export default function CapsPage(): React.ReactElement {
 
             <div className="donation-summary-panel__section">
               <strong>Entrega</strong>
-              <p>{donationDate || 'Data pendente'} às {donationTime || 'horário pendente'}</p>
+              <p>{donationDate ? formatDate(donationDate) : 'Data pendente'} às {donationTime || 'horário pendente'}</p>
             </div>
 
             <div className="donation-summary-panel__section">
@@ -680,7 +622,7 @@ export default function CapsPage(): React.ReactElement {
             </div>
 
             {whatsappUrl ? (
-              <a className="unit-secondary-button" href={whatsappUrl} target="_blank" rel="noreferrer">
+              <a className="unit-secondary-button" href={whatsappUrl} target="_blank" rel="noopener noreferrer">
                 <FaWhatsapp aria-hidden="true" />
                 Combinar entrega
               </a>

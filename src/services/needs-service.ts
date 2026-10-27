@@ -55,7 +55,7 @@ export function normalizeNeed(need: ApiNeed): Need {
     status: need.status ?? 'Pendente',
     donatedAmount: need.donatedAmount ?? 0,
     unitId,
-    unitName: need.unit?.title ?? 'Unidade nao informada',
+    unitName: need.unit?.title ?? 'Unidade não informada',
   }
 }
 

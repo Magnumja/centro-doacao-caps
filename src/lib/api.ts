@@ -1,9 +1,11 @@
-const rawBase = (import.meta as any).env?.VITE_API_URL ?? ''
-const BASE = String(rawBase).replace(/\/$/, '')
+const BASE = String(import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '')
 const MUTATION_HEADERS = {
   'Content-Type': 'application/json',
   'X-CSRF-Protection': '1',
 }
+
+// Mensagem exibida quando o navegador nem consegue falar com a API (offline, CORS, servidor fora do ar).
+export const NETWORK_ERROR_MESSAGE = 'Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.'
 
 export class ApiError extends Error {
   constructor(
@@ -16,10 +18,22 @@ export class ApiError extends Error {
   }
 }
 
-async function handleRes<T>(res: Response): Promise<T> {
-  const text = await res.text()
+// Extrai uma mensagem amigável de qualquer erro lançado (ApiError, Error ou valor desconhecido).
+export function getErrorMessage(error: unknown, fallback: string): string {
+  if (error instanceof Error && error.message) return error.message
+  return fallback
+}
 
-  let parsed: any = null
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  let res: Response
+  try {
+    res = await fetch(`${BASE}${path}`, { credentials: 'include', ...init })
+  } catch {
+    throw new ApiError(NETWORK_ERROR_MESSAGE, 0)
+  }
+
+  const text = await res.text()
+  let parsed: unknown = null
   try {
     parsed = JSON.parse(text || '{}')
   } catch {
@@ -27,35 +41,27 @@ async function handleRes<T>(res: Response): Promise<T> {
   }
 
   if (!res.ok) {
-    const message = (parsed && typeof parsed.error === 'string' && parsed.error) || text || res.statusText
-    throw new ApiError(message, res.status, parsed?.details)
+    const body = (parsed ?? {}) as { error?: unknown, details?: unknown }
+    // Respostas de proxy (502/504) chegam como HTML: não mostramos isso ao usuário.
+    const message = typeof body.error === 'string' && body.error
+      ? body.error
+      : res.status >= 500 ? NETWORK_ERROR_MESSAGE : res.statusText || 'Erro inesperado.'
+    throw new ApiError(message, res.status, body.details)
   }
 
   return (parsed ?? text) as T
 }
 
-export async function get<T = any>(path: string): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, { credentials: 'include' })
-  return handleRes<T>(res)
+export function get<T = unknown>(path: string): Promise<T> {
+  return request<T>(path)
 }
 
-export async function post<T = any>(path: string, body: unknown): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, {
-    method: 'POST',
-    credentials: 'include',
-    headers: MUTATION_HEADERS,
-    body: JSON.stringify(body),
-  })
-  return handleRes<T>(res)
+export function post<T = unknown>(path: string, body: unknown): Promise<T> {
+  return request<T>(path, { method: 'POST', headers: MUTATION_HEADERS, body: JSON.stringify(body) })
 }
 
-export async function del<T = any>(path: string): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, {
-    method: 'DELETE',
-    credentials: 'include',
-    headers: { 'X-CSRF-Protection': '1' },
-  })
-  return handleRes<T>(res)
+export function del<T = unknown>(path: string): Promise<T> {
+  return request<T>(path, { method: 'DELETE', headers: { 'X-CSRF-Protection': '1' } })
 }
 
 export default { get, post, del }

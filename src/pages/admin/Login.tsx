@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
 import { useAdminLogin } from '../../hooks/useAdminLogin'
 
@@ -43,6 +43,7 @@ export default function Login(): React.ReactElement {
                             id="email"
                             type="email"
                             placeholder="seu@email.com"
+                            autoComplete="username"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
@@ -57,6 +58,7 @@ export default function Login(): React.ReactElement {
                                 id="password"
                                 type={showPassword ? 'text' : 'password'}
                                 placeholder="••••••••"
+                            autoComplete="current-password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
@@ -67,25 +69,17 @@ export default function Login(): React.ReactElement {
                                 className="password-toggle"
                                 onClick={() => setShowPassword(v => !v)}
                                 aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
-                                tabIndex={-1}
                             >
-                                {showPassword ? <FaEyeSlash /> : <FaEye />}
+                                {showPassword ? <FaEyeSlash aria-hidden="true" /> : <FaEye aria-hidden="true" />}
                             </button>
                         </div>
                     </fieldset>
 
                     {errorMessage && (
-                        <div className="login-error">
+                        <div className="login-error" role="alert">
                             <p>{errorMessage}</p>
                         </div>
                     )}
-
-                    <div className="login-remember">
-                        <label>
-                            <input type="checkbox" disabled={isLoading} />
-                            Manter-me conectado
-                        </label>
-                    </div>
 
                     <button type="submit" className="login-submit" disabled={isLoading}>
                         {isLoading ? 'Autenticando...' : 'Entrar'}
@@ -94,7 +88,7 @@ export default function Login(): React.ReactElement {
                     {localAuthBypassEnabled && (
                         <button
                             type="button"
-                            className="login-submit"
+                            className="login-submit login-submit--secondary"
                             disabled={isLoading}
                             onClick={directLocalAccess}
                         >
@@ -102,11 +96,9 @@ export default function Login(): React.ReactElement {
                         </button>
                     )}
 
-                    <div className="login-help">
-                        <a href="#" className="login-help__link">
-                            Esqueceu a senha?
-                        </a>
-                    </div>
+                    <p className="login-help">
+                        Esqueceu a senha? Solicite a redefinição à coordenação da rede CAPS.
+                    </p>
                 </form>
             </div>
         </div>

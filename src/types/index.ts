@@ -1,13 +1,15 @@
 export type Cap = {
   id: string
   title: string
-  unitType: 'CAPS'
+  unitType: 'CAPS' | 'Residência Terapêutica'
   address: string
   contact?: string
   whatsapp?: string
   operatingHours?: string
   needsSummary?: string
   description?: string
+  capacity?: string
+  privacyNote?: string
   lat?: number
   lng?: number
   photo?: string
@@ -51,41 +53,11 @@ export type ProjectStats = {
   topCapsDemands: Array<{ unitId: string, unitName: string, total: number }>
 }
 
-export type User = {
-  id: string
-  name: string
-  email?: string
-}
-
 export type Host = {
   id: string
   name: string
   email: string
-  password: string
   capId: string
   contact: string
   role: 'host' | 'admin'
-}
-
-export type Donation = {
-  id: string
-  capId: string
-  category: 'roupa' | 'comida' | 'utensilios'
-  quantity: string
-  donorName?: string
-  donorEmail?: string
-  isAnonymous: boolean
-  date: string
-  time: string
-  registeredAt: string
-}
-
-export type Resident = {
-  id: string
-  name: string
-  capId: string
-  capName: string
-  emergencyContact: string
-  entryDate: string
-  status?: 'ativo' | 'egresso'
 }

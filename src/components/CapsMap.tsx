@@ -1,12 +1,15 @@
 import React from 'react'
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import { Link } from 'react-router-dom'
 import L from 'leaflet'
+
+import { useUnits } from '../hooks/usePublicData'
+import { getUnitPath } from '../lib/routes'
+
 // Importa os assets do leaflet para que o bundler (Vite) resolva os caminhos corretamente
 const markerIcon2xUrl = new URL('leaflet/dist/images/marker-icon-2x.png', import.meta.url).href
 const markerIconUrl = new URL('leaflet/dist/images/marker-icon.png', import.meta.url).href
 const markerShadowUrl = new URL('leaflet/dist/images/marker-shadow.png', import.meta.url).href
-
-import { caps } from '../data/mock'
 
 
 // Ajuste necessário para o Leaflet encontrar os ícones quando rodando com Vite.
@@ -101,8 +104,10 @@ const upaUnits: UpaUnit[] = [
 const CAMPO_GRANDE_CENTER: [number, number] = [-20.4697, -54.6201]
 
 export default function CapsMap(): React.ReactElement {
+  const { units } = useUnits()
   // Filtra apenas unidades que possuem latitude e longitude válidas.
-  const unitsWithCoords = caps.filter((c) => c.lat !== undefined && c.lng !== undefined)
+  const unitsWithCoords = units.filter((unit) => typeof unit.lat === 'number' && typeof unit.lng === 'number')
+  const hasTherapeuticResidences = unitsWithCoords.some((unit) => unit.unitType !== 'CAPS')
 
   return (
     <div className="caps-map-wrapper">
@@ -147,7 +152,9 @@ export default function CapsMap(): React.ReactElement {
                 </>
               ) : null}
               <br />
-              <em style={{ fontSize: '0.8rem', color: '#0f8f79' }}>{unit.unitType}</em>
+              <em className="caps-map-popup__type">{unit.unitType}</em>
+              <br />
+              <Link className="caps-map-popup__link" to={getUnitPath(unit.id)}>Ver necessidades e doar</Link>
             </Popup>
           </Marker>
         ))}
@@ -164,14 +171,14 @@ export default function CapsMap(): React.ReactElement {
               <br />
               <span>{upa.address}</span>
               <br />
-              <em style={{ fontSize: '0.8rem', color: '#2d8a3f' }}>UPA</em>
+              <em className="caps-map-popup__type caps-map-popup__type--upa">UPA</em>
             </Popup>
           </Marker>
         ))}
       </MapContainer>
       <p className="caps-map-legend">
         <span className="legend-caps">● CAPS</span>
-        <span className="legend-rt">● Residência Terapêutica</span>
+        {hasTherapeuticResidences ? <span className="legend-rt">● Residência Terapêutica</span> : null}
         <span className="legend-upa">● UPA</span>
       </p>
     </div>

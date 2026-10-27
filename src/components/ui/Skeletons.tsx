@@ -15,17 +15,3 @@ export function UrgentCarouselSkeleton(): React.ReactElement {
   )
 }
 
-export function NeedListSkeleton(): React.ReactElement {
-  return (
-    <div className="home-needs-grid" aria-hidden="true">
-      {Array.from({ length: 6 }).map((_, index) => (
-        <article key={index} className="home-need-feed-card skeleton-card">
-          <div className="skeleton-line w-30" />
-          <div className="skeleton-line w-70" />
-          <div className="skeleton-line w-100" />
-          <div className="skeleton-line w-50" />
-        </article>
-      ))}
-    </div>
-  )
-}

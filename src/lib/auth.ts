@@ -7,13 +7,11 @@ export function isLocalAuthBypassEnabled(): boolean {
     return false
   }
 
-  const env = (import.meta as any).env
-
   // Modo apresentacao: em localhost o bypass fica ativo por padrao.
   // Para desativar localmente, defina VITE_ENABLE_LOCAL_AUTH_BYPASS="false".
   if (!isLocalHostname(window.location.hostname)) {
     return false
   }
 
-  return env?.VITE_ENABLE_LOCAL_AUTH_BYPASS !== 'false'
+  return import.meta.env.VITE_ENABLE_LOCAL_AUTH_BYPASS !== 'false'
 }

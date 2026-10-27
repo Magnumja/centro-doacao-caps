@@ -27,8 +27,17 @@ React + TypeScript + Vite, CSS puro (sem Tailwind), React Router v7 HashRouter, 
 
 ## Design system
 
-- Tokens em `src/Styles/Layout.css` (:root)
-- Arquivos CSS por página: `Home.css`, `CapsPage.css`, `AboutProject.css`, `YourDonations.css`, `Login.css`
-- Tipografia: Lexend (display/nav) + Source Sans 3 (body) via Google Fonts
+- **Tokens** em `src/Styles/tokens.css` (`:root`): cores, fontes, sombras, raios, movimento, largura de layout. Nunca repita um valor literal nas páginas: crie/use um `var(--token)`.
+- **Ordem da cascata** em `src/Styles/index.css` (importado uma única vez em `src/main.tsx`). Componentes e páginas **não** importam CSS. `Layout.css` (base + header/footer) carrega por último de propósito.
+- Arquivos CSS por página: `Home.css` (home, necessidades, cards de pedido, mapa), `CapsPage.css`, `AboutProject.css`, `YourDonations.css`, `Login.css`, `Dashboard.css`
+- Tipografia self-hosted via `@fontsource-variable` (Lexend + Source Sans 3): use `var(--font-display)` / `var(--font-body)`
 - Paleta: navy #07345f (primary), teal #0f8f79 (secondary), gold #f7bd4f (tertiary accent)
 - Radius: 12px (card), 10px (control)
+
+## Arquitetura de dados (frontend)
+
+- `src/hooks/usePublicData.ts`: `useUnits()` / `useNeeds()` com cache compartilhado entre páginas (sem refetch nem "piscar" ao navegar). Após publicar/apagar pedidos chame `invalidatePublicNeeds()`.
+- `src/services/*`: chamadas HTTP. Fallback para o catálogo local (`src/data/mockData.ts`) quando a API cai.
+- `src/lib/`: `api.ts` (cliente HTTP + mensagens de erro em PT), `format.ts` (datas sem bug de fuso), `stats.ts` (indicadores calculados), `routes.ts` (caminhos), `session.ts` (sessão do gestor).
+- Rotas da doação: `/caps`, `/caps/:unidade`, `/caps/:unidade?pedido=ID` (pré-preenche o item). A URL é a fonte de verdade da unidade selecionada.
+- Imagens ficam só em `public/` e são referenciadas pela raiz (`/capsmargarida.jpg`).

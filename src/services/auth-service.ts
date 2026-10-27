@@ -7,7 +7,6 @@ const LOCAL_DEMO_HOST: AuthHost = {
   id: 'local-dev-admin',
   name: 'Administrador local',
   email: 'local@localhost',
-  password: '',
   capId: 'c1',
   contact: '',
   role: 'admin',

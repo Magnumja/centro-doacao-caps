@@ -3,6 +3,7 @@ import { FaMapMarkerAlt, FaWhatsapp } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 
 import { getMapsUrl, getWhatsAppUrl } from '../lib/contact'
+import { getUnitPath } from '../lib/routes'
 import { Cap } from '../types'
 
 type CapsCardProps = {
@@ -18,13 +19,6 @@ function CapsCard({
   isAnimatingSelection = false,
   onSelectDonation,
 }: CapsCardProps): React.ReactElement {
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>): void => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault()
-      onSelectDonation(cap)
-    }
-  }
-
   const resolvedPhoto = (typeof cap.photo === 'string' && cap.photo.length > 0)
     ? cap.photo
     : undefined
@@ -33,18 +27,19 @@ function CapsCard({
   const mapsUrl = getMapsUrl(cap.address)
 
   return (
-    <div
+    // O card inteiro é clicável com o mouse; no teclado/leitor de tela a ação fica no
+    // botão "Quero doar" (um card com role="button" não pode conter outros links).
+    <article
       className={`page-card donation-unit-card${isSelected || isAnimatingSelection ? ' donation-unit-card--selected' : ''}${isAnimatingSelection ? ' donation-unit-card--selecting' : ''}`}
-      role="button"
-      tabIndex={0}
       onClick={() => onSelectDonation(cap)}
-      onKeyDown={handleKeyDown}
     >
       {resolvedPhoto && (
         <img
           className="caps-card__photo"
           src={resolvedPhoto}
           alt={`Foto da unidade ${cap.title}`}
+          loading="lazy"
+          decoding="async"
           onError={(event) => { event.currentTarget.style.display = 'none' }}
         />
       )}
@@ -60,7 +55,7 @@ function CapsCard({
       <div className="caps-card__actions">
         <Link
           className="unit-secondary-button"
-          to={`/caps/${cap.id}`}
+          to={getUnitPath(cap.id)}
           onClick={(event) => event.stopPropagation()}
         >
           Ver necessidades
@@ -73,14 +68,14 @@ function CapsCard({
             onSelectDonation(cap)
           }}
         >
-          {isSelected ? 'Alterar doação' : 'Quero doar'}
+          Quero doar
         </button>
         {whatsappUrl ? (
           <a
             className="unit-icon-link"
             href={whatsappUrl}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             onClick={(event) => event.stopPropagation()}
             aria-label={`Falar pelo WhatsApp com ${cap.title}`}
             title="Falar pelo WhatsApp"
@@ -93,7 +88,7 @@ function CapsCard({
             className="unit-icon-link"
             href={mapsUrl}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             onClick={(event) => event.stopPropagation()}
             aria-label={`Ver ${cap.title} no mapa`}
             title="Ver no mapa"
@@ -102,14 +97,8 @@ function CapsCard({
           </a>
         ) : null}
       </div>
-    </div>
+    </article>
   )
 }
 
-export default React.memo(CapsCard, (prev, next) => {
-  return (
-    prev.cap.id === next.cap.id
-    && prev.isSelected === next.isSelected
-    && prev.isAnimatingSelection === next.isAnimatingSelection
-  )
-})
+export default React.memo(CapsCard)

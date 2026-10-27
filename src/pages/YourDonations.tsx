@@ -2,18 +2,9 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { FaCalendarCheck, FaClock, FaGift, FaTrash } from 'react-icons/fa'
 
+import { formatDate } from '../lib/format'
+import { getUnitPath } from '../lib/routes'
 import { listDonorIntentions, removeDonorIntention, DonorIntention } from '../services/donor-intentions-service'
-
-function formatDate(date: string): string {
-  if (!date) return 'Data não informada'
-
-  const parsed = new Date(`${date}T00:00:00`)
-  if (Number.isNaN(parsed.getTime())) {
-    return date
-  }
-
-  return parsed.toLocaleDateString('pt-BR')
-}
 
 export default function YourDonations(): React.ReactElement {
   const [intentions, setIntentions] = useState<DonorIntention[]>(() => listDonorIntentions())
@@ -80,7 +71,7 @@ export default function YourDonations(): React.ReactElement {
 
                 <div className="your-donation-card__footer">
                   <span>{intention.isAnonymous ? 'Doação anônima' : intention.donorName}</span>
-                  <Link to={`/caps?unit=${intention.unitSlug}`}>Doar novamente nesta unidade</Link>
+                  <Link to={getUnitPath(intention.unitSlug)}>Doar novamente nesta unidade</Link>
                 </div>
               </article>
             ))}
