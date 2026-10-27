@@ -90,6 +90,20 @@ enum HostRole {
   admin
 }
 
+// ─── Doador (conta opcional para acompanhar o próprio histórico) ─────────────
+
+model Donor {
+  id        String     @id @default(cuid())
+  name      String
+  email     String     @unique
+  password  String     // bcrypt hash — NUNCA armazenar texto puro
+
+  donations Donation[]
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
 // ─── Doação ──────────────────────────────────────────────────────────────────
 
 model Donation {
@@ -103,13 +117,24 @@ model Donation {
   time        String           // ex.: 14:30
   registeredAt DateTime        @default(now())
 
+  // Rótulo escolhido pelo doador (ex.: "Higiene pessoal"); category é o agrupamento interno.
+  itemLabel   String?
+  // Itens registrados juntos (mesma intenção de doação) compartilham o groupId.
+  groupId     String?
+
   unit        Unit             @relation(fields: [unitId], references: [id])
   unitId      String
+
+  // Preenchido quando o doador estava logado; mesmo doações anônimas para a
+  // unidade aparecem no histórico do próprio doador.
+  donor       Donor?           @relation(fields: [donorId], references: [id], onDelete: SetNull)
+  donorId     String?
 
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
 
   @@index([unitId, registeredAt(sort: Desc)])
+  @@index([donorId, registeredAt(sort: Desc)])
 }
 
 enum DonationCategory {

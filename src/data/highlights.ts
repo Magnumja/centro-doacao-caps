@@ -5,6 +5,8 @@ export type HighlightItem = {
   image: string
   ctaLabel: string
   ctaLink: string
+  // Data de publicação (notícias automáticas da prefeitura).
+  publishedAt?: string
 }
 
 export const highlights: HighlightItem[] = [

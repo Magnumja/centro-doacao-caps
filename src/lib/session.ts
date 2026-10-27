@@ -9,6 +9,18 @@ export function hasStoredHostSession(): boolean {
   }
 }
 
+// Sessão de demonstração (atalho de localhost) — só vale se a pessoa escolheu entrar assim.
+export const DEMO_HOST_ID = 'local-dev-admin'
+
+export function hasStoredDemoSession(): boolean {
+  try {
+    const stored = JSON.parse(window.localStorage.getItem(LOGGED_HOST_KEY) ?? 'null') as { id?: string } | null
+    return stored?.id === DEMO_HOST_ID
+  } catch {
+    return false
+  }
+}
+
 export function storeHostSession(host: unknown): void {
   try {
     window.localStorage.setItem(LOGGED_HOST_KEY, JSON.stringify(host))

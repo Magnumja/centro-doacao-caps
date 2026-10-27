@@ -4,17 +4,19 @@ import {
   FaInfoCircle,
   FaMapMarkerAlt,
   FaTimes,
+  FaUserCircle,
   FaWhatsapp,
 } from 'react-icons/fa'
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 import CapsCard from '../components/CapsCard'
 import { donationCategories } from '../data/mockData'
+import { useDonorSession } from '../hooks/useDonorSession'
 import { useNeeds, useUnits } from '../hooks/usePublicData'
 import { getErrorMessage } from '../lib/api'
 import { getMapsUrl, getWhatsAppUrl } from '../lib/contact'
 import { formatDate, formatLongDate, todayISODate } from '../lib/format'
-import { getUnitPath } from '../lib/routes'
+import { getDonorAccessPath, getUnitPath } from '../lib/routes'
 import { isOpen, isUrgent } from '../lib/stats'
 import { isValidEmail, registerDonations, validateDonationInput } from '../services/donations-service'
 import { saveDonorIntention } from '../services/donor-intentions-service'
@@ -54,6 +56,7 @@ export default function CapsPage(): React.ReactElement {
   const [searchParams] = useSearchParams()
   const params = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
 
   // A URL é a fonte única de verdade da unidade selecionada.
   const routeUnitId = params['*']?.split('/').filter(Boolean)[0] ?? null
@@ -62,6 +65,7 @@ export default function CapsPage(): React.ReactElement {
 
   const { units: caps, isLoading: isLoadingUnits } = useUnits()
   const { needs: allNeeds } = useNeeds()
+  const { donor } = useDonorSession()
 
   const [selectionPreviewId, setSelectionPreviewId] = useState<string | null>(null)
   const [isEnteringUnit, setIsEnteringUnit] = useState(false)
@@ -79,6 +83,8 @@ export default function CapsPage(): React.ReactElement {
   const [successMessage, setSuccessMessage] = useState<string>('')
   // Erros por campo só aparecem depois da primeira tentativa de envio.
   const [showErrors, setShowErrors] = useState(false)
+  // Incrementa a cada formulário limpo, para reaplicar os dados da conta do doador.
+  const [formVersion, setFormVersion] = useState(0)
 
   const selectionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const donationFlowRef = useRef<HTMLDivElement | null>(null)
@@ -105,7 +111,15 @@ export default function CapsPage(): React.ReactElement {
     setDonorEmail('')
     setFormMessage('')
     setShowErrors(false)
+    setFormVersion((version) => version + 1)
   }, [])
+
+  // Doador logado: nome e e-mail já vêm preenchidos (continuam editáveis).
+  useEffect(() => {
+    if (!donor) return
+    setDonorName(donor.name)
+    setDonorEmail(donor.email)
+  }, [donor, formVersion])
 
   // Links antigos (/caps?unit=c1) continuam funcionando.
   useEffect(() => {
@@ -254,7 +268,8 @@ export default function CapsPage(): React.ReactElement {
     try {
       await registerDonations(input)
 
-      saveDonorIntention({
+      // Com conta, o histórico fica no servidor; sem conta, guardamos neste aparelho.
+      if (!donor) saveDonorIntention({
         unitSlug: unit.id,
         unitName: unit.title,
         items: selectedItems.map((item) => ({
@@ -330,6 +345,12 @@ export default function CapsPage(): React.ReactElement {
                 Ver suas doações
               </Link>
             </div>
+            {!donor ? (
+              <p className="donation-success-account">
+                Quer ver suas doações em qualquer aparelho?{' '}
+                <Link to={getDonorAccessPath('/suas-doacoes', 'criar')}>Crie uma conta gratuita</Link>
+              </p>
+            ) : null}
           </article>
         </div>
       ) : null}
@@ -589,6 +610,15 @@ export default function CapsPage(): React.ReactElement {
                 <span className="donation-step__number" aria-hidden="true">{identityComplete ? <FaCheck /> : '3'}</span>
                 Como você quer se identificar?
               </legend>
+              {donor ? (
+                <p className="donation-step__hint donation-account-note">
+                  <FaUserCircle aria-hidden="true" /> Conectado como <strong>{donor.name}</strong>. Esta doação vai para o seu histórico, mesmo se for anônima para a unidade.
+                </p>
+              ) : (
+                <p className="donation-step__hint">
+                  <Link to={getDonorAccessPath(location.pathname)}>Entre na sua conta</Link> para acompanhar esta doação depois. É opcional.
+                </p>
+              )}
 
               <div className="donation-identity-options">
                 <label className={anonymousDonation === 'nao' ? 'is-selected' : ''}>

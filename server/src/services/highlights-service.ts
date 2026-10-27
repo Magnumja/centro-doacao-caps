@@ -19,6 +19,10 @@ const highlightSchema = z.object({
 export class HighlightsService {
   private readonly items = new Map<string, HighlightItem>()
   private readonly newsCacheTtlMs = 1000 * 60 * 15
+  // Se nenhum feed respondeu, tenta de novo logo (não deixa o carrossel 15 min sem notícias).
+  private readonly failedFetchCacheTtlMs = 1000 * 60 * 2
+  // Notícias mais antigas que isso não aparecem como destaque "atual".
+  private readonly maxNewsAgeMs = 1000 * 60 * 60 * 24 * 365
   private readonly maxFeedBytes = 256 * 1024
   private readonly feedTimeoutMs = 8000
   private readonly allowedNewsHost = 'www.campogrande.ms.gov.br'
@@ -136,27 +140,33 @@ export class HighlightsService {
       return this.newsCache.items
     }
 
+    // A busca do WordPress ordena por relevância; orderby=date garante as publicações mais recentes.
     const newsFeeds = this.searchTerms.map((term) => (
-      `https://www.campogrande.ms.gov.br/cgnoticias/?s=${encodeURIComponent(term)}&feed=rss2`
+      `https://www.campogrande.ms.gov.br/cgnoticias/?s=${encodeURIComponent(term)}&orderby=date&order=DESC&feed=rss2`
     ))
     const results = await Promise.allSettled(newsFeeds.map((feed) => this.fetchNewsFeed(feed)))
+    const anyFeedAnswered = results.some((result) => result.status === 'fulfilled' && result.value !== null)
+    const oldestAllowedMs = Date.now() - this.maxNewsAgeMs
     const items = results
-      .flatMap((result) => result.status === 'fulfilled' ? result.value : [])
+      .flatMap((result) => result.status === 'fulfilled' && result.value ? result.value : [])
+      .filter((item) => item.publishedAtMs >= oldestAllowedMs)
       .filter((item, index, allItems) => allItems.findIndex((candidate) => candidate.ctaLink === item.ctaLink) === index)
       .sort((a, b) => b.publishedAtMs - a.publishedAtMs)
-      .map(({ publishedAtMs: _publishedAtMs, ...item }) => item)
+      .map(({ publishedAtMs, ...item }) => ({ ...item, publishedAt: new Date(publishedAtMs).toISOString() }))
       .slice(0, 5)
 
     this.newsCache = {
-      expiresAt: Date.now() + this.newsCacheTtlMs,
+      expiresAt: Date.now() + (anyFeedAnswered ? this.newsCacheTtlMs : this.failedFetchCacheTtlMs),
       items,
     }
 
     return items
   }
 
-  private async fetchNewsFeed(feedUrl: string): Promise<NewsHighlightItem[]> {
+  // null = o feed não respondeu (rede/erro); [] = respondeu sem notícias relevantes.
+  private async fetchNewsFeed(feedUrl: string): Promise<NewsHighlightItem[] | null> {
     const xml = await this.fetchFeedXml(feedUrl)
+    if (!xml) return null
     const parsed = this.parser.parse(xml) as any
     const rawItems = parsed?.rss?.channel?.item
     const feedItems = Array.isArray(rawItems) ? rawItems : rawItems ? [rawItems] : []

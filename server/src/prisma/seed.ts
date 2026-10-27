@@ -48,9 +48,9 @@ async function main(): Promise<void> {
 
     await prisma.host.upsert({
       where: { email: 'teste@caps.br' },
-      update: {},
+      update: { name: 'Gestor de demonstração' },
       create: {
-        name: '',
+        name: 'Gestor de demonstração',
         email: 'teste@caps.br',
         password: demoHash,
         contact: '(67) 99999-0001',

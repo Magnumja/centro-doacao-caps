@@ -7,6 +7,7 @@ export class DonationsRepository {
 
   create(data: {
     unitId: string
+    donorId?: string
     category: 'roupa' | 'comida' | 'utensilios'
     quantity: string
     isAnonymous: boolean
@@ -25,8 +26,33 @@ export class DonationsRepository {
         donorEmail: data.isAnonymous ? null : data.donorEmail,
         date: data.date,
         time: data.time,
+        donorId: data.donorId,
       },
     })
+  }
+
+  // Grava todos os itens de uma intenção numa transação: ou entram todos, ou nenhum.
+  async createGroup(rows: Array<{
+    unitId: string
+    groupId: string
+    donorId?: string
+    category: 'roupa' | 'comida' | 'utensilios'
+    itemLabel: string
+    quantity: string
+    isAnonymous: boolean
+    donorName?: string
+    donorEmail?: string
+    date: string
+    time: string
+  }>): Promise<number> {
+    const result = await prisma.donation.createMany({
+      data: rows.map((row) => ({
+        ...row,
+        donorName: row.isAnonymous ? null : row.donorName,
+        donorEmail: row.isAnonymous ? null : row.donorEmail,
+      })),
+    })
+    return result.count
   }
 
   listByUnit(unitId: string, skip: number, take: number) {

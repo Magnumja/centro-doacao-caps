@@ -537,7 +537,7 @@ export default function Dashboard(): React.ReactElement {
                         <td>{formatDate(donation.date)}</td>
                         <td>{donation.time}</td>
                         <td className={`category-badge category-${donation.category}`}>
-                          {donation.category}
+                          {donation.itemLabel ?? analyticsCategories.find((category) => category.key === donation.category)?.label ?? donation.category}
                         </td>
                         <td>{donation.quantity}</td>
                         <td>

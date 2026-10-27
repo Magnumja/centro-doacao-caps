@@ -1,12 +1,19 @@
 import { Request, Response } from 'express'
+import { readDonorSession } from '../middleware/donor-auth'
 import { DonationsService } from '../services/donations-service'
 
 export class DonationsController {
   constructor(private readonly service = new DonationsService()) {}
 
   create = async (req: Request, res: Response): Promise<void> => {
-    const donation = await this.service.create(req.body)
+    const donation = await this.service.create(req.body, readDonorSession(req)?.donorId)
     res.status(201).json(donation)
+  }
+
+  // Doador logado: os itens entram no histórico da conta (mesmo se anônimos para a unidade).
+  createBatch = async (req: Request, res: Response): Promise<void> => {
+    const result = await this.service.createBatch(req.body, readDonorSession(req)?.donorId)
+    res.status(201).json(result)
   }
 
   list = async (req: Request, res: Response): Promise<void> => {

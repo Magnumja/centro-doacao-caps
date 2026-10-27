@@ -34,3 +34,31 @@ export function verifyToken(token: string): JwtPayload {
 
   return jwtPayloadSchema.parse(decoded)
 }
+
+// ─── Sessão do doador ────────────────────────────────────────────────────────
+// Audiência própria: um token de doador nunca é aceito como token de gestor
+// (verifyToken exige AUDIENCE) e vice-versa.
+const DONOR_AUDIENCE = 'centro-doacao-caps-donor'
+
+const donorPayloadSchema = z.object({
+  donorId: z.string().min(1),
+})
+
+export type DonorJwtPayload = z.infer<typeof donorPayloadSchema>
+
+export function signDonorToken(payload: DonorJwtPayload): string {
+  return jwt.sign(payload, SECRET, {
+    expiresIn: '30d',
+    issuer: ISSUER,
+    audience: DONOR_AUDIENCE,
+  })
+}
+
+export function verifyDonorToken(token: string): DonorJwtPayload {
+  const decoded = jwt.verify(token, SECRET, {
+    issuer: ISSUER,
+    audience: DONOR_AUDIENCE,
+  })
+
+  return donorPayloadSchema.parse(decoded)
+}

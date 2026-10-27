@@ -1827,3 +1827,34 @@
     gap: 0.35rem;
   }
 }
+
+/* Doador logado: aviso no passo 3 */
+.caps-page .donation-account-note {
+  border-radius: var(--radius-control);
+  background: var(--color-secondary-soft);
+  padding: 0.6rem 0.75rem;
+  margin: 0;
+  color: var(--color-text);
+}
+
+.caps-page .donation-account-note svg {
+  color: var(--color-secondary);
+}
+
+.caps-page .donation-step__hint a {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+/* Diálogo de sucesso: convite para criar conta */
+.donation-success-account {
+  margin: 0.25rem 0 0;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.donation-success-account a {
+  color: var(--color-primary);
+  font-weight: 700;
+}

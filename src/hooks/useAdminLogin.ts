@@ -48,11 +48,8 @@ export function useAdminLogin() {
       const host = await fetchCurrentHost()
       persistAndNavigate(host)
     } catch (err) {
-      if (localAuthBypassEnabled) {
-        fallbackToLocal()
-        return
-      }
-
+      // Credencial errada sempre mostra o erro, inclusive em localhost. O modo de
+      // demonstração só entra pelo botão explícito "Entrar direto no localhost".
       setErrorMessage(getErrorMessage(err, 'Erro ao autenticar.'))
     } finally {
       setIsLoading(false)

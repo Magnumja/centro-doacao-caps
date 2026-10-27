@@ -357,3 +357,136 @@
   background: rgba(229, 241, 245, 0.6);
   border-color: rgba(7, 52, 95, 0.28);
 }
+
+/* ── Conta do doador ── */
+.your-donations-account {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  padding: 0.75rem 1rem;
+}
+
+.your-donations-account > svg {
+  flex: 0 0 auto;
+  font-size: 1.9rem;
+  color: var(--color-primary);
+}
+
+.your-donations-account span {
+  display: grid;
+  min-width: 0;
+  margin-right: auto;
+}
+
+.your-donations-account strong {
+  color: var(--color-text);
+  font-family: var(--font-display);
+}
+
+.your-donations-account small {
+  overflow: hidden;
+  color: var(--color-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.your-donations-account button {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-surface-solid);
+  padding: 0 0.85rem;
+  color: var(--color-text);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.your-donations-account button:hover {
+  border-color: rgba(179, 58, 48, 0.3);
+  color: var(--color-danger);
+}
+
+/* Convite para criar conta (visitante) */
+.your-donations-account-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px solid rgba(15, 143, 121, 0.28);
+  border-radius: var(--radius-card);
+  background: var(--color-secondary-soft);
+  padding: 1rem 1.15rem;
+}
+
+.your-donations-account-cta strong {
+  color: var(--color-text);
+  font-family: var(--font-display);
+}
+
+.page-block .your-donations-account-cta p {
+  margin-top: 0.2rem;
+  color: var(--color-text);
+}
+
+.your-donations-account-cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.your-donations-secondary {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-surface-solid);
+  padding: 0 0.95rem;
+  color: var(--color-primary-strong);
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* Registros locais anteriores ao login */
+.your-donations-device {
+  margin-top: 1rem;
+  border-top: 1px solid var(--color-border);
+  padding-top: 0.75rem;
+}
+
+.your-donations-device summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  color: var(--color-muted);
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.your-donations-device .your-donations-list {
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 560px) {
+  .your-donations-account {
+    flex-wrap: wrap;
+  }
+
+  .your-donations-account button {
+    width: 100%;
+    justify-content: center;
+  }
+}

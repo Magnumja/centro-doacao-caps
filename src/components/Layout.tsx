@@ -2,7 +2,6 @@ import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { FaBars, FaEnvelope, FaMapMarkerAlt, FaPhoneAlt, FaTimes } from 'react-icons/fa'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 
-import { isLocalAuthBypassEnabled } from '../lib/auth'
 import { hasStoredHostSession } from '../lib/session'
 
 // Imagens servidas da pasta /public (mesmo caminho em dev e produção).
@@ -12,7 +11,7 @@ const navbarLogoWhite = '/sesau-navbar-white.png'
 export default function Layout(): React.ReactElement {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const location = useLocation()
-  const canOpenAdminDirectly = hasStoredHostSession() || isLocalAuthBypassEnabled()
+  const canOpenAdminDirectly = hasStoredHostSession()
   // A animação de entrada roda só ao trocar de seção (ex.: /caps -> /donate). Dentro da
   // mesma seção (/caps -> /caps/c1) a página continua montada e mantém seus dados.
   const sectionKey = location.pathname.split('/')[1] || 'home'

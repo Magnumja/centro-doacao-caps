@@ -52,7 +52,7 @@ router.post('/login', asyncHandler(async (req: Request, res: Response): Promise<
   const parsed = loginSchema.safeParse(req.body)
 
   if (!parsed.success) {
-    res.status(400).json({ error: parsed.error.flatten().fieldErrors })
+    res.status(400).json({ error: 'Informe um e-mail válido e a senha.', details: parsed.error.flatten().fieldErrors })
     return
   }
 

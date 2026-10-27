@@ -5,6 +5,8 @@ export type HighlightItem = {
   image: string
   ctaLabel: string
   ctaLink: string
+  // ISO 8601; presente nas notícias automáticas para o site mostrar a data.
+  publishedAt?: string
 }
 
 export const highlights: HighlightItem[] = [

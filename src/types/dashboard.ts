@@ -13,6 +13,8 @@ export type NeedCardItem = {
 export type DashboardDonation = {
   id: string
   category: 'roupa' | 'comida' | 'utensilios'
+  // Rótulo escolhido pelo doador (ex.: "Higiene pessoal"); doações antigas não têm.
+  itemLabel?: string | null
   quantity: string
   donorName?: string | null
   donorEmail?: string | null

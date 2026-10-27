@@ -7,6 +7,7 @@ const router = Router()
 const controller = new DonationsController()
 
 router.post('/', asyncHandler(controller.create))
+router.post('/batch', asyncHandler(controller.createBatch))
 router.get('/', requireAuth, asyncHandler(controller.list))
 router.delete('/:id', requireAuth, asyncHandler(controller.remove))
 

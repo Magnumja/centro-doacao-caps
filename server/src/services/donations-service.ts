@@ -20,10 +20,28 @@ const createDonationSchema = z.object({
   { message: 'Nome do doador e obrigatorio para doacoes nao anonimas.', path: ['donorName'] },
 )
 
+// Uma intenção de doação com vários itens, gravada de uma vez (tudo ou nada).
+const createBatchSchema = z.object({
+  unitSlug: z.string().trim().min(1, 'Unidade obrigatoria.').max(80).regex(/^[a-z0-9-]+$/i, 'Unidade invalida.'),
+  items: z.array(z.object({
+    category: z.enum(['roupa', 'comida', 'utensilios'], { message: 'Categoria invalida.' }),
+    label: z.string().trim().min(1).max(60),
+    quantity: z.string().trim().min(1, 'Quantidade obrigatoria.').max(100),
+  })).min(1, 'Escolha ao menos um item.').max(10, 'Registre no maximo 10 itens por vez.'),
+  isAnonymous: z.boolean(),
+  donorName: z.string().trim().max(120).optional(),
+  donorEmail: z.string().trim().toLowerCase().email('E-mail invalido.').max(200).optional(),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Data deve estar no formato AAAA-MM-DD.'),
+  time: z.string().regex(/^\d{2}:\d{2}$/, 'Hora deve estar no formato HH:MM.'),
+}).refine(
+  (data) => data.isAnonymous || (!!data.donorName && data.donorName.trim().length > 0),
+  { message: 'Nome do doador e obrigatorio para doacoes nao anonimas.', path: ['donorName'] },
+)
+
 export class DonationsService {
   constructor(private readonly repository = new DonationsRepository()) {}
 
-  async create(payload: unknown) {
+  async create(payload: unknown, donorId?: string) {
     const parsed = createDonationSchema.safeParse(payload)
     if (!parsed.success) {
       throw new ValidationError(parsed.error)
@@ -48,7 +66,42 @@ export class DonationsService {
       throw new AppError('Unidade nao encontrada.', 404)
     }
 
-    return this.repository.create({ ...data, unitId: unit.id })
+    return this.repository.create({ ...data, unitId: unit.id, donorId })
+  }
+
+  async createBatch(payload: unknown, donorId?: string) {
+    const parsed = createBatchSchema.safeParse(payload)
+    if (!parsed.success) {
+      throw new ValidationError(parsed.error)
+    }
+
+    const { unitSlug, items, ...shared } = parsed.data
+    const groupId = randomUUID()
+
+    if (process.env.API_MOCK_MODE === 'true') {
+      const fallbackUnit = fallbackUnits.find((candidate) => candidate.slug === unitSlug)
+      if (!fallbackUnit) {
+        throw new AppError('Unidade nao encontrada.', 404)
+      }
+      return { groupId, count: items.length }
+    }
+
+    const unit = await this.repository.findUnitBySlug(unitSlug)
+    if (!unit) {
+      throw new AppError('Unidade nao encontrada.', 404)
+    }
+
+    const count = await this.repository.createGroup(items.map((item) => ({
+      ...shared,
+      category: item.category,
+      itemLabel: item.label,
+      quantity: item.quantity,
+      unitId: unit.id,
+      groupId,
+      donorId,
+    })))
+
+    return { groupId, count }
   }
 
   async listByHost(unitId: string, page = '1', limit = '20') {

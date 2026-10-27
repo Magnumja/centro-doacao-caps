@@ -41,5 +41,7 @@ React + TypeScript + Vite, CSS puro (sem Tailwind), React Router v7 HashRouter, 
 - `src/services/*`: chamadas HTTP. Fallback para o catálogo local (`src/data/mockData.ts`) quando a API cai.
 - `src/lib/`: `api.ts` (cliente HTTP + mensagens de erro em PT), `format.ts` (datas sem bug de fuso), `stats.ts` (indicadores calculados), `routes.ts` (caminhos), `session.ts` (sessão do gestor).
 - Formulário de doação (`CapsPage.tsx`): 3 passos numerados (itens → entrega → identificação) que ganham ✓ quando completos; erros por campo aparecem só após tentar enviar.
+- Conta do doador (opcional): `src/hooks/useDonorSession.tsx` (contexto em `router.tsx`), página `/entrar`, histórico em `/suas-doacoes`. API `/api/donors/*` com cookie httpOnly `donor_token` (audiência JWT própria, separada do gestor). Sem conta, o histórico fica só no aparelho (localStorage).
+- Doação é enviada por `POST /api/donations/batch` (todos os itens numa transação, mesmo `groupId`).
 - Rotas da doação: `/caps`, `/caps/:unidade`, `/caps/:unidade?pedido=ID` (pré-preenche o item). A URL é a fonte de verdade da unidade selecionada.
 - Imagens ficam só em `public/` e são referenciadas pela raiz (`/capsmargarida.jpg`).

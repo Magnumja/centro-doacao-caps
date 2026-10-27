@@ -8,6 +8,8 @@ import Donate from '../pages/Donate'
 import YourDonations from '../pages/YourDonations'
 import NotFound from '../pages/NotFound'
 import Layout from '../components/Layout'
+import { DonorSessionProvider } from '../hooks/useDonorSession'
+import DonorAccess from '../pages/DonorAccess'
 
 // Área administrativa em arquivos separados: o visitante comum não baixa esse código.
 const Login = lazy(() => import('../pages/admin/Login'))
@@ -25,36 +27,40 @@ export default function Router(): React.ReactElement {
   return (
     // HashRouter evita erro de refresh em hospedagens estáticas sem rewrite.
     <HashRouter>
-      <Routes>
-        {/*
-          Layout é a rota "pai" para compartilhar banner/menu em todas as telas filhas.
-          Cada <Route /> abaixo é renderizada dentro do <Outlet /> do Layout.
-        */}
-        <Route element={<Layout />}>
-          {/* Página inicial */}
-          <Route path="/" element={<Home />} />
+      {/* Sessão do doador disponível em todas as páginas (menu, formulário, histórico). */}
+      <DonorSessionProvider>
+        <Routes>
+          {/*
+            Layout é a rota "pai" para compartilhar banner/menu em todas as telas filhas.
+            Cada <Route /> abaixo é renderizada dentro do <Outlet /> do Layout.
+          */}
+          <Route element={<Layout />}>
+            {/* Página inicial */}
+            <Route path="/" element={<Home />} />
 
-          {/* Compatibilidade com o caminho antigo /home */}
-          <Route path="/home" element={<Navigate to="/" replace />} />
-          <Route path="/sobre-o-projeto" element={<AboutProject />} />
+            {/* Compatibilidade com o caminho antigo /home */}
+            <Route path="/home" element={<Navigate to="/" replace />} />
+            <Route path="/sobre-o-projeto" element={<AboutProject />} />
 
-          {/* Fluxo de doação: /caps (lista), /caps/:unidade e /caps/:unidade?pedido=ID */}
-          <Route path="/caps/*" element={<CapsPage />} />
+            {/* Fluxo de doação: /caps (lista), /caps/:unidade e /caps/:unidade?pedido=ID */}
+            <Route path="/caps/*" element={<CapsPage />} />
 
-          {/* Vitrine pública de necessidades */}
-          <Route path="/donate" element={<Donate />} />
-          <Route path="/suas-doacoes" element={<YourDonations />} />
+            {/* Vitrine pública de necessidades */}
+            <Route path="/donate" element={<Donate />} />
+            <Route path="/suas-doacoes" element={<YourDonations />} />
+            <Route path="/entrar" element={<DonorAccess />} />
 
-          {/* Entrada da área administrativa */}
-          <Route path="/admin/login" element={<Suspense fallback={<AdminFallback />}><Login /></Suspense>} />
+            {/* Entrada da área administrativa */}
+            <Route path="/admin/login" element={<Suspense fallback={<AdminFallback />}><Login /></Suspense>} />
 
-          {/* Área administrativa (telas/tabs internas) */}
-          <Route path="/admin/*" element={<Suspense fallback={<AdminFallback />}><Dashboard /></Suspense>} />
+            {/* Área administrativa (telas/tabs internas) */}
+            <Route path="/admin/*" element={<Suspense fallback={<AdminFallback />}><Dashboard /></Suspense>} />
 
-          {/* Fallback para qualquer rota não mapeada */}
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
+            {/* Fallback para qualquer rota não mapeada */}
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </DonorSessionProvider>
     </HashRouter>
   )
 }

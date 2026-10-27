@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { isLocalAuthBypassEnabled } from '../lib/auth'
-import { clearHostSession, storeHostSession } from '../lib/session'
+import { clearHostSession, hasStoredDemoSession, storeHostSession } from '../lib/session'
 import { fetchCurrentHost, getLocalDemoHost } from '../services/auth-service'
 import { fetchDashboardCollections } from '../services/dashboard-service'
 import { DashboardDonation, DashboardHost, DashboardResident, NeedCardItem } from '../types/dashboard'
@@ -48,7 +48,13 @@ export function useDashboardData(): UseDashboardDataResult {
           }
         }
       } catch {
-        if (localAuthBypassEnabled && mounted) {
+        // Execução já descartada (ex.: StrictMode monta/desmonta, ou a pessoa saiu da
+        // página): não pode mexer na sessão, senão apaga a da execução seguinte.
+        if (!mounted) return
+
+        // Sem sessão válida no servidor: só segue em modo demonstração se a pessoa
+        // escolheu esse acesso no login (localhost). Caso contrário, volta ao login.
+        if (localAuthBypassEnabled && hasStoredDemoSession()) {
           const demoHost = getLocalDemoHost()
           storeHostSession(demoHost)
           setLoggedHost(demoHost)
@@ -59,9 +65,7 @@ export function useDashboardData(): UseDashboardDataResult {
         }
 
         clearHostSession()
-        if (mounted) {
-          navigate('/admin/login')
-        }
+        navigate('/admin/login')
       }
     })()
 

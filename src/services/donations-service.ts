@@ -1,4 +1,4 @@
-import api, { getErrorMessage } from '../lib/api'
+import api from '../lib/api'
 
 export type DonationFormInput = {
   unitSlug: string
@@ -48,30 +48,22 @@ export function validateDonationInput(input: DonationFormInput): string | null {
   return null
 }
 
+// Envia a intenção inteira de uma vez: o servidor grava todos os itens numa transação
+// (tudo ou nada). Se o doador estiver logado, o cookie da sessão vincula ao histórico dele.
 export async function registerDonations(input: DonationFormInput): Promise<void> {
-  const payloads = input.selectedItems.map((item) => ({
+  const isAnonymous = input.anonymousDonation === 'sim'
+
+  await api.post('/api/donations/batch', {
     unitSlug: input.unitSlug,
-    category: categoryMap[item] ?? 'utensilios',
-    quantity: input.itemQuantities[item],
-    isAnonymous: input.anonymousDonation === 'sim',
-    donorName: input.anonymousDonation === 'sim' ? undefined : input.donorName,
-    donorEmail: input.anonymousDonation === 'sim' ? undefined : input.donorEmail,
+    items: input.selectedItems.map((item) => ({
+      category: categoryMap[item] ?? 'utensilios',
+      label: item,
+      quantity: input.itemQuantities[item],
+    })),
+    isAnonymous,
+    donorName: isAnonymous ? undefined : input.donorName,
+    donorEmail: isAnonymous ? undefined : input.donorEmail,
     date: input.donationDate,
     time: input.donationTime,
-  }))
-
-  // A API registra um item por requisição. Usamos allSettled para saber exatamente
-  // quais itens foram salvos caso só parte das requisições falhe.
-  const results = await Promise.allSettled(payloads.map((payload) => api.post('/api/donations', payload)))
-  const failed = results.flatMap((result, index) => (result.status === 'rejected' ? [{ item: input.selectedItems[index], reason: result.reason }] : []))
-
-  if (failed.length === 0) return
-
-  const reason = getErrorMessage(failed[0].reason, 'Não foi possível registrar a doação agora.')
-  if (failed.length === results.length) {
-    throw new Error(reason)
-  }
-
-  const saved = input.selectedItems.filter((item) => !failed.some((entry) => entry.item === item))
-  throw new Error(`Registramos ${saved.join(', ')}, mas não ${failed.map((entry) => entry.item).join(', ')}. ${reason}`)
+  })
 }

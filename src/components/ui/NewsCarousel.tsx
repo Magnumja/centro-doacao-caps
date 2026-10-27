@@ -1,12 +1,15 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { HighlightItem } from '../../data/highlights'
+import { formatDate } from '../../lib/format'
 import { trackEvent } from '../../services/telemetry-service'
 
 type Props = {
   items: HighlightItem[]
   autoPlayMs?: number
 }
+
+const viewedHighlightIds = new Set<string>()
 
 const carouselImageFallbacks = [
   '/capsmargarida.jpg',
@@ -75,7 +78,10 @@ export default function NewsCarousel({ items, autoPlayMs = 5500 }: Props): React
   }, [activeIndex, autoPlayMs, isPageVisible, isPaused, prefersReducedMotion, total])
 
   useEffect(() => {
-    if (!activeItem) return
+    // Cada destaque é contado uma vez por visita. Antes, a troca automática enviava um
+    // evento a cada 5,5s para sempre, consumindo o limite de requisições do visitante.
+    if (!activeItem || viewedHighlightIds.has(activeItem.id)) return
+    viewedHighlightIds.add(activeItem.id)
 
     void trackEvent({
       eventName: 'carousel_slide_view',
@@ -198,7 +204,9 @@ export default function NewsCarousel({ items, autoPlayMs = 5500 }: Props): React
           {renderSlideLink(
             'news-carousel__text-link',
             <>
-              <span className="home-card-tag">Destaque</span>
+              <span className="home-card-tag">
+                {activeItem.publishedAt ? `Notícia · ${formatDate(activeItem.publishedAt)}` : 'Destaque'}
+              </span>
               <h3>{activeItem.title}</h3>
               <p>{activeItem.description}</p>
             </>,
