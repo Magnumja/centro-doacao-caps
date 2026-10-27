@@ -490,3 +490,8 @@
     justify-content: center;
   }
 }
+
+button.your-donations-secondary {
+  cursor: pointer;
+  font-size: 0.88rem;
+}

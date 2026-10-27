@@ -65,7 +65,7 @@ export default function CapsPage(): React.ReactElement {
 
   const { units: caps, isLoading: isLoadingUnits } = useUnits()
   const { needs: allNeeds } = useNeeds()
-  const { donor, isDemo } = useDonorSession()
+  const { donor, isDemo, canUseDemo, loginDemo } = useDonorSession()
 
   const [selectionPreviewId, setSelectionPreviewId] = useState<string | null>(null)
   const [isEnteringUnit, setIsEnteringUnit] = useState(false)
@@ -618,6 +618,12 @@ export default function CapsPage(): React.ReactElement {
               ) : (
                 <p className="donation-step__hint">
                   <Link to={getDonorAccessPath(location.pathname)}>Entre na sua conta</Link> para acompanhar esta doação depois. É opcional.
+                  {canUseDemo ? (
+                    <>
+                      {' '}
+                      <button type="button" className="donation-demo-login" onClick={loginDemo}>Entrar direto no localhost</button>
+                    </>
+                  ) : null}
                 </p>
               )}
 

@@ -88,7 +88,7 @@ function DonationCard({ donation, onRemove }: { donation: DonationCardData, onRe
 }
 
 export default function YourDonations(): React.ReactElement {
-  const { donor, isChecking, isDemo, logout } = useDonorSession()
+  const { donor, isChecking, isDemo, canUseDemo, loginDemo, logout } = useDonorSession()
   const [deviceIntentions, setDeviceIntentions] = useState<DonorIntention[]>(() => listDonorIntentions())
   const [accountDonations, setAccountDonations] = useState<DonorDonation[]>([])
   const [isLoadingAccount, setIsLoadingAccount] = useState(false)
@@ -159,6 +159,12 @@ export default function YourDonations(): React.ReactElement {
           <div className="your-donations-account-cta__actions">
             <Link className="your-donations-primary" to={getDonorAccessPath('/suas-doacoes', 'criar')}>Criar conta</Link>
             <Link className="your-donations-secondary" to={getDonorAccessPath('/suas-doacoes')}>Já tenho conta</Link>
+            {/* Atalho de apresentação: só em localhost, igual ao do painel do gestor. */}
+            {canUseDemo ? (
+              <button type="button" className="your-donations-secondary" onClick={loginDemo}>
+                Entrar direto no localhost
+              </button>
+            ) : null}
           </div>
         </aside>
       ) : null}

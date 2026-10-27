@@ -892,7 +892,8 @@ a:focus-visible {
   .news-carousel__controls button,
   .selected-unit-actions .unit-donate-button,
   .selected-unit-actions .unit-secondary-button,
-  .your-donations-next-steps a {
+  .your-donations-next-steps a,
+  .donation-demo-login {
     min-height: 44px;
   }
 

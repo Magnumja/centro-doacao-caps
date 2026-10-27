@@ -70,9 +70,11 @@ const donorAuthLimiter = rateLimit({
   message: { error: 'Muitas tentativas. Aguarde 15 minutos e tente novamente.' },
 })
 
+// Anti-spam de doações. Cada intenção é 1 requisição (/batch); 60/hora por IP comporta
+// redes compartilhadas (evento, unidade de saúde) sem liberar envio em massa.
 const donationLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
-  max: 30,
+  max: 60,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: 'Muitas tentativas de cadastro de doacao. Tente novamente mais tarde.' },
