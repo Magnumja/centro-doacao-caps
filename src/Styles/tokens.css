@@ -68,6 +68,15 @@
   --stagger-step: 45ms;       /* atraso entre itens de uma mesma lista */
   --motion-rise: 8px;         /* deslocamento vertical das entradas */
 
+  /* ── Navbar fixa (altura real; usada para a rolagem não esconder conteúdo atrás dela) ── */
+  --header-height: 86px;
+
   /* ── Camadas ── */
   --z-header: 30;
+}
+
+@media (max-width: 860px) {
+  :root {
+    --header-height: 64px;
+  }
 }

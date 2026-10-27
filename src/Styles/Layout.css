@@ -57,13 +57,20 @@ textarea {
   resize: vertical;
 }
 
-/* Header — health-header below */
+/* Header — health-header below
+   Sem backdrop-filter: o fundo da navbar é praticamente opaco, então o desfoque não aparecia,
+   mas o navegador o recalculava a cada quadro da rolagem (engasgos/piscadas ao rolar). */
+
+/* Rolagens automáticas (Tab no teclado, links internos, scrollIntoView) param abaixo da
+   navbar fixa em vez de esconder o conteúdo atrás dela. */
+html {
+  scroll-padding-top: calc(var(--header-height) + 0.75rem);
+}
 
 .health-header {
   position: sticky;
   top: 0;
   z-index: 30;
-  backdrop-filter: blur(10px);
 }
 
 .health-header__inner {
