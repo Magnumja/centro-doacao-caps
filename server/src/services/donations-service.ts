@@ -1,4 +1,6 @@
+import { randomUUID } from 'node:crypto'
 import { z } from 'zod'
+import { fallbackUnits } from '../data/public-fallback'
 import { AppError } from '../errors/app-error'
 import { ValidationError } from '../errors/validation-error'
 import { DonationsRepository } from '../repositories/donations-repository'
@@ -28,6 +30,18 @@ export class DonationsService {
     }
 
     const { unitSlug, ...data } = parsed.data
+
+    // Modo de demonstração local (sem banco; nunca ativo em produção): valida igual,
+    // mas não persiste, para o fluxo de doação poder ser testado de ponta a ponta.
+    if (process.env.API_MOCK_MODE === 'true') {
+      const fallbackUnit = fallbackUnits.find((candidate) => candidate.slug === unitSlug)
+      if (!fallbackUnit) {
+        throw new AppError('Unidade nao encontrada.', 404)
+      }
+
+      return { id: randomUUID(), ...data, unitId: fallbackUnit.id, registeredAt: new Date().toISOString() }
+    }
+
     const unit = await this.repository.findUnitBySlug(unitSlug)
 
     if (!unit) {
