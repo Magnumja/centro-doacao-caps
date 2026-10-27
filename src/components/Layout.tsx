@@ -31,9 +31,12 @@ export default function Layout(): React.ReactElement {
     setIsMobileMenuOpen(false)
   }, [location.pathname])
 
+  // Nova página começa no topo, de imediato. 'instant' é necessário: com 'auto' o navegador
+  // herda o scroll-behavior: smooth do CSS e a página nova aparecia rolando ~600ms desde o
+  // fim. Só reage à troca de caminho; mudar só a query (abas, filtros) não mexe na rolagem.
   useLayoutEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
-  }, [location.pathname, location.search])
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+  }, [location.pathname])
 
   useEffect(() => {
     if (!isMobileMenuOpen) {

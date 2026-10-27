@@ -13,11 +13,12 @@ function safeReturnPath(value: string | null): string {
 }
 
 export default function DonorAccess(): React.ReactElement {
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
   const navigate = useNavigate()
-  const { donor, isChecking, login, register } = useDonorSession()
+  const { donor, isChecking, canUseDemo, login, register, loginDemo } = useDonorSession()
 
-  const mode: Mode = searchParams.get('modo') === 'criar' ? 'criar' : 'entrar'
+  // A aba é estado da tela (troca instantânea). A URL só define a aba inicial (?modo=criar).
+  const [mode, setMode] = useState<Mode>(() => (searchParams.get('modo') === 'criar' ? 'criar' : 'entrar'))
   const returnTo = safeReturnPath(searchParams.get('voltar'))
 
   const [name, setName] = useState('')
@@ -27,16 +28,15 @@ export default function DonorAccess(): React.ReactElement {
   const [errorMessage, setErrorMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Quem já está logado não precisa ver esta tela.
+  // Quem já está logado (ou acabou de entrar) segue para onde estava indo.
+  // Único ponto de navegação após o login: evita navegar duas vezes.
   useEffect(() => {
     if (!isChecking && donor) navigate(returnTo, { replace: true })
   }, [donor, isChecking, navigate, returnTo])
 
   const switchMode = (next: Mode): void => {
     setErrorMessage('')
-    const params = new URLSearchParams(searchParams)
-    params.set('modo', next)
-    setSearchParams(params, { replace: true })
+    setMode(next)
   }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
@@ -56,7 +56,6 @@ export default function DonorAccess(): React.ReactElement {
       } else {
         await login({ email: email.trim(), password })
       }
-      navigate(returnTo, { replace: true })
     } catch (error) {
       setErrorMessage(getErrorMessage(error, 'Não foi possível entrar agora. Tente novamente.'))
     } finally {
@@ -152,6 +151,16 @@ export default function DonorAccess(): React.ReactElement {
             {isCreating ? 'Entrar' : 'Criar conta'}
           </button>
         </p>
+
+        {/* Atalho de apresentação: só existe em localhost, igual ao do painel do gestor. */}
+        {canUseDemo ? (
+          <div className="donor-access__demo">
+            <button type="button" className="unit-secondary-button" onClick={loginDemo}>
+              Entrar direto no localhost (demonstração)
+            </button>
+            <small>Sem senha nem banco de dados. O histórico usa as doações registradas neste navegador.</small>
+          </div>
+        ) : null}
 
         <Link className="donor-access__skip" to="/caps">Continuar sem conta e doar</Link>
       </form>

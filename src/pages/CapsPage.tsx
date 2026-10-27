@@ -65,7 +65,7 @@ export default function CapsPage(): React.ReactElement {
 
   const { units: caps, isLoading: isLoadingUnits } = useUnits()
   const { needs: allNeeds } = useNeeds()
-  const { donor } = useDonorSession()
+  const { donor, isDemo } = useDonorSession()
 
   const [selectionPreviewId, setSelectionPreviewId] = useState<string | null>(null)
   const [isEnteringUnit, setIsEnteringUnit] = useState(false)
@@ -268,8 +268,9 @@ export default function CapsPage(): React.ReactElement {
     try {
       await registerDonations(input)
 
-      // Com conta, o histórico fica no servidor; sem conta, guardamos neste aparelho.
-      if (!donor) saveDonorIntention({
+      // Com conta real, o histórico fica no servidor; sem conta (ou na demonstração),
+      // guardamos neste aparelho.
+      if (!donor || isDemo) saveDonorIntention({
         unitSlug: unit.id,
         unitName: unit.title,
         items: selectedItems.map((item) => ({

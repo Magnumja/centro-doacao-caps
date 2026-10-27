@@ -88,14 +88,15 @@ function DonationCard({ donation, onRemove }: { donation: DonationCardData, onRe
 }
 
 export default function YourDonations(): React.ReactElement {
-  const { donor, isChecking, logout } = useDonorSession()
+  const { donor, isChecking, isDemo, logout } = useDonorSession()
   const [deviceIntentions, setDeviceIntentions] = useState<DonorIntention[]>(() => listDonorIntentions())
   const [accountDonations, setAccountDonations] = useState<DonorDonation[]>([])
   const [isLoadingAccount, setIsLoadingAccount] = useState(false)
   const [accountError, setAccountError] = useState('')
 
   useEffect(() => {
-    if (!donor) {
+    // Demonstração não tem conta no servidor: o histórico vem deste aparelho.
+    if (!donor || isDemo) {
       setAccountDonations([])
       return undefined
     }
@@ -110,7 +111,7 @@ export default function YourDonations(): React.ReactElement {
     return () => {
       mounted = false
     }
-  }, [donor])
+  }, [donor, isDemo])
 
   const handleRemove = (id: string) => {
     removeDonorIntention(id)
@@ -143,7 +144,7 @@ export default function YourDonations(): React.ReactElement {
           <FaUserCircle aria-hidden="true" />
           <span>
             <strong>{donor.name}</strong>
-            <small>{donor.email}</small>
+            <small>{isDemo ? 'Modo demonstração (localhost)' : donor.email}</small>
           </span>
           <button type="button" onClick={() => void logout()}>
             <FaSignOutAlt aria-hidden="true" /> Sair da conta
@@ -169,7 +170,17 @@ export default function YourDonations(): React.ReactElement {
           <h3>{donor ? 'Últimas doações da sua conta' : 'Minhas intenções'}</h3>
         </div>
 
-        {donor ? (
+        {donor && isDemo ? (
+          deviceCards.length > 0 ? (
+            <div className="your-donations-list">{deviceCards}</div>
+          ) : (
+            <article className="your-donations-empty">
+              <h4>Nenhuma doação registrada ainda</h4>
+              <p>Registre uma doação em uma unidade CAPS e ela aparecerá aqui.</p>
+              <Link className="your-donations-primary" to="/caps">Escolher uma unidade para doar</Link>
+            </article>
+          )
+        ) : donor ? (
           isLoadingAccount ? (
             <p className="home-urgent-empty" role="status">Carregando seu histórico...</p>
           ) : accountError ? (
@@ -198,7 +209,7 @@ export default function YourDonations(): React.ReactElement {
         )}
 
         {/* Registros feitos antes de entrar continuam acessíveis, sem misturar com a conta. */}
-        {donor && deviceCards.length > 0 ? (
+        {donor && !isDemo && deviceCards.length > 0 ? (
           <details className="your-donations-device">
             <summary>{deviceCards.length} registro(s) feito(s) antes de entrar, salvos só neste aparelho</summary>
             <div className="your-donations-list">{deviceCards}</div>

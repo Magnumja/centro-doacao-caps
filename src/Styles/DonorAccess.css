@@ -165,3 +165,23 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Atalho de demonstração (localhost) */
+.donor-access__demo {
+  display: grid;
+  gap: 0.35rem;
+  border-top: 1px dashed var(--color-border);
+  padding-top: 0.9rem;
+}
+
+.donor-access__demo .unit-secondary-button {
+  width: 100%;
+  justify-content: center;
+}
+
+.donor-access__demo small {
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  line-height: 1.4;
+  text-align: center;
+}
