@@ -1,34 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap');
-
-:root {
-  --health-accent: #07345f;
-  --health-accent-strong: #041b31;
-  --health-secondary: #0f8f79;
-  --health-text: #102a36;
-  --health-soft-text: #58707a;
-  --health-border: #d7e6e4;
-  --color-page: #f3f8f6;
-  --color-page-soft: #eaf4f1;
-  --color-surface: rgba(255, 255, 255, 0.94);
-  --color-surface-solid: #ffffff;
-  --color-surface-soft: #f7fbfa;
-  --color-primary: var(--health-accent);
-  --color-primary-strong: var(--health-accent-strong);
-  --color-primary-soft: #e5f1f5;
-  --color-secondary: var(--health-secondary);
-  --color-secondary-soft: #e4f6f1;
-  --color-accent-warm: #f7bd4f;
-  --color-danger: #b33a30;
-  --color-text: var(--health-text);
-  --color-muted: var(--health-soft-text);
-  --color-border: var(--health-border);
-  --shadow-card: 0 18px 46px rgba(9, 36, 61, 0.11);
-  --shadow-soft: 0 10px 28px rgba(9, 36, 61, 0.08);
-  --shadow-hover: 0 22px 52px rgba(9, 36, 61, 0.14);
-  --radius-card: 12px;
-  --radius-control: 10px;
-}
-
 * {
   box-sizing: border-box;
 }
@@ -47,10 +16,8 @@ main {
 
 body {
   margin: 0;
-  overscroll-behavior-y: contain;
   color: var(--color-text);
-  background: var(--color-page);
-  font-family: 'Source Sans 3', sans-serif;
+  font-family: var(--font-body);
 }
 
 img,
@@ -60,28 +27,6 @@ svg {
 
 a {
   color: inherit;
-}
-
-button,
-a,
-input,
-textarea,
-select {
-  transition:
-    transform 160ms ease,
-    box-shadow 160ms ease,
-    border-color 160ms ease,
-    background-color 160ms ease,
-    color 160ms ease;
-}
-
-button:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible,
-a:focus-visible {
-  outline: 2px solid rgba(45, 111, 143, 0.52);
-  outline-offset: 2px;
 }
 
 button:disabled,
@@ -97,7 +42,6 @@ select {
   width: 100%;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-control);
-  background: var(--color-surface);
   color: var(--color-text);
   font: inherit;
 }
@@ -119,14 +63,10 @@ textarea {
   position: sticky;
   top: 0;
   z-index: 30;
-  border-bottom: 1px solid var(--color-border);
-  background: rgba(246, 250, 248, 0.94);
   backdrop-filter: blur(10px);
 }
 
 .health-header__inner {
-  width: min(1180px, 94vw);
-  min-height: 52px;
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -135,12 +75,8 @@ textarea {
 }
 
 .health-nav {
-  display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 0.35rem;
   flex-wrap: wrap;
-  margin-inline: auto;
 }
 
 .health-nav__link,
@@ -155,22 +91,11 @@ textarea {
   border-radius: var(--radius-control);
   background: transparent;
   color: var(--color-text);
-  font-family: 'Lexend', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.84rem;
   font-weight: 700;
   text-decoration: none;
   cursor: pointer;
-}
-
-.health-nav__link {
-  padding: 0.42rem 0.64rem;
-}
-
-.health-nav__link:hover,
-.health-nav__link--active {
-  border-color: rgba(15, 118, 104, 0.32);
-  background: var(--color-primary-soft);
-  color: var(--color-primary-strong);
 }
 
 .mobile-nav-toggle,
@@ -181,9 +106,6 @@ textarea {
 }
 
 /* Page shell */
-.page-transition {
-  animation: pageFadeIn 160ms ease both;
-}
 
 @keyframes pageFadeIn {
   from {
@@ -198,17 +120,16 @@ textarea {
 }
 
 .page-block {
-  width: min(1180px, 94vw);
+  width: var(--layout-width);
   margin: 0 auto;
   padding: clamp(1rem, 3vw, 1.8rem) 0;
   display: grid;
-  gap: clamp(0.85rem, 2vw, 1.2rem);
 }
 
 .page-block h2 {
   margin: 0;
   color: var(--color-text);
-  font-family: 'Lexend', sans-serif;
+  font-family: var(--font-display);
   font-size: clamp(1.42rem, 2.6vw, 2.05rem);
   line-height: 1.16;
   text-wrap: balance;
@@ -223,8 +144,7 @@ textarea {
 
 .page-kicker {
   width: fit-content;
-  color: var(--color-primary-strong);
-  font-family: 'Lexend', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -246,7 +166,7 @@ textarea {
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-control);
-  font-family: 'Lexend', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.88rem;
   font-weight: 700;
   text-decoration: none;
@@ -263,7 +183,7 @@ textarea {
 .btn-primary {
   border: 0;
   background: var(--color-primary);
-  color: #ffffff;
+  color: var(--color-white);
   padding: 0.62rem 0.92rem;
 }
 
@@ -287,7 +207,7 @@ textarea {
   z-index: 999;
   border-radius: var(--radius-control);
   background: var(--color-text);
-  color: #ffffff;
+  color: var(--color-white);
   padding: 0.55rem 0.8rem;
   text-decoration: none;
 }
@@ -310,12 +230,12 @@ textarea {
 .site-footer {
   margin-top: clamp(1.5rem, 4vw, 3rem);
   background:
-    linear-gradient(180deg, #041b31 0%, #030f1c 100%);
+    linear-gradient(180deg, var(--color-primary-strong) 0%, #030f1c 100%);
   color: rgba(255, 255, 255, 0.82);
 }
 
 .site-footer__inner {
-  width: min(1180px, 94vw);
+  width: var(--layout-width);
   margin: 0 auto;
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(160px, 0.5fr) minmax(240px, 0.7fr);
@@ -345,7 +265,7 @@ textarea {
 .site-footer h2,
 .site-footer h3 {
   margin: 0;
-  font-family: 'Lexend', sans-serif;
+  font-family: var(--font-display);
 }
 
 .site-footer h2 {
@@ -371,7 +291,7 @@ textarea {
 
 .site-footer__brand .page-kicker {
   font-size: 0.68rem;
-  color: #f7bd4f;
+  color: var(--color-accent-warm);
   background: transparent;
   border: none;
   padding: 0;
@@ -399,11 +319,11 @@ textarea {
 }
 
 .site-footer__column a:hover {
-  color: #0f8f79;
+  color: var(--color-secondary);
 }
 
 .site-footer__bottom {
-  width: min(1180px, 94vw);
+  width: var(--layout-width);
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
@@ -415,9 +335,6 @@ textarea {
 }
 
 @media (max-width: 860px) {
-  .health-header {
-    --mobile-nav-offset: 0px;
-  }
 
   .health-header__inner {
     justify-content: space-between;
@@ -425,7 +342,6 @@ textarea {
 
   .mobile-nav-toggle {
     display: inline-flex;
-    border-color: var(--color-border);
     padding: 0.45rem 0.68rem;
   }
 
@@ -454,20 +370,10 @@ textarea {
     bottom: 0;
     left: auto;
     z-index: 60;
-    width: min(320px, 86vw);
     height: auto;
     max-height: calc(100dvh - var(--mobile-nav-offset));
     overflow-y: auto;
-    overscroll-behavior: contain;
-    display: grid;
-    align-content: start;
     justify-content: stretch;
-    gap: 0.45rem;
-    padding: 1rem;
-    border-left: 1px solid var(--color-border);
-    background: var(--color-surface);
-    box-shadow: -18px 0 40px rgba(23, 51, 58, 0.16);
-    transform: translateX(105%);
     transition: transform 220ms ease, box-shadow 220ms ease;
   }
 
@@ -481,18 +387,13 @@ textarea {
     justify-content: space-between;
     margin-bottom: 0.3rem;
     color: var(--color-text);
-    font-family: 'Lexend', sans-serif;
+    font-family: var(--font-display);
     order: 0;
   }
 
   .health-nav__mobile-header button {
     width: 2.4rem;
     padding: 0;
-  }
-
-  .health-nav__link {
-    justify-content: flex-start;
-    width: 100%;
   }
 
   .mobile-nav-backdrop {
@@ -505,8 +406,6 @@ textarea {
     display: block;
     border: 0;
     background: rgba(8, 22, 19, 0.42);
-    opacity: 0;
-    pointer-events: none;
   }
 
   .mobile-nav-backdrop--visible {
@@ -546,11 +445,7 @@ textarea {
 /* PREFCG-inspired institutional navigation */
 .health-header {
   border-bottom: 0;
-  background:
-    linear-gradient(90deg, rgba(5, 22, 44, 0.96) 0%, rgba(9, 48, 84, 0.9) 50%, rgba(5, 22, 44, 0.76) 100%),
-    linear-gradient(180deg, #0a3562 0%, #071b34 100%);
-  color: #ffffff;
-  box-shadow: 0 8px 22px rgba(5, 22, 44, 0.18);
+  color: var(--color-white);
 }
 
 .health-header::before {
@@ -558,9 +453,6 @@ textarea {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.08), transparent 34%, rgba(255, 255, 255, 0.06)),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 62%);
 }
 
 .health-header__inner {
@@ -605,7 +497,7 @@ textarea {
   display: block;
   justify-items: center;
   overflow: hidden;
-  color: #ffffff;
+  color: var(--color-white);
   text-decoration: none;
   border-radius: 6px;
 }
@@ -621,10 +513,6 @@ textarea {
   background: transparent;
   padding: 0;
   box-shadow: none;
-}
-
-.health-nav__link {
-  color: #ffffff;
 }
 
 .health-nav__link {
@@ -645,9 +533,7 @@ textarea {
   left: 0;
   right: 100%;
   bottom: 0.12rem;
-  height: 3px;
-  border-radius: 999px;
-  background: #ffcc00;
+  border-radius: var(--radius-pill);
   transition: right 180ms ease;
 }
 
@@ -655,7 +541,6 @@ textarea {
 .health-nav__link--active {
   border-color: transparent;
   background: transparent;
-  color: #ffcc00;
 }
 
 .health-nav__link:hover::after,
@@ -681,6 +566,7 @@ textarea {
 
 @media (max-width: 860px) {
   .health-header {
+    --mobile-nav-offset: 0px;
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
@@ -694,7 +580,7 @@ textarea {
   .mobile-nav-toggle {
     border-color: rgba(255, 255, 255, 0.34);
     background: rgba(255, 255, 255, 0.1);
-    color: #ffffff;
+    color: var(--color-white);
   }
 
   .mobile-nav-toggle[aria-expanded='true'] {
@@ -709,7 +595,6 @@ textarea {
     align-content: start;
     gap: 0.55rem;
     border-radius: 0;
-    background: var(--color-surface-solid);
     padding: 1rem 1rem max(1rem, env(safe-area-inset-bottom));
   }
 
@@ -746,7 +631,6 @@ textarea {
   .health-nav__link:hover,
   .health-nav__link--active {
     background: var(--color-primary-soft);
-    color: var(--color-primary-strong);
   }
 }
 
@@ -773,10 +657,11 @@ textarea {
 /* Premium product layer */
 
 body {
+  overscroll-behavior-y: contain;
   position: relative;
   min-height: 100vh;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(243, 248, 246, 0.86) 38%, #f3f8f6 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(243, 248, 246, 0.86) 38%, var(--color-page) 100%),
     linear-gradient(110deg, rgba(7, 52, 95, 0.06) 0%, transparent 34%, rgba(15, 143, 121, 0.06) 100%);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -823,8 +708,8 @@ input,
 textarea,
 select {
   transition:
-    transform 180ms cubic-bezier(.2, .7, .2, 1),
-    box-shadow 180ms cubic-bezier(.2, .7, .2, 1),
+    transform 180ms var(--ease-standard),
+    box-shadow 180ms var(--ease-standard),
     border-color 180ms ease,
     background-color 180ms ease,
     color 180ms ease,
@@ -849,7 +734,7 @@ input:focus,
 textarea:focus,
 select:focus {
   border-color: rgba(15, 143, 121, 0.66);
-  box-shadow: 0 0 0 4px rgba(15, 143, 121, 0.12);
+  box-shadow: var(--focus-ring);
 }
 
 button:focus-visible,
@@ -864,7 +749,7 @@ a:focus-visible {
 .health-header {
   background:
     linear-gradient(90deg, rgba(4, 27, 49, 0.98) 0%, rgba(7, 52, 95, 0.94) 54%, rgba(7, 70, 100, 0.92) 100%),
-    linear-gradient(180deg, #07345f 0%, #041b31 100%);
+    linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-strong) 100%);
   box-shadow: 0 14px 34px rgba(4, 27, 49, 0.22);
 }
 
@@ -893,12 +778,12 @@ a:focus-visible {
 }
 
 .page-transition {
-  animation: pageFadeIn 320ms cubic-bezier(.2, .7, .2, 1) both;
+  animation: pageFadeIn 320ms var(--ease-standard) both;
 }
 
 .page-block {
   gap: clamp(1rem, 2.4vw, 1.45rem);
-  animation: appSurfaceEnter 360ms cubic-bezier(.2, .7, .2, 1) both;
+  animation: appSurfaceEnter 360ms var(--ease-standard) both;
 }
 
 .page-block h2 {
@@ -910,7 +795,7 @@ a:focus-visible {
   align-items: center;
   gap: 0.35rem;
   border: 1px solid rgba(7, 52, 95, 0.12);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: rgba(255, 255, 255, 0.62);
   padding: 0.26rem 0.62rem;
   color: var(--color-primary-strong);
@@ -943,8 +828,8 @@ a:focus-visible {
 .your-donations-primary {
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.13), transparent 42%),
-    linear-gradient(135deg, #07345f 0%, #0c5f7e 100%);
-  box-shadow: 0 12px 24px rgba(7, 52, 95, 0.22);
+    linear-gradient(135deg, var(--color-primary) 0%, #0c5f7e 100%);
+  box-shadow: var(--shadow-button);
 }
 
 .btn-primary:hover,
@@ -953,7 +838,7 @@ a:focus-visible {
 .unit-donate-button:hover,
 .your-donations-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 16px 34px rgba(7, 52, 95, 0.26);
+  box-shadow: var(--shadow-button-hover);
 }
 
 .btn-primary:active,
@@ -979,7 +864,7 @@ a:focus-visible {
 .unit-secondary-button:hover,
 .unit-icon-link:hover {
   border-color: rgba(15, 143, 121, 0.28);
-  background: #ffffff;
+  background: var(--color-white);
   box-shadow: 0 10px 22px rgba(9, 36, 61, 0.08);
 }
 
@@ -987,9 +872,10 @@ a:focus-visible {
 
 @media (max-width: 860px) {
   .health-nav {
+    overscroll-behavior: contain;
     border-left: 1px solid rgba(16, 42, 54, 0.12);
     background:
-      linear-gradient(180deg, #ffffff, #f7fbfa);
+      linear-gradient(180deg, var(--color-white), var(--color-surface-soft));
     box-shadow: -22px 0 54px rgba(4, 27, 49, 0.22);
     transform: translateX(105%) !important;
   }

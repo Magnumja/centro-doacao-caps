@@ -21,7 +21,6 @@ import { saveDonorIntention } from '../services/donor-intentions-service'
 import { fetchUnits } from '../services/units-service'
 import { caps as mockCaps, donationCategories, needs as mockNeeds } from '../data/mockData'
 
-import '../Styles/CapsPage.css'
 
 const donationOptions = donationCategories
 const selectionAnimationDurationMs = 260

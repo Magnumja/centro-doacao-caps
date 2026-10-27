@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
 import { useAdminLogin } from '../../hooks/useAdminLogin'
 
-import '../../Styles/Login.css'
 
 export default function Login(): React.ReactElement {
     const [email, setEmail] = useState('')

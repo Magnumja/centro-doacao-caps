@@ -14,7 +14,6 @@ import { fetchHighlights } from '../services/highlights-service'
 import { fetchNeedsPage, normalizeNeed } from '../services/needs-service'
 import { trackEvent } from '../services/telemetry-service'
 import { Need } from '../types'
-import '../Styles/Home.css'
 
 export default function Home(): React.ReactElement {
   const [urgentNeeds, setUrgentNeeds] = useState<Need[]>([])

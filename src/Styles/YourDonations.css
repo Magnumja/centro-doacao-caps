@@ -28,8 +28,8 @@
   border-radius: var(--radius-control);
   padding: 0.58rem 0.82rem;
   background: var(--color-primary);
-  color: #ffffff;
-  font-family: 'Lexend', sans-serif;
+  color: var(--color-white);
+  font-family: var(--font-display);
   font-size: 0.86rem;
   font-weight: 700;
   text-decoration: none;
@@ -59,15 +59,7 @@
 .your-donation-card h4,
 .your-donations-empty h4 {
   margin: 0;
-  font-family: 'Lexend', sans-serif;
-}
-
-.your-donations-section__title h3 {
-  font-size: 1.02rem;
-}
-
-.your-donations-section__title svg {
-  color: var(--color-primary);
+  font-family: var(--font-display);
 }
 
 .your-donations-list {
@@ -88,14 +80,11 @@
 
 .your-donation-status {
   width: fit-content;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 0.16rem 0.52rem;
-  background: var(--color-primary-soft);
-  color: var(--color-primary-strong);
-  font-family: 'Lexend', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.72rem;
   font-weight: 700;
-  text-transform: uppercase;
 }
 
 .your-donation-card h4,
@@ -108,12 +97,8 @@
   display: inline-grid;
   place-items: center;
   width: 2.5rem;
-  height: 2.5rem;
   border: 1px solid rgba(186, 53, 53, 0.22);
   border-radius: var(--radius-control);
-  background: rgba(186, 53, 53, 0.08);
-  color: #8f2323;
-  cursor: pointer;
 }
 
 .your-donation-meta {
@@ -125,7 +110,6 @@
 .your-donation-meta span,
 .your-donation-items li {
   border-radius: var(--radius-control);
-  background: var(--color-surface);
 }
 
 .your-donation-meta span {
@@ -162,7 +146,6 @@
 
 .your-donations-next-steps {
   justify-content: flex-start;
-  flex-wrap: wrap;
 }
 
 @media (max-width: 700px) {
@@ -224,13 +207,14 @@
 }
 
 .your-donations-section__title svg {
-  color: #07345f;
+  color: var(--color-primary);
 }
 
 .your-donation-status {
+  text-transform: uppercase;
   border: 1px solid rgba(15, 143, 121, 0.16);
   background: rgba(228, 246, 241, 0.9);
-  color: #07345f;
+  color: var(--color-primary);
 }
 
 .your-donation-meta span,
@@ -240,6 +224,8 @@
 }
 
 .your-donation-remove {
+  height: 2.5rem;
+  cursor: pointer;
   border-color: rgba(179, 58, 48, 0.18);
   background: rgba(179, 58, 48, 0.06);
   color: #8f2c24;
@@ -281,14 +267,14 @@
 /* Section title */
 .your-donations-section__title h3 {
   font-size: 1.05rem;
-  color: #102a36;
+  color: var(--color-text);
 }
 
 /* Card headings */
 .your-donation-card h4 {
   font-size: 1rem;
   line-height: 1.28;
-  color: #102a36;
+  color: var(--color-text);
   text-wrap: balance;
 }
 
@@ -308,13 +294,13 @@
 
 .your-donations-empty h4 {
   font-size: 1.08rem;
-  color: #102a36;
+  color: var(--color-text);
   text-wrap: balance;
 }
 
 .your-donations-empty p {
   max-width: 48ch;
-  color: #58707a;
+  color: var(--color-muted);
   line-height: 1.6;
   text-wrap: pretty;
 }
@@ -325,6 +311,7 @@
 
 /* Next steps — diferenciar primário de secundário */
 .your-donations-next-steps {
+  flex-wrap: wrap;
   gap: 0.6rem;
   padding: clamp(0.85rem, 2vw, 1.1rem);
 }
@@ -332,7 +319,7 @@
 .your-donations-next-steps a:last-child {
   background: transparent;
   border: 1px solid rgba(16, 42, 54, 0.14);
-  color: #07345f;
+  color: var(--color-primary);
 }
 
 .your-donations-next-steps a:last-child:hover {
@@ -347,14 +334,14 @@
 }
 
 .your-donation-items li strong {
-  color: #102a36;
-  font-family: 'Lexend', sans-serif;
+  color: var(--color-text);
+  font-family: var(--font-display);
 }
 
 .your-donation-items li span {
-  color: #58707a;
+  color: var(--color-muted);
   font-weight: 700;
-  font-family: 'Lexend', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.84rem;
 }
 
@@ -362,7 +349,7 @@
 .your-donation-card__footer a {
   background: transparent;
   border: 1px solid rgba(7, 52, 95, 0.18);
-  color: #07345f;
+  color: var(--color-primary);
   font-size: 0.8rem;
 }
 

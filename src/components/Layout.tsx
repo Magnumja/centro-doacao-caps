@@ -3,7 +3,6 @@ import { FaBars, FaEnvelope, FaMapMarkerAlt, FaPhoneAlt, FaTimes } from 'react-i
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 
 import { isLocalAuthBypassEnabled } from '../lib/auth'
-import '../Styles/Layout.css'
 import logo from '../public/logosesau.png'
 import navbarLogoWhite from '../../public/sesau-navbar-white.png'
 

@@ -8,7 +8,6 @@ const markerShadowUrl = new URL('leaflet/dist/images/marker-shadow.png', import.
 
 import { caps } from '../data/mock'
 
-import 'leaflet/dist/leaflet.css'
 
 // Ajuste necessário para o Leaflet encontrar os ícones quando rodando com Vite.
 delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl

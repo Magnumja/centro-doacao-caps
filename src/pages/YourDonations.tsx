@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { FaCalendarCheck, FaClock, FaGift, FaTrash } from 'react-icons/fa'
 
 import { listDonorIntentions, removeDonorIntention, DonorIntention } from '../services/donor-intentions-service'
-import '../Styles/YourDonations.css'
 
 function formatDate(date: string): string {
   if (!date) return 'Data não informada'

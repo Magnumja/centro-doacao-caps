@@ -1,0 +1,11 @@
+@import '@fontsource-variable/lexend';
+@import '@fontsource-variable/source-sans-3';
+@import './tokens.css';
+@import 'leaflet/dist/leaflet.css';
+@import './Home.css';
+@import './AboutProject.css';
+@import './CapsPage.css';
+@import './YourDonations.css';
+@import './Login.css';
+@import './Dashboard.css';
+@import './Layout.css';

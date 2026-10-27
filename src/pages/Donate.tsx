@@ -6,7 +6,6 @@ import DonationRequestCard from '../components/DonationRequestCard'
 import { donationCategories } from '../data/mockData'
 import { fetchPublicNeeds } from '../lib/needs'
 import { DonationCategoryName, Need } from '../types'
-import '../Styles/Home.css'
 
 export default function Donate(): React.ReactElement {
   const [needs, setNeeds] = useState<Need[]>([])

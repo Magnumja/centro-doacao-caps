@@ -9,7 +9,6 @@ import { useDashboardData } from '../../hooks/useDashboardData'
 import { logoutHost } from '../../services/auth-service'
 import { createNeed, deleteNeed } from '../../services/needs-service'
 
-import '../../Styles/Dashboard.css'
 
 // Abas disponíveis na área administrativa.
 type TabType = 'overview' | 'donations' | 'analytics' | 'profile' | 'residents'

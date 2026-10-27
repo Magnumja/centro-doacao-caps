@@ -2,7 +2,6 @@ import React from 'react'
 import { FaHandsHelping, FaHospital, FaLightbulb } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 
-import '../Styles/AboutProject.css'
 
 const projectPoints = [
   {
